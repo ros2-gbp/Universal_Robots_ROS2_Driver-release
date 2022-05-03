@@ -1,0 +1,12 @@
+Source: ros-galactic-ur-controllers
+Section: misc
+Priority: optional
+Maintainer: Denis Stogl <denis@stoglrobotics.de>
+Build-Depends: debhelper (>= 9.0.0), ros-galactic-ament-cmake, ros-galactic-angles, ros-galactic-control-msgs, ros-galactic-controller-interface, ros-galactic-geometry-msgs, ros-galactic-joint-trajectory-controller, ros-galactic-pluginlib, ros-galactic-rclcpp-lifecycle, ros-galactic-rcutils, ros-galactic-realtime-tools, ros-galactic-sensor-msgs, ros-galactic-std-msgs, ros-galactic-std-srvs, ros-galactic-ur-client-library, ros-galactic-ur-dashboard-msgs, ros-galactic-ur-msgs, ros-galactic-ros-workspace
+Homepage: 
+Standards-Version: 3.9.2
+
+Package: ros-galactic-ur-controllers
+Architecture: any
+Depends: ${shlibs:Depends}, ${misc:Depends}, ros-galactic-angles, ros-galactic-control-msgs, ros-galactic-controller-interface, ros-galactic-geometry-msgs, ros-galactic-joint-trajectory-controller, ros-galactic-pluginlib, ros-galactic-rclcpp-lifecycle, ros-galactic-rcutils, ros-galactic-realtime-tools, ros-galactic-sensor-msgs, ros-galactic-std-msgs, ros-galactic-std-srvs, ros-galactic-ur-client-library, ros-galactic-ur-dashboard-msgs, ros-galactic-ur-msgs, ros-galactic-ros-workspace
+Description: Provides controllers that use the speed scaling interface of Universal Robots.
