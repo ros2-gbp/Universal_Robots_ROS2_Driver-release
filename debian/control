@@ -1,0 +1,12 @@
+Source: ros-rolling-ur-moveit-config
+Section: misc
+Priority: optional
+Maintainer: Denis Stogl <denis@stoglrobotics.de>
+Build-Depends: debhelper (>= 9.0.0), ros-rolling-ament-cmake, ros-rolling-ament-cmake-python, ros-rolling-ros-workspace
+Homepage: 
+Standards-Version: 3.9.2
+
+Package: ros-rolling-ur-moveit-config
+Architecture: any
+Depends: ${shlibs:Depends}, ${misc:Depends}, ros-rolling-launch, ros-rolling-launch-ros, ros-rolling-moveit-kinematics, ros-rolling-moveit-planners-ompl, ros-rolling-moveit-ros-move-group, ros-rolling-moveit-ros-visualization, ros-rolling-moveit-servo, ros-rolling-moveit-simple-controller-manager, ros-rolling-rviz2, ros-rolling-ur-description, ros-rolling-urdf, ros-rolling-warehouse-ros-sqlite, ros-rolling-xacro, ros-rolling-ros-workspace
+Description: An example package with MoveIt2 configurations for UR robots.
