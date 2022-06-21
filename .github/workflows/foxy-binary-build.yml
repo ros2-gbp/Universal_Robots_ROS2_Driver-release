@@ -1,11 +1,5 @@
 name: Foxy Binary Build
 on:
-  pull_request:
-    branches:
-      - foxy
-  push:
-    branches:
-      - foxy
   schedule:
     # Run every morning to detect flakiness and broken dependencies
     - cron: '58 11 * * *'
@@ -16,7 +10,6 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       max-parallel: 1
-      fail-fast: false
       matrix:
         env:
           - {ROS_DISTRO: foxy, ROS_REPO: main}
@@ -30,6 +23,8 @@ jobs:
       CACHE_PREFIX: ${{ matrix.env.ROS_DISTRO }}-${{ matrix.env.ROS_REPO }}
     steps:
       - uses: actions/checkout@v1
+        with:
+          ref: foxy
       - name: start ursim
         run: |
           .github/dockerursim/build_and_run_docker_ursim.sh
