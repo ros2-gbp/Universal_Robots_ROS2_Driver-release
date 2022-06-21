@@ -1,7 +1,7 @@
 # Universal Robots ROS2 Driver
 
 Universal Robots has become a dominant supplier of lightweight, robotic manipulators for industry, as well as for scientific research and education.
-<center><img src="ur_robot_driver/doc/installation/initial_setup_images/e-Series.jpg" alt="Universal Robot e-Series family" style="width: 80%;"/></center>
+<center><img src="ur_robot_driver/doc/initial_setup_images/e-Series.jpg" alt="Universal Robot e-Series family" style="width: 80%;"/></center>
 
 This is one of the very first ROS2 manipulator drivers. Some of the new features are enabled by ROS2 and include decreased latency, improved security, and more flexibility regarding middleware configuration. The package contains launch files to quickly get started using the driver as a standalone version or in combination with MoveIt2
 
@@ -10,16 +10,12 @@ This driver is developed on top of [Universal_Robots_Client_Library](https://git
 The driver is compatible across the entire line of UR robots -- from 3 kg payload to 16 kg payload and includes both the CB3 and the E-series.
 
 
-Check also [presentations and videos](ur_robot_driver/doc/resources/README.md) about this driver.
-
-
 ## Build Status
 
 ROS2 Distro | Foxy  | Galactic | Rolling
 :---------: | :---: | :------: | :-----:
 **Branch** | [foxy](https://github.com/UniversalRobots/Universal_Robots_ROS2_Driver/tree/foxy) | [main](https://github.com/UniversalRobots/Universal_Robots_ROS2_Driver/tree/main) | [main](https://github.com/UniversalRobots/Universal_Robots_ROS2_Driver/tree/main)
-**Build Status** | [![Foxy Binary Build](https://github.com/UniversalRobots/Universal_Robots_ROS2_Driver/actions/workflows/foxy-binary-build.yml/badge.svg?event=schedule)](https://github.com/UniversalRobots/Universal_Robots_ROS2_Driver/actions/workflows/foxy-binary-build.yml) <br /> [![Foxy Semi-Binary Build](https://github.com/UniversalRobots/Universal_Robots_ROS2_Driver/actions/workflows/foxy-semi-binary-build.yml/badge.svg?event=schedule)](https://github.com/UniversalRobots/Universal_Robots_ROS2_Driver/actions/workflows/foxy-semi-binary-build.yml) <br /> [![Foxy Source Build](https://github.com/UniversalRobots/Universal_Robots_ROS2_Driver/actions/workflows/foxy-source-build.yml/badge.svg?event=schedule)](https://github.com/UniversalRobots/Universal_Robots_ROS2_Driver/actions/workflows/foxy-source-build.yml) | [![Galactic Binary Build](https://github.com/UniversalRobots/Universal_Robots_ROS2_Driver/actions/workflows/galactic-binary-build.yml/badge.svg?branch=main)](https://github.com/UniversalRobots/Universal_Robots_ROS2_Driver/actions/workflows/galactic-binary-build.yml?branch=main) <br /> [![Galactic Semi-Binary Build](https://github.com/UniversalRobots/Universal_Robots_ROS2_Driver/actions/workflows/galactic-semi-binary-build.yml/badge.svg?branch=main)](https://github.com/UniversalRobots/Universal_Robots_ROS2_Driver/actions/workflows/galactic-semi-binary-build.yml?branch=main) <br /> [![Galactic Source Build](https://github.com/UniversalRobots/Universal_Robots_ROS2_Driver/actions/workflows/galactic-source-build.yml/badge.svg?branch=main)](https://github.com/UniversalRobots/Universal_Robots_ROS2_Driver/actions/workflows/galactic-source-build.yml?branch=main) | [![Rolling Binary Build](https://github.com/UniversalRobots/Universal_Robots_ROS2_Driver/actions/workflows/rolling-binary-build.yml/badge.svg?branch=main)](https://github.com/UniversalRobots/Universal_Robots_ROS2_Driver/actions/workflows/rolling-binary-build.yml?branch=main) <br /> [![Rolling Semi-Binary Build](https://github.com/UniversalRobots/Universal_Robots_ROS2_Driver/actions/workflows/rolling-semi-binary-build.yml/badge.svg?branch=main)](https://github.com/UniversalRobots/Universal_Robots_ROS2_Driver/actions/workflows/rolling-semi-binary-build.yml?branch=main) <br /> [![Rolling Source Build](https://github.com/UniversalRobots/Universal_Robots_ROS2_Driver/actions/workflows/rolling-source-build.yml/badge.svg?branch=main)](https://github.com/UniversalRobots/Universal_Robots_ROS2_Driver/actions/workflows/rolling-source-build.yml?branch=main)
-**Execution Test** |  |  | [![Execution Testing](https://github.com/UniversalRobots/Universal_Robots_ROS2_Driver/actions/workflows/test-ci.yml/badge.svg?branch=main)](https://github.com/UniversalRobots/Universal_Robots_ROS2_Driver/actions/workflows/test-ci.yml?branch=main)
+**Build Status** | [![Binary Build](https://github.com/UniversalRobots/Universal_Robots_ROS2_Driver/actions/workflows/foxy-binary-build.yml/badge.svg?branch=foxy)](https://github.com/UniversalRobots/Universal_Robots_ROS2_Driver/actions/workflows/foxy-binary-build.yml?branch=foxy) <br /> [![Semi-Binary Build](https://github.com/UniversalRobots/Universal_Robots_ROS2_Driver/actions/workflows/foxy-semi-binary-build.yml/badge.svg?branch=foxy)](https://github.com/UniversalRobots/Universal_Robots_ROS2_Driver/actions/workflows/foxy-semi-binary-build.yml?branch=foxy) <br /> [![Source Build](https://github.com/UniversalRobots/Universal_Robots_ROS2_Driver/actions/workflows/foxy-source-build.yml/badge.svg?branch=foxy)](https://github.com/UniversalRobots/Universal_Robots_ROS2_Driver/actions/workflows/foxy-source-build.yml?branch=foxy) | [![Galactic Binary Build](https://github.com/UniversalRobots/Universal_Robots_ROS2_Driver/actions/workflows/galactic-binary-build.yml/badge.svg?branch=main)](https://github.com/UniversalRobots/Universal_Robots_ROS2_Driver/actions/workflows/galactic-binary-build.yml?branch=main) <br /> [![Galactic Semi-Binary Build](https://github.com/UniversalRobots/Universal_Robots_ROS2_Driver/actions/workflows/galactic-semi-binary-build.yml/badge.svg?branch=main)](https://github.com/UniversalRobots/Universal_Robots_ROS2_Driver/actions/workflows/galactic-semi-binary-build.yml?branch=main) <br /> [![Galactic Source Build](https://github.com/UniversalRobots/Universal_Robots_ROS2_Driver/actions/workflows/galactic-source-build.yml/badge.svg?branch=main)](https://github.com/UniversalRobots/Universal_Robots_ROS2_Driver/actions/workflows/galactic-source-build.yml?branch=main) | [![Rolling Binary Build](https://github.com/UniversalRobots/Universal_Robots_ROS2_Driver/actions/workflows/rolling-binary-build.yml/badge.svg?branch=main)](https://github.com/UniversalRobots/Universal_Robots_ROS2_Driver/actions/workflows/rolling-binary-build.yml?branch=main) <br /> [![Rolling Semi-Binary Build](https://github.com/UniversalRobots/Universal_Robots_ROS2_Driver/actions/workflows/rolling-semi-binary-build.yml/badge.svg?branch=main)](https://github.com/UniversalRobots/Universal_Robots_ROS2_Driver/actions/workflows/rolling-semi-binary-build.yml?branch=main) <br /> [![Rolling Source Build](https://github.com/UniversalRobots/Universal_Robots_ROS2_Driver/actions/workflows/rolling-source-build.yml/badge.svg?branch=main)](https://github.com/UniversalRobots/Universal_Robots_ROS2_Driver/actions/workflows/rolling-source-build.yml?branch=main)
 
 **NOTE**: There are three build stages checking current and future compatibility of the driver.
 
@@ -45,7 +41,7 @@ ROS2 Distro | Foxy  | Galactic | Rolling
   - `ur_controllers` - implementations of controllers specific for UR robots.
   - `ur_dashboard_msgs` - package defining messages used by dashboard node.
   - `ur_description` - description files for the UR robots: meshes, URDF/XACRO files, etc.
-  - `ur_moveit_config` - example MoveIt configuration for UR robots.
+  - `ur_moveit` - example MoveIt configuration for UR robots.
   - `ur_robot_driver` - driver / hardware interface for communication with UR robots.
 
 
@@ -68,8 +64,7 @@ ROS2 Distro | Foxy  | Galactic | Rolling
    ```
    cd $COLCON_WS
    git clone https://github.com/UniversalRobots/Universal_Robots_ROS2_Driver.git src/Universal_Robots_ROS2_Driver
-   vcs import src --skip-existing --input src/Universal_Robots_ROS2_Driver/Universal_Robots_ROS2_Driver-not-released.${ROS_DISTRO}.repos
-   rosdep update
+   vcs import src --skip-existing --input src/Universal_Robots_ROS2_Driver/Universal_Robots_ROS2_Driver.repos
    rosdep install --ignore-src --from-paths src -y -r
    colcon build --cmake-args -DCMAKE_BUILD_TYPE=Release
    source install/setup.bash
@@ -77,107 +72,19 @@ ROS2 Distro | Foxy  | Galactic | Rolling
 
 ## Using MoveIt
 
-[MoveIt!](https://moveit.ros.org) support is built-in into this driver already.
-Watch MoveIt in action with the Universal Robots ROS2 driver:
+To use MoveIt some additional packages should be added into workspace:
+   ```
+   cd $COLCON_WS
+   vcs import src --skip-existing --input src/Universal_Robots_ROS2_Driver/MoveIt_Support.repos
+   vcs import src --skip-existing --input src/moveit2/moveit2.repos
+   rosdep install --ignore-src --from-paths src -y -r
+   colcon build --cmake-args -DCMAKE_BUILD_TYPE=Release
+   source install/setup.bash
+   ```
 
-[![Video: MoveIt2 Demo](https://img.youtube.com/vi/d_cVXoZZ52w/0.jpg)](https://www.youtube.com/watch?v=d_cVXoZZ52w)
+## Hardware Setup
 
-  *The video shows free-space trajectory planning around a modeled collision scene object using the MoveIt2 MotionPlanning widget for Rviz2.*
-
-
-### Real robot / URSim
-To test the driver with the example MoveIt-setup, first start the driver as described
-[below](#connect-to-external-control-via-urcap).
-```
-ros2 launch ur_moveit_config ur_moveit.launch.py ur_type:=ur5e launch_rviz:=true
-```
-Now you should be able to use the MoveIt Plugin in rviz2 to plan and execute trajectories with the
-robot as explained [here](https://moveit.picknik.ai/galactic/doc/tutorials/quickstart_in_rviz/quickstart_in_rviz_tutorial.html).
-
-### Fake hardware on ROS2 Galactic
-
-Currently, the `scaled_joint_trajectory_controller` does not work on ROS2 Galactic. There is an
-[upstream Merge-Request]() pending to fix that. Until this is merged and released, please change the
-default controller in the [controllers.yaml](ur_moveit_config/config/controllers.yaml) file. Make
-sure that the `default` field is assigned `true` for the `joint_trajectory_controller` and `false`
-for the
-`scaled_joint_trajectory_controller`.
-
-```
-controller_names:
-  - scaled_joint_trajectory_controller
-  - joint_trajectory_controller
-scaled_joint_trajectory_controller:
-  action_ns: follow_joint_trajectory
-  type: FollowJointTrajectory
-  default: false
-  joints:
-    - shoulder_pan_joint
-    - shoulder_lift_joint
-    - elbow_joint
-    - wrist_1_joint
-    - wrist_2_joint
-    - wrist_3_joint
-joint_trajectory_controller:
-  action_ns: follow_joint_trajectory
-  type: FollowJointTrajectory
-  default: true
-  joints:
-    - shoulder_pan_joint
-    - shoulder_lift_joint
-    - elbow_joint
-    - wrist_1_joint
-    - wrist_2_joint
-    - wrist_3_joint
-```
-
-Then start
-
-```
-ros2 launch ur_bringup ur_control.launch.py ur_type:=ur5e robot_ip:=yyy.yyy.yyy.yyy use_fake_hardware:=true launch_rviz:=false initial_joint_controller:=joint_trajectory_controller
-# and in another shell
-ros2 launch ur_moveit_config ur_moveit.launch.py ur_type:=ur5e launch_rviz:=true
-```
-
-## Network Setup
-
-There are many possible ways to connect a UR robot. This section describes a good example using static IP addresses and a direct connection from the PC to the Robot to minimize latency introduced by network hardware. Though a good network switch usually works fine, as well.
-
-1. Connect the UR control box directly to the remote PC with an ethernet cable.
-
-2. Open the network settings from the UR teach pendant (Setup Robot -> Network) and enter these settings:
-
-```
-IP address: 192.168.1.102
-Subnet mask: 255.255.255.0
-Default gateway: 192.168.1.1
-Preferred DNS server: 192.168.1.1
-Alternative DNS server: 0.0.0.0
-```
-
-3. On the remote PC, turn off all network devices except the "wired connection", e.g. turn off wifi.
-
-4. Open Network Settings and create a new Wired connection with these settings. You may want to name this new connection `UR` or something similar:
-
-```
-IPv4
-Manual
-Address: 192.168.1.101
-Netmask: 255.255.255.0
-Gateway: 192.168.1.1
-```
-
-5. Verify the connection from the PC with e.g. ping.
-
-```
-ping 192.168.1.102
-```
-
-## Connect to External Control via URCap
-
-This section describes installation and launching of the URCap program from the pendant. It allows ROS to control the robot externally. Generally, you will launch the driver via ROS then start URCap from the pendant.
-
-1. To enable external control of the UR robot from a remote PC you need to install the [**externalcontrol-1.0.5.urcap**](/ur_robot_driver/resources) which can be downloaded from [Universal_Robots_ExternalControl_URCap](https://github.com/UniversalRobots/Universal_Robots_ExternalControl_URCap/releases).
+1. To enable external control of the UR robot from a remote PC you need to install the **externalcontrol-1.0.5.urcap** which can be found inside the **resources** folder of this driver or download the latest from [Universal_Robots_ExternalControl_URCap](https://github.com/UniversalRobots/Universal_Robots_ExternalControl_URCap/releases).
 
 **Note:** For installing this URCap a minimal PolyScope version of 3.7 or 5.1 (in case of e-Series) is necessary.
 
@@ -185,15 +92,14 @@ This section describes installation and launching of the URCap program from the 
 
 3. On the remote PC, launch the suitable launch file which starts the robot driver and controllers (see details in [Usage](#usage) section).
 
-4. From the Program Robot tab of the teach pendant, load `external_control.urp`. Click on the "Control by..." section of the program to check the Host IP of the external PC. If it needs to be modified, make the modification under the Installation tab (as prompted on screen). You do not need to modify the Custom Port.
-
-5. When the Host IP is correct, click the play button to connect with the external PC.
+4. In the Program tab of the teach pendant, navigate to the URCaps section on the left and add the external control to the robot program by clicking on it. The program can then be executed by pressing the play button. Make sure the robot is turned on. The robot power status will be displayed on the bottom left.
 
 ## Usage
 
-For starting the driver there are two main launch files in the `ur_bringup` package.
+For starting the driver there are three main launch files in the `ur_bringup` package.
 
   - `ur_control.launch.py` - starts ros2_control node including hardware interface, joint state broadcaster and a controller. This launch file also starts `dashboard_client` if real robot is used.
+  - `ur_moveit.launch.py` - start everything from `ur_control.launch.py` plus an example scenario with [MoveIt2](https://moveit.ros.org/).
   - `ur_dashboard_client.launch.py` - start the dashboard client for UR robots.
 
 Also, there are predefined launch files for all supported types of UR robots.
@@ -231,43 +137,37 @@ The most relevant arguments are the following:
 
 ### Example Commands for Testing the Driver
 
-Allowed UR-Type strings: `ur3`, `ur3e`, `ur5`, `ur5e`, `ur10`, `ur10e`, `ur16e`.
+- To start the robot driver and controllers, use:
+   ```
+   ros2 launch ur_bringup ur_control.launch.py ur_type:=ur5e robot_ip:=yyy.yyy.yyy.yyy use_fake_hardware:=true launch_rviz:=true
+   ```
+   For an offline test with the emulated hardware you can just copy-paste this line.
+   To run on the hardware, write the IP address of your robot and omit the `use_fake_hardware` argument.
 
-##### 1. Start hardware, simulator or mockup
+   **NOTE**: If controllers are not starting automatically, i.e., the robot state is not shown in rviz, you can start them manually:
+   ```
+   ros2 control load_controller --set-state start joint_state_broadcaster
+   ros2 control load_controller --set-state start joint_trajectory_controller
+   ```
 
-- To do test with hardware, use:
-  ```
-  ros2 launch ur_bringup ur_control.launch.py ur_type:=<UR_TYPE> robot_ip:=<IP_OF_THE_ROBOT> launch_rviz:=true
-  ```
-  For more details check the argument documentation with `ros2 launch ur_bringup ur_control.launch.py --show-arguments`
+   To check the controllers' state use `ros2 control list_controllers` command.
 
-  After starting the launch file start the external_control URCap program from the pendant, as described above.
+- Send some goal to the Joint Trajectory Controller by using a demo node from
+  [ros2_control_demos](https://github.com/ros-controls/ros2_control_demos) package by starting  the
+  following command in another terminal.
 
-- To do an offline test with URSim check details about it in [this section](#usage-with-official-ur-simulator)
-
-- To use mocked hardware (capability of ros2_control), use `use_fake_hardware` argument, like:
-  ```
-  ros2 launch ur_bringup ur_control.launch.py ur_type:=ur5e robot_ip:=yyy.yyy.yyy.yyy use_fake_hardware:=true launch_rviz:=true
-  ```
-
-  **NOTE**: Instead of using the global launch file for control stack, there are also prepeared launch files for each type of UR robots named. They accept the same arguments are the global one and are used by:
-  ```
-  ros2 launch ur_bringup <ur_type>.launch.py
-  ```
-
-##### 2. Sending commands to controllers
-
-Before running any commands, first check the controllers' state using `ros2 control list_controllers`.
-
-- Send some goal to the Joint Trajectory Controller by using a demo node from [ros2_control_demos](https://github.com/ros-controls/ros2_control_demos) package by starting  the following command in another terminal:
+  **NOTE: As the `ros2_control_demos` package is currently not released for ROS2 Foxy, you'll have
+  to build it in your workspace in order to use this launchfile. We are aware that this is not
+  ideal, but we thought it would be better to not drop the testing launchfile at all and provide
+  this info to users.**
    ```
    ros2 launch ur_bringup test_joint_trajectory_controller.launch.py
    ```
    After a few seconds the robot should move.
 
-- To test another controller, simply define it using `initial_joint_controller` argument, for example when using fake hardware:
+- To test another controller, simply define it using `robot_controller` argument:
    ```
-   ros2 launch ur_bringup ur_control.launch.py ur_type:=ur5e robot_ip:=yyy.yyy.yyy.yyy initial_joint_controller:=joint_trajectory_controller use_fake_hardware:=true launch_rviz:=true
+   ros2 launch ur_bringup ur_control.launch.py ur_type:=ur5e robot_ip:=yyy.yyy.yyy.yyy robot_controller:=scaled_joint_trajectory_controller use_fake_hardware:=true launch_rviz:=true
    ```
    And send the command using demo node:
    ```
@@ -275,10 +175,15 @@ Before running any commands, first check the controllers' state using `ros2 cont
    ```
    After a few seconds the robot should move (or jump when using emulation).
 
+- To test the driver with the example MoveIt-setup, first start the controllers then start MoveIt. (This requires a `vcs import` of MoveIt packages):
+   ```
+   ros2 launch ur_bringup ur_control.launch.py ur_type:=ur5e robot_ip:=yyy.yyy.yyy.yyy use_fake_hardware:=true launch_rviz:=false
 
-##### 3. Using only robot description
+   ros2 launch ur_bringup ur_moveit.launch.py ur_type:=ur5e robot_ip:="xxx.xxx" use_fake_hardware:=true launch_rviz:=true
+   ```
+   Now you should be able to use the MoveIt Plugin in rviz2 to plan and execute trajectories with the robot.
 
-If you just want to test description of the UR robots, e.g., after changes you can use the following command:
+5. If you just want to test description of the UR robots, e.g., after changes you can use the following command:
    ```
    ros2 launch ur_description view_ur.launch.py ur_type:=ur5e
    ```
@@ -287,6 +192,7 @@ The docker-compose setup is prepared for usage of driver with the official UR si
 
 ## Expected Changes in the Near Future
 
+- Using upstream `force_torque_sensor_broadcaster` (ros-controls/ros2_controllers#152)
 - Trajectory control currently only supports position commands. In the future, velocity control will be added.
 
 
