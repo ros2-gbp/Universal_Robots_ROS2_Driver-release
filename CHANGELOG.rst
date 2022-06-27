@@ -2,6 +2,9 @@
 Changelog for package ur_bringup
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+2.2.1 (2022-06-27)
+------------------
+
 2.2.0 (2022-06-20)
 ------------------
 * Updated package maintainers
