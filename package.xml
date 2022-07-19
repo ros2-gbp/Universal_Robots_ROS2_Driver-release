@@ -2,7 +2,7 @@
 <?xml-model href="http://download.ros.org/schema/package_format3.xsd" schematypens="http://www.w3.org/2001/XMLSchema"?>
 <package format="3">
   <name>ur_moveit_config</name>
-  <version>2.2.1</version>
+  <version>2.2.2</version>
   <description>
      An example package with MoveIt2 configurations for UR robots.
   </description>
@@ -11,6 +11,9 @@
   <maintainer email="wilbrandt@fzi.de">Robert Wilbrandt</maintainer>
 
   <license>Apache2.0</license>
+
+  <author email="lovro.ivanov@gmail.com">Lovro Ivanov</author>
+  <author email="zelenak@picknik.ai">Andy Zelenak</author>
 
   <buildtool_depend>ament_cmake</buildtool_depend>
   <buildtool_depend>ament_cmake_python</buildtool_depend>
