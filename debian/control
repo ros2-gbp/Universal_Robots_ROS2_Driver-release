@@ -1,0 +1,12 @@
+Source: ros-galactic-ur-moveit-config
+Section: misc
+Priority: optional
+Maintainer: Denis Stogl <denis@stoglrobotics.de>
+Build-Depends: debhelper (>= 9.0.0), ros-galactic-ament-cmake, ros-galactic-ament-cmake-python, ros-galactic-ros-workspace
+Homepage: 
+Standards-Version: 3.9.2
+
+Package: ros-galactic-ur-moveit-config
+Architecture: any
+Depends: ${shlibs:Depends}, ${misc:Depends}, ros-galactic-launch, ros-galactic-launch-ros, ros-galactic-moveit-kinematics, ros-galactic-moveit-planners-ompl, ros-galactic-moveit-ros-move-group, ros-galactic-moveit-ros-visualization, ros-galactic-moveit-servo, ros-galactic-moveit-simple-controller-manager, ros-galactic-rviz2, ros-galactic-ur-description, ros-galactic-urdf, ros-galactic-warehouse-ros-mongo, ros-galactic-xacro, ros-galactic-ros-workspace
+Description: An example package with MoveIt2 configurations for UR robots.
