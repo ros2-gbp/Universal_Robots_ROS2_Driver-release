@@ -2,7 +2,7 @@
 <?xml-model href="http://download.ros.org/schema/package_format3.xsd" schematypens="http://www.w3.org/2001/XMLSchema"?>
 <package format="3">
   <name>ur_bringup</name>
-  <version>2.1.1</version>
+  <version>2.1.2</version>
   <description>Launch file and run-time configurations, e.g. controllers.</description>
 
   <maintainer email="denis@stoglrobotics.de">Denis Stogl</maintainer>
@@ -24,14 +24,19 @@
 
   <exec_depend>controller_manager</exec_depend>
   <exec_depend>force_torque_sensor_broadcaster</exec_depend>
+  <exec_depend>joint_state_broadcaster</exec_depend>
   <exec_depend>joint_state_publisher</exec_depend>
+  <exec_depend>joint_trajectory_controller</exec_depend>
   <exec_depend>launch</exec_depend>
   <exec_depend>launch_ros</exec_depend>
+  <exec_depend>position_controllers</exec_depend>
   <exec_depend>robot_state_publisher</exec_depend>
   <exec_depend>ros2_controllers_test_nodes</exec_depend>
   <exec_depend>rviz2</exec_depend>
+  <exec_depend>ur_controllers</exec_depend>
   <exec_depend>ur_description</exec_depend>
   <exec_depend>urdf</exec_depend>
+  <exec_depend>velocity_controllers</exec_depend>
   <exec_depend>xacro</exec_depend>
 
   <export>
