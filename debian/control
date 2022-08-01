@@ -1,0 +1,12 @@
+Source: ros-galactic-ur-robot-driver
+Section: misc
+Priority: optional
+Maintainer: Denis Stogl <denis@stoglrobotics.de>
+Build-Depends: debhelper (>= 9.0.0), ros-galactic-ament-cmake, ros-galactic-ament-cmake-python, ros-galactic-controller-manager, ros-galactic-controller-manager-msgs, ros-galactic-geometry-msgs, ros-galactic-hardware-interface, ros-galactic-launch-testing-ament-cmake <!nocheck>, ros-galactic-pluginlib, ros-galactic-rclcpp, ros-galactic-rclcpp-lifecycle, ros-galactic-rclpy, ros-galactic-std-msgs, ros-galactic-std-srvs, ros-galactic-tf2-geometry-msgs, ros-galactic-ur-bringup, ros-galactic-ur-client-library, ros-galactic-ur-controllers, ros-galactic-ur-dashboard-msgs, ros-galactic-ur-description, ros-galactic-ur-msgs, ros-galactic-ros-workspace
+Homepage: 
+Standards-Version: 3.9.2
+
+Package: ros-galactic-ur-robot-driver
+Architecture: any
+Depends: ${shlibs:Depends}, ${misc:Depends}, ros-galactic-controller-manager, ros-galactic-controller-manager-msgs, ros-galactic-geometry-msgs, ros-galactic-hardware-interface, ros-galactic-pluginlib, ros-galactic-rclcpp, ros-galactic-rclcpp-lifecycle, ros-galactic-rclpy, ros-galactic-std-msgs, ros-galactic-std-srvs, ros-galactic-tf2-geometry-msgs, ros-galactic-ur-bringup, ros-galactic-ur-client-library, ros-galactic-ur-controllers, ros-galactic-ur-dashboard-msgs, ros-galactic-ur-description, ros-galactic-ur-msgs, ros-galactic-ros-workspace
+Description: The new driver for Universal Robots UR3, UR5 and UR10 robots with CB3 controllers and the e-series.
