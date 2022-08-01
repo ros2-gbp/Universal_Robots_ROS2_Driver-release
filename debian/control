@@ -1,0 +1,13 @@
+Source: ros-galactic-ur-bringup
+Section: misc
+Priority: optional
+Maintainer: Denis Stogl <denis@stoglrobotics.de>
+Build-Depends: debhelper (>= 9.0.0), ros-galactic-ament-cmake, ros-galactic-ament-cmake-python, ros-galactic-rclpy, ros-galactic-ros-workspace
+Homepage: 
+Standards-Version: 3.9.2
+
+Package: ros-galactic-ur-bringup
+Architecture: any
+Depends: ${shlibs:Depends}, ${misc:Depends}, ros-galactic-controller-manager, ros-galactic-force-torque-sensor-broadcaster, ros-galactic-joint-state-broadcaster, ros-galactic-joint-state-publisher, ros-galactic-joint-trajectory-controller, ros-galactic-launch, ros-galactic-launch-ros, ros-galactic-position-controllers, ros-galactic-rclpy, ros-galactic-robot-state-publisher, ros-galactic-ros2-controllers-test-nodes, ros-galactic-rviz2, ros-galactic-ur-controllers, ros-galactic-ur-description, ros-galactic-urdf, ros-galactic-velocity-controllers, ros-galactic-xacro, ros-galactic-ros-workspace
+Description: Launch file and run-time configurations, e.g.
+ controllers.
