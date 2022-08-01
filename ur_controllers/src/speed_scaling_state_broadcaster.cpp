@@ -58,16 +58,16 @@ SpeedScalingStateBroadcaster::SpeedScalingStateBroadcaster()
 {
 }
 
-controller_interface::CallbackReturn SpeedScalingStateBroadcaster::on_init()
+rclcpp_lifecycle::node_interfaces::LifecycleNodeInterface::CallbackReturn SpeedScalingStateBroadcaster::on_init()
 {
   try {
     auto_declare<double>("state_publish_rate", 100.0);
   } catch (std::exception& e) {
     fprintf(stderr, "Exception thrown during init stage with message: %s \n", e.what());
-    return controller_interface::CallbackReturn::ERROR;
+    return rclcpp_lifecycle::node_interfaces::LifecycleNodeInterface::CallbackReturn::ERROR;
   }
 
-  return controller_interface::CallbackReturn::SUCCESS;
+  return rclcpp_lifecycle::node_interfaces::LifecycleNodeInterface::CallbackReturn::SUCCESS;
 }
 
 controller_interface::InterfaceConfiguration SpeedScalingStateBroadcaster::command_interface_configuration() const
@@ -83,12 +83,12 @@ controller_interface::InterfaceConfiguration SpeedScalingStateBroadcaster::state
   return config;
 }
 
-controller_interface::CallbackReturn
+rclcpp_lifecycle::node_interfaces::LifecycleNodeInterface::CallbackReturn
 SpeedScalingStateBroadcaster::on_configure(const rclcpp_lifecycle::State& /*previous_state*/)
 {
-  if (!get_node()->get_parameter("state_publish_rate", publish_rate_)) {
+  if (!node_->get_parameter("state_publish_rate", publish_rate_)) {
     RCLCPP_INFO(get_node()->get_logger(), "Parameter 'state_publish_rate' not set");
-    return controller_interface::CallbackReturn::ERROR;
+    return rclcpp_lifecycle::node_interfaces::LifecycleNodeInterface::CallbackReturn::ERROR;
   } else {
     RCLCPP_INFO(get_node()->get_logger(), "Publisher rate set to : %.1f Hz", publish_rate_);
   }
@@ -99,21 +99,21 @@ SpeedScalingStateBroadcaster::on_configure(const rclcpp_lifecycle::State& /*prev
   } catch (const std::exception& e) {
     // get_node() may throw, logging raw here
     fprintf(stderr, "Exception thrown during init stage with message: %s \n", e.what());
-    return controller_interface::CallbackReturn::ERROR;
+    return rclcpp_lifecycle::node_interfaces::LifecycleNodeInterface::CallbackReturn::ERROR;
   }
-  return controller_interface::CallbackReturn::SUCCESS;
+  return rclcpp_lifecycle::node_interfaces::LifecycleNodeInterface::CallbackReturn::SUCCESS;
 }
 
-controller_interface::CallbackReturn
+rclcpp_lifecycle::node_interfaces::LifecycleNodeInterface::CallbackReturn
 SpeedScalingStateBroadcaster::on_activate(const rclcpp_lifecycle::State& /*previous_state*/)
 {
-  return controller_interface::CallbackReturn::SUCCESS;
+  return rclcpp_lifecycle::node_interfaces::LifecycleNodeInterface::CallbackReturn::SUCCESS;
 }
 
-controller_interface::CallbackReturn
+rclcpp_lifecycle::node_interfaces::LifecycleNodeInterface::CallbackReturn
 SpeedScalingStateBroadcaster::on_deactivate(const rclcpp_lifecycle::State& /*previous_state*/)
 {
-  return controller_interface::CallbackReturn::SUCCESS;
+  return rclcpp_lifecycle::node_interfaces::LifecycleNodeInterface::CallbackReturn::SUCCESS;
 }
 
 controller_interface::return_type SpeedScalingStateBroadcaster::update(const rclcpp::Time& /*time*/,

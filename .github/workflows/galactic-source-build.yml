@@ -1,24 +1,19 @@
-name: Rolling Source Build
+name: Galactic Source Build
 on:
   push:
     branches:
-      - main
-  schedule:
-    # Run every morning to detect flakiness and broken dependencies
-    - cron: '43 1 * * *'
+      - galactic
+  # no schedule possible on other branch than default branch
 
 jobs:
-  rolling_source:
+  galactic_source:
     runs-on: ubuntu-20.04
     strategy:
       fail-fast: false
-    container:
-      image: ubuntu:jammy
     env:
-      ROS_DISTRO: rolling
-      ros_version: 2
+      ROS_DISTRO: galactic
     steps:
-      - uses: ros-tooling/setup-ros@v0.3
+      - uses: ros-tooling/setup-ros@v0.2
         with:
           required-ros-distributions: ${{ env.ROS_DISTRO }}
       - uses: actions/checkout@v2
@@ -27,14 +22,13 @@ jobs:
           target-ros2-distro: ${{ env.ROS_DISTRO }}
           # build all packages listed in the meta package
           package-name:
-            ur
             ur_bringup
             ur_controllers
             ur_dashboard_msgs
             ur_moveit_config
             ur_robot_driver
           vcs-repo-file-url: |
-            https://raw.githubusercontent.com/ros2/ros2/master/ros2.repos
+            https://raw.githubusercontent.com/ros2/ros2/${{ env.ROS_DISTRO }}/ros2.repos
             https://raw.githubusercontent.com/${{ github.repository }}/${{ github.sha }}/Universal_Robots_ROS2_Driver.${{ env.ROS_DISTRO }}.repos
           colcon-mixin-repository: https://raw.githubusercontent.com/colcon/colcon-mixin-repository/master/index.yaml
           skip-tests: true

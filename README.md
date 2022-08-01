@@ -114,7 +114,6 @@ Check also [presentations and videos](ur_robot_driver/doc/resources/README.md) a
   </tr>
 </table>
 
-
 **NOTE**: There are three build stages checking current and future compatibility of the driver.
 
 1. Binary builds - against released packages (main and testing) in ROS distributions. Shows that direct local build is possible.
@@ -131,26 +130,38 @@ Check also [presentations and videos](ur_robot_driver/doc/resources/README.md) a
 
 ## Packages in the Repository:
 
-  - `ur` - Meta-package that provides a single point of installation for the released packages.
-  - `ur_bringup` - launch file and run-time configurations, e.g. controllers (DEPRECATED).
-  - `ur_calibration` - tool for extracting calibration information from a real robot.
+  - `ur_bringup` - launch file and run-time configurations, e.g. controllers.
   - `ur_controllers` - implementations of controllers specific for UR robots.
   - `ur_dashboard_msgs` - package defining messages used by dashboard node.
+  - `ur_description` - description files for the UR robots: meshes, URDF/XACRO files, etc.
   - `ur_moveit_config` - example MoveIt configuration for UR robots.
   - `ur_robot_driver` - driver / hardware interface for communication with UR robots.
 
-Deprecation: The `ur_bringup` package is deprecated and will be removed from Iron Irwini on.
 
 ## Getting Started
+You can either install this driver from binary packages or build it from source. We recommend a
+binary package installation unless you want to join development and submit changes.
 
-1. [Install ROS2 Rolling](https://docs.ros.org/en/rolling/Installation/Ubuntu-Install-Debians.html).
-   For using this driver with ROS2 `foxy`. Checkout [foxy
-   branch](https://github.com/UniversalRobots/Universal_Robots_ROS2_Driver/tree/foxy), for using it
-   with ROS2 ``galactic``, use the [galactic branch](https://github.com/UniversalRobots/Universal_Robots_ROS2_Driver/tree/galactic).
+### Install from binary packages
 
-2. Make sure that `colcon`, its extensions and `vcs` are installed:
+1. [Install ROS2
+   Galactic](https://docs.ros.org/en/galactic/Installation/Ubuntu-Install-Debians.html). This
+   branch supports only ROS2 galactic. For other ROS2 versions, please see the respective branches.
+2. Install the driver using
    ```
-   sudo apt install python3-colcon-common-extensions python3-vcstool
+   sudo apt-get install ros-galactic-ur-robot-driver
+   ```
+### Build from source
+1. [Install ROS2
+   Galactic](https://docs.ros.org/en/galactic/Installation/Ubuntu-Install-Debians.html). This
+   branch supports only ROS2 galactic. For other ROS2 versions, please see the respective branches.
+   The `main` branch will stay valid for all new ROS2 versions as long as they are compatible with
+   the main branch. Therefore you might not find a dedicated branch for a recent ROS2 version. In
+   that case, please use the `main` branch.
+
+2. Make sure that `colcon` and its extensions are installed:
+   ```
+   sudo apt install python3-colcon-common-extensions
    ```
 
 3. Create a new ROS2 workspace:
@@ -162,10 +173,9 @@ Deprecation: The `ur_bringup` package is deprecated and will be removed from Iro
 4. Pull relevant packages, install dependencies, compile, and source the workspace by using:
    ```
    cd $COLCON_WS
-   git clone https://github.com/UniversalRobots/Universal_Robots_ROS2_Driver.git src/Universal_Robots_ROS2_Driver
-   vcs import src --skip-existing --input src/Universal_Robots_ROS2_Driver/Universal_Robots_ROS2_Driver-not-released.${ROS_DISTRO}.repos
+   git clone -b galactic https://github.com/UniversalRobots/Universal_Robots_ROS2_Driver.git src/Universal_Robots_ROS2_Driver
    rosdep update
-   rosdep install --ignore-src --from-paths src -y -r
+   rosdep install --ignore-src --from-paths src -y
    colcon build --cmake-args -DCMAKE_BUILD_TYPE=Release
    source install/setup.bash
    ```
@@ -188,6 +198,51 @@ ros2 launch ur_moveit_config ur_moveit.launch.py ur_type:=ur5e launch_rviz:=true
 ```
 Now you should be able to use the MoveIt Plugin in rviz2 to plan and execute trajectories with the
 robot as explained [here](https://moveit.picknik.ai/galactic/doc/tutorials/quickstart_in_rviz/quickstart_in_rviz_tutorial.html).
+
+### Fake hardware on ROS2 Galactic
+
+Currently, the `scaled_joint_trajectory_controller` does not work on ROS2 Galactic. There is an
+[upstream Merge-Request]() pending to fix that. Until this is merged and released, please change the
+default controller in the [controllers.yaml](ur_moveit_config/config/controllers.yaml) file. Make
+sure that the `default` field is assigned `true` for the `joint_trajectory_controller` and `false`
+for the
+`scaled_joint_trajectory_controller`.
+
+```
+controller_names:
+  - scaled_joint_trajectory_controller
+  - joint_trajectory_controller
+scaled_joint_trajectory_controller:
+  action_ns: follow_joint_trajectory
+  type: FollowJointTrajectory
+  default: false
+  joints:
+    - shoulder_pan_joint
+    - shoulder_lift_joint
+    - elbow_joint
+    - wrist_1_joint
+    - wrist_2_joint
+    - wrist_3_joint
+joint_trajectory_controller:
+  action_ns: follow_joint_trajectory
+  type: FollowJointTrajectory
+  default: true
+  joints:
+    - shoulder_pan_joint
+    - shoulder_lift_joint
+    - elbow_joint
+    - wrist_1_joint
+    - wrist_2_joint
+    - wrist_3_joint
+```
+
+Then start
+
+```
+ros2 launch ur_bringup ur_control.launch.py ur_type:=ur5e robot_ip:=yyy.yyy.yyy.yyy use_fake_hardware:=true launch_rviz:=false initial_joint_controller:=joint_trajectory_controller
+# and in another shell
+ros2 launch ur_moveit_config ur_moveit.launch.py ur_type:=ur5e launch_rviz:=true
+```
 
 ## Network Setup
 
@@ -241,14 +296,14 @@ This section describes installation and launching of the URCap program from the 
 
 ## Usage
 
-For starting the driver there are two main launch files in the `ur_robot_driver` package.
+For starting the driver there are two main launch files in the `ur_bringup` package.
 
   - `ur_control.launch.py` - starts ros2_control node including hardware interface, joint state broadcaster and a controller. This launch file also starts `dashboard_client` if real robot is used.
   - `ur_dashboard_client.launch.py` - start the dashboard client for UR robots.
 
 Also, there are predefined launch files for all supported types of UR robots.
 
-The arguments for launch files can be listed using `ros2 launch ur_robot_driver <launch_file_name>.launch.py --show-args`.
+The arguments for launch files can be listed using `ros2 launch ur_bringup <launch_file_name>.launch.py --show-args`.
 The most relevant arguments are the following:
 
   - `ur_type` (*mandatory*) - a type of used UR robot (*ur3*, *ur3e*, *ur5*, *ur5e*, *ur10*, *ur10e*, or *ur16e*).
@@ -287,9 +342,9 @@ Allowed UR-Type strings: `ur3`, `ur3e`, `ur5`, `ur5e`, `ur10`, `ur10e`, `ur16e`.
 
 - To do test with hardware, use:
   ```
-  ros2 launch ur_robot_driver ur_control.launch.py ur_type:=<UR_TYPE> robot_ip:=<IP_OF_THE_ROBOT> launch_rviz:=true
+  ros2 launch ur_bringup ur_control.launch.py ur_type:=<UR_TYPE> robot_ip:=<IP_OF_THE_ROBOT> launch_rviz:=true
   ```
-  For more details check the argument documentation with `ros2 launch ur_robot_driver ur_control.launch.py --show-arguments`
+  For more details check the argument documentation with `ros2 launch ur_bringup ur_control.launch.py --show-arguments`
 
   After starting the launch file start the external_control URCap program from the pendant, as described above.
 
@@ -297,12 +352,12 @@ Allowed UR-Type strings: `ur3`, `ur3e`, `ur5`, `ur5e`, `ur10`, `ur10e`, `ur16e`.
 
 - To use mocked hardware (capability of ros2_control), use `use_fake_hardware` argument, like:
   ```
-  ros2 launch ur_robot_driver ur_control.launch.py ur_type:=ur5e robot_ip:=yyy.yyy.yyy.yyy use_fake_hardware:=true launch_rviz:=true
+  ros2 launch ur_bringup ur_control.launch.py ur_type:=ur5e robot_ip:=yyy.yyy.yyy.yyy use_fake_hardware:=true launch_rviz:=true
   ```
 
   **NOTE**: Instead of using the global launch file for control stack, there are also prepeared launch files for each type of UR robots named. They accept the same arguments are the global one and are used by:
   ```
-  ros2 launch ur_robot_driver <ur_type>.launch.py
+  ros2 launch ur_bringup <ur_type>.launch.py
   ```
 
 ##### 2. Sending commands to controllers
@@ -311,17 +366,17 @@ Before running any commands, first check the controllers' state using `ros2 cont
 
 - Send some goal to the Joint Trajectory Controller by using a demo node from [ros2_control_demos](https://github.com/ros-controls/ros2_control_demos) package by starting  the following command in another terminal:
    ```
-   ros2 launch ur_robot_driver test_joint_trajectory_controller.launch.py
+   ros2 launch ur_bringup test_joint_trajectory_controller.launch.py
    ```
    After a few seconds the robot should move.
 
 - To test another controller, simply define it using `initial_joint_controller` argument, for example when using fake hardware:
    ```
-   ros2 launch ur_robot_driver ur_control.launch.py ur_type:=ur5e robot_ip:=yyy.yyy.yyy.yyy initial_joint_controller:=joint_trajectory_controller use_fake_hardware:=true launch_rviz:=true
+   ros2 launch ur_bringup ur_control.launch.py ur_type:=ur5e robot_ip:=yyy.yyy.yyy.yyy initial_joint_controller:=joint_trajectory_controller use_fake_hardware:=true launch_rviz:=true
    ```
    And send the command using demo node:
    ```
-   ros2 launch ur_robot_driver test_scaled_joint_trajectory_controller.launch.py
+   ros2 launch ur_bringup test_scaled_joint_trajectory_controller.launch.py
    ```
    After a few seconds the robot should move (or jump when using emulation).
 

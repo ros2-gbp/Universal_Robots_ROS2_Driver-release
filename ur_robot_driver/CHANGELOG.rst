@@ -1,35 +1,15 @@
-2.2.3 (2022-07-27)
+2.1.2 (2022-07-27)
 ------------------
-* Adapt ros control api (`#448 <https://github.com/UniversalRobots/Universal_Robots_ROS2_Driver/issues/448>`_)
-  * scaled jtc: Use get_interface_name instead of get_name
-  * Migrate from stopped controllers to inactive controllers
-  stopped controllers has been depreated upstream
-* Contributors: Felix Exner
+* Silence a compilation warning (`#425 <https://github.com/UniversalRobots/Universal_Robots_ROS2_Driver/issues/425>`_) (`#427 <https://github.com/UniversalRobots/Universal_Robots_ROS2_Driver/issues/427>`_)
+* Fix dependencies for galactic (`#392 <https://github.com/UniversalRobots/Universal_Robots_ROS2_Driver/issues/392>`_)
+* Contributors: Felix Exner, Robert Wilbrandt
 
-2.2.2 (2022-07-19)
+2.1.1 (2022-05-05)
 ------------------
-* Made sure all past maintainers are listed as authors (`#429 <https://github.com/UniversalRobots/Universal_Robots_ROS2_Driver/issues/429>`_)
-* Silence a compilation warning (`#425 <https://github.com/UniversalRobots/Universal_Robots_ROS2_Driver/issues/425>`_)
-  Since setting the receive timeout takes the time_buffer as an argument
-  this raises a "may be used uninitialized" warning. Setting this to 0
-  explicitly should prevent that.
-* Doc: Fix IP address in usage->ursim section (`#422 <https://github.com/UniversalRobots/Universal_Robots_ROS2_Driver/issues/422>`_)
-* Contributors: Felix Exner
 
-2.2.1 (2022-06-27)
+2.1.0 (2022-05-03)
 ------------------
-* Fixed controller name for force_torque_sensor_broadcaster (`#411 <https://github.com/UniversalRobots/Universal_Robots_ROS2_Driver/issues/411>`_)
-* Contributors: Felix Exner
-
-2.2.0 (2022-06-20)
-------------------
-* Updated package maintainers
-* Rework bringup (`#403 <https://github.com/UniversalRobots/Universal_Robots_ROS2_Driver/issues/403>`_)
-* Prepare for humble (`#394 <https://github.com/UniversalRobots/Universal_Robots_ROS2_Driver/issues/394>`_)
-* Update dependencies on all packages (`#391 <https://github.com/UniversalRobots/Universal_Robots_ROS2_Driver/issues/391>`_)
-* Update HW-interface API for humble. (`#377 <https://github.com/UniversalRobots/Universal_Robots_ROS2_Driver/issues/377>`_)
-* Use types in hardware interface from ros2_control in local namespace (`#339 <https://github.com/UniversalRobots/Universal_Robots_ROS2_Driver/issues/339>`_)
-* Update header extension to remove compile warning. (`#285 <https://github.com/UniversalRobots/Universal_Robots_ROS2_Driver/issues/285>`_)
+* Updated package maintainers (`#360 <https://github.com/UniversalRobots/Universal_Robots_ROS2_Driver/issues/360>`_)
 * Add resource files from ROS World. (`#226 <https://github.com/UniversalRobots/Universal_Robots_ROS2_Driver/issues/226>`_)
 * Add sphinx documentation (`#340 <https://github.com/UniversalRobots/Universal_Robots_ROS2_Driver/issues/340>`_)
 * Update license to BSD-3-Clause (`#277 <https://github.com/UniversalRobots/Universal_Robots_ROS2_Driver/issues/277>`_)
@@ -124,7 +104,7 @@
   - ur_bringup
   - ur_description
 * Change pkg versions to 0.0.0
-* Contributors: AndyZe, Denis Stogl, Denis Štogl, Felix Exner, John Morris, Lovro, Mads Holm Peters, Marvin Große Besselmann, Rune Søe-Knudsen, livanov93, Robert Wilbrandt
+* Contributors: AndyZe, Denis Stogl, Denis Štogl, Felix Exner, John Morris, Lovro, Mads Holm Peters, Marvin Große Besselmann, Rune Søe-Knudsen, livanov93
 
 0.0.3 (2019-08-09)
 ------------------

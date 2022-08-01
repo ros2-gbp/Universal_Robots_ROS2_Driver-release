@@ -197,7 +197,10 @@ def launch_setup(context, *args, **kwargs):
         package="controller_manager",
         executable="ros2_control_node",
         parameters=[robot_description, update_rate_config_file, initial_joint_controllers],
-        output="screen",
+        output={
+            "stdout": "screen",
+            "stderr": "screen",
+        },
         condition=IfCondition(use_fake_hardware),
     )
 
@@ -205,7 +208,10 @@ def launch_setup(context, *args, **kwargs):
         package="ur_robot_driver",
         executable="ur_ros2_control_node",
         parameters=[robot_description, update_rate_config_file, initial_joint_controllers],
-        output="screen",
+        output={
+            "stdout": "screen",
+            "stderr": "screen",
+        },
         condition=UnlessCondition(use_fake_hardware),
     )
 
@@ -344,14 +350,6 @@ def launch_setup(context, *args, **kwargs):
 
 
 def generate_launch_description():
-    print(
-        "\033[91m"
-        "DEPRECATION WARNING: "
-        "Launch files from the ur_bringup package are deprecated and will be removed from Iron "
-        "Irwini on. Please use the same launch files from the ur_robot_driver package."
-        "\033[0m"
-    )
-
     declared_arguments = []
     # UR specific arguments
     declared_arguments.append(

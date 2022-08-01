@@ -40,8 +40,6 @@
 
 #include "ur_controllers/scaled_joint_trajectory_controller.hpp"
 
-#include "lifecycle_msgs/msg/state.hpp"
-
 namespace ur_controllers
 {
 controller_interface::InterfaceConfiguration ScaledJointTrajectoryController::state_interface_configuration() const
@@ -52,12 +50,12 @@ controller_interface::InterfaceConfiguration ScaledJointTrajectoryController::st
   return conf;
 }
 
-controller_interface::CallbackReturn ScaledJointTrajectoryController::on_activate(const rclcpp_lifecycle::State& state)
+CallbackReturn ScaledJointTrajectoryController::on_activate(const rclcpp_lifecycle::State& state)
 {
   TimeData time_data;
-  time_data.time = get_node()->now();
+  time_data.time = node_->now();
   time_data.period = rclcpp::Duration::from_nanoseconds(0);
-  time_data.uptime = get_node()->now();
+  time_data.uptime = node_->now();
   time_data_.initRT(time_data);
   return JointTrajectoryController::on_activate(state);
 }
@@ -65,7 +63,7 @@ controller_interface::CallbackReturn ScaledJointTrajectoryController::on_activat
 controller_interface::return_type ScaledJointTrajectoryController::update(const rclcpp::Time& time,
                                                                           const rclcpp::Duration& /*period*/)
 {
-  if (state_interfaces_.back().get_interface_name() == "speed_scaling_factor") {
+  if (state_interfaces_.back().get_name() == "speed_scaling") {
     scaling_factor_ = state_interfaces_.back().get_value();
   } else {
     RCLCPP_ERROR(get_node()->get_logger(), "Speed scaling interface not found in hardware interface.");
@@ -165,10 +163,7 @@ controller_interface::return_type ScaledJointTrajectoryController::update(const 
     // find segment for current timestamp
     joint_trajectory_controller::TrajectoryPointConstIter start_segment_itr, end_segment_itr;
     const bool valid_point =
-        (*traj_point_active_ptr_)
-            ->sample(traj_time,
-                     joint_trajectory_controller::interpolation_methods::InterpolationMethod::VARIABLE_DEGREE_SPLINE,
-                     state_desired, start_segment_itr, end_segment_itr);
+        (*traj_point_active_ptr_)->sample(traj_time, state_desired, start_segment_itr, end_segment_itr);
 
     if (valid_point) {
       bool abort = false;
@@ -218,10 +213,10 @@ controller_interface::return_type ScaledJointTrajectoryController::update(const 
           auto result = std::make_shared<FollowJTrajAction::Result>();
 
           if (abort) {
-            RCLCPP_WARN(get_node()->get_logger(), "Aborted due to state tolerance violation");
+            RCLCPP_WARN(node_->get_logger(), "Aborted due to state tolerance violation");
             result->set__error_code(FollowJTrajAction::Result::PATH_TOLERANCE_VIOLATED);
           } else if (outside_goal_tolerance) {
-            RCLCPP_WARN(get_node()->get_logger(), "Aborted due to goal tolerance violation");
+            RCLCPP_WARN(node_->get_logger(), "Aborted due to goal tolerance violation");
             result->set__error_code(FollowJTrajAction::Result::GOAL_TOLERANCE_VIOLATED);
           }
           active_goal->setAborted(result);
@@ -236,7 +231,7 @@ controller_interface::return_type ScaledJointTrajectoryController::update(const 
             active_goal->setSucceeded(res);
             rt_active_goal_.writeFromNonRT(RealtimeGoalHandlePtr());
 
-            RCLCPP_INFO(get_node()->get_logger(), "Goal reached, success!");
+            RCLCPP_INFO(node_->get_logger(), "Goal reached, success!");
           } else if (default_tolerances_.goal_time_tolerance != 0.0) {
             // if we exceed goal_time_toleralance set it to aborted
             const rclcpp::Time traj_start = (*traj_point_active_ptr_)->get_trajectory_start_time();
@@ -250,8 +245,7 @@ controller_interface::return_type ScaledJointTrajectoryController::update(const 
               result->set__error_code(FollowJTrajAction::Result::GOAL_TOLERANCE_VIOLATED);
               active_goal->setAborted(result);
               rt_active_goal_.writeFromNonRT(RealtimeGoalHandlePtr());
-              RCLCPP_WARN(get_node()->get_logger(), "Aborted due goal_time_tolerance exceeding by %f seconds",
-                          difference);
+              RCLCPP_WARN(node_->get_logger(), "Aborted due goal_time_tolerance exceeding by %f seconds", difference);
             }
           }
         }

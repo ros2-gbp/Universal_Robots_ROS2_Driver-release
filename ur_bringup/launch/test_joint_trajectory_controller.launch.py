@@ -38,13 +38,6 @@ from launch_ros.substitutions import FindPackageShare
 
 
 def generate_launch_description():
-    print(
-        "\033[91m"
-        "DEPRECATION WARNING: "
-        "Launch files from the ur_bringup package are deprecated and will be removed from Iron "
-        "Irwini on. Please use the same launch files from the ur_robot_driver package."
-        "\033[0m"
-    )
 
     position_goals = PathJoinSubstitution(
         [FindPackageShare("ur_bringup"), "config", "test_goal_publishers_config.yaml"]
@@ -57,7 +50,10 @@ def generate_launch_description():
                 executable="publisher_joint_trajectory_controller",
                 name="publisher_joint_trajectory_controller",
                 parameters=[position_goals],
-                output="screen",
+                output={
+                    "stdout": "screen",
+                    "stderr": "screen",
+                },
             )
         ]
     )

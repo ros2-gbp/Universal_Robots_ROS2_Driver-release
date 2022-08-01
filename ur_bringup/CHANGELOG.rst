@@ -2,24 +2,18 @@
 Changelog for package ur_bringup
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-2.2.3 (2022-07-27)
+2.1.2 (2022-07-27)
+------------------
+* Fix force_torque_sensor_broadcaster config (`#406 <https://github.com/UniversalRobots/Universal_Robots_ROS2_Driver/issues/406>`_)
+* Fix dependencies for galactic (`#392 <https://github.com/UniversalRobots/Universal_Robots_ROS2_Driver/issues/392>`_)
+* Contributors: Felix Exner, Robert Wilbrandt
+
+2.1.1 (2022-05-05)
 ------------------
 
-2.2.2 (2022-07-19)
+2.1.0 (2022-05-03)
 ------------------
-* Made sure all past maintainers are listed as authors (`#429 <https://github.com/UniversalRobots/Universal_Robots_ROS2_Driver/issues/429>`_)
-* Contributors: Felix Exner
-
-2.2.1 (2022-06-27)
-------------------
-
-2.2.0 (2022-06-20)
-------------------
-* Updated package maintainers
-* Rework bringup (`#403 <https://github.com/UniversalRobots/Universal_Robots_ROS2_Driver/issues/403>`_)
-* Fix force_torque_sensor_broadcaster config (`#405 <https://github.com/UniversalRobots/Universal_Robots_ROS2_Driver/issues/405>`_)
-* Prepare for humble (`#394 <https://github.com/UniversalRobots/Universal_Robots_ROS2_Driver/issues/394>`_)
-* Update dependencies on all packages (`#391 <https://github.com/UniversalRobots/Universal_Robots_ROS2_Driver/issues/391>`_)
+* Updated package maintainers (`#360 <https://github.com/UniversalRobots/Universal_Robots_ROS2_Driver/issues/360>`_)
 * Add sphinx documentation (`#340 <https://github.com/UniversalRobots/Universal_Robots_ROS2_Driver/issues/340>`_)
 * Use upstream fts_broadcaster (`#304 <https://github.com/UniversalRobots/Universal_Robots_ROS2_Driver/issues/304>`_)
 * Update license to BSD-3-Clause (`#277 <https://github.com/UniversalRobots/Universal_Robots_ROS2_Driver/issues/277>`_)
@@ -76,4 +70,4 @@ Changelog for package ur_bringup
   - ur_description
 * Change pkg versions to 0.0.0
 * Add ur5_moveit_config, ur_bringup, ur_description pkgs
-* Contributors: AndyZe, Denis Stogl, Denis Štogl, Felix Exner, John Morris, Kenneth Bogert, Mads Holm Peters, Marvin Große Besselmann, Thomas Barbier, Vatan Aksoy Tezer, livanov93, relffok, Robert Wilbrandt
+* Contributors: AndyZe, Denis Stogl, Denis Štogl, Felix Exner, John Morris, Kenneth Bogert, Mads Holm Peters, Marvin Große Besselmann, Thomas Barbier, Vatan Aksoy Tezer, livanov93, relffok

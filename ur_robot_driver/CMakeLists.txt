@@ -1,6 +1,7 @@
 cmake_minimum_required(VERSION 3.5)
 project(ur_robot_driver)
 
+add_compile_options(-std=c++11)
 add_compile_options(-Wall)
 add_compile_options(-Wextra)
 add_compile_options(-Wno-unused-parameter)
@@ -141,19 +142,12 @@ install(PROGRAMS scripts/wait_dashboard_server.sh
   DESTINATION bin
 )
 
-install(PROGRAMS scripts/start_ursim.sh
-  DESTINATION lib/${PROJECT_NAME}
-)
-
-install(DIRECTORY config launch
-  DESTINATION share/${PROJECT_NAME}
-)
-
 ament_package()
 
 if(BUILD_TESTING)
   find_package(ur_controllers REQUIRED)
   find_package(ur_description REQUIRED)
+  find_package(ur_bringup REQUIRED)
   find_package(ur_msgs REQUIRED)
   find_package(launch_testing_ament_cmake)
   add_launch_test(test/integration_test_1.py)

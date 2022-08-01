@@ -2,30 +2,17 @@
 Changelog for package ur_controllers
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-2.2.3 (2022-07-27)
+2.1.2 (2022-07-27)
 ------------------
-* Adapt ros control api (`#448 <https://github.com/UniversalRobots/Universal_Robots_ROS2_Driver/issues/448>`_)
-  * scaled jtc: Use get_interface_name instead of get_name
-  * Migrate from stopped controllers to inactive controllers
-  stopped controllers has been depreated upstream
-* Contributors: Felix Exner
+* Fix dependencies for galactic (`#392 <https://github.com/UniversalRobots/Universal_Robots_ROS2_Driver/issues/392>`_)
+* Contributors: Felix Exner, Robert Wilbrandt
 
-2.2.2 (2022-07-19)
-------------------
-* Adapted to JTC interpolation method feature (`#439 <https://github.com/UniversalRobots/Universal_Robots_ROS2_Driver/issues/439>`_)
-* Made sure all past maintainers are listed as authors (`#429 <https://github.com/UniversalRobots/Universal_Robots_ROS2_Driver/issues/429>`_)
-* Contributors: Felix Exner
-
-2.2.1 (2022-06-27)
+2.1.1 (2022-05-05)
 ------------------
 
-2.2.0 (2022-06-20)
+2.1.0 (2022-05-03)
 ------------------
-* Updated package maintainers
-* Prepare for humble (`#394 <https://github.com/UniversalRobots/Universal_Robots_ROS2_Driver/issues/394>`_)
-* Update dependencies on all packages (`#391 <https://github.com/UniversalRobots/Universal_Robots_ROS2_Driver/issues/391>`_)
-* Update controllers' API (`#351 <https://github.com/UniversalRobots/Universal_Robots_ROS2_Driver/issues/351>`_)
-* Update binary dependencies (`#344 <https://github.com/UniversalRobots/Universal_Robots_ROS2_Driver/issues/344>`_)
+* Updated package maintainers (`#360 <https://github.com/UniversalRobots/Universal_Robots_ROS2_Driver/issues/360>`_)
 * Use upstream fts_broadcaster (`#304 <https://github.com/UniversalRobots/Universal_Robots_ROS2_Driver/issues/304>`_)
 * Update license to BSD-3-Clause (`#277 <https://github.com/UniversalRobots/Universal_Robots_ROS2_Driver/issues/277>`_)
 * Added controller stopper node (`#309 <https://github.com/UniversalRobots/Universal_Robots_ROS2_Driver/issues/309>`_)

@@ -38,13 +38,6 @@ from launch_ros.substitutions import FindPackageShare
 
 
 def generate_launch_description():
-    print(
-        "\033[91m"
-        "DEPRECATION WARNING: "
-        "Launch files from the ur_bringup package are deprecated and will be removed from Iron "
-        "Irwini on. Please use the same launch files from the ur_robot_driver package."
-        "\033[0m"
-    )
 
     velocity_goals = PathJoinSubstitution(
         [FindPackageShare("ur_bringup"), "config", "test_velocity_goal_publishers_config.yaml"]
@@ -57,7 +50,10 @@ def generate_launch_description():
                 executable="publisher_forward_position_controller",
                 name="publisher_forward_velocity_controller",
                 parameters=[velocity_goals],
-                output="screen",
+                output={
+                    "stdout": "screen",
+                    "stderr": "screen",
+                },
             )
         ]
     )
