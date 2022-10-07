@@ -1,16 +1,30 @@
 // Copyright 2019, FZI Forschungszentrum Informatik
 //
-// Licensed under the Apache License, Version 2.0 (the "License");
-// you may not use this file except in compliance with the License.
-// You may obtain a copy of the License at
+// Redistribution and use in source and binary forms, with or without
+// modification, are permitted provided that the following conditions are met:
 //
-//     http://www.apache.org/licenses/LICENSE-2.0
+//    * Redistributions of source code must retain the above copyright
+//      notice, this list of conditions and the following disclaimer.
 //
-// Unless required by applicable law or agreed to in writing, software
-// distributed under the License is distributed on an "AS IS" BASIS,
-// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-// See the License for the specific language governing permissions and
-// limitations under the License.
+//    * Redistributions in binary form must reproduce the above copyright
+//      notice, this list of conditions and the following disclaimer in the
+//      documentation and/or other materials provided with the distribution.
+//
+//    * Neither the name of the {copyright_holder} nor the names of its
+//      contributors may be used to endorse or promote products derived from
+//      this software without specific prior written permission.
+//
+// THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
+// AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+// IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
+// ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE
+// LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
+// CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
+// SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
+// INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
+// CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+// ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
+// POSSIBILITY OF SUCH DAMAGE.
 
 //----------------------------------------------------------------------
 /*!\file
@@ -26,6 +40,8 @@
 
 #include "ur_controllers/scaled_joint_trajectory_controller.hpp"
 
+#include "lifecycle_msgs/msg/state.hpp"
+
 namespace ur_controllers
 {
 controller_interface::InterfaceConfiguration ScaledJointTrajectoryController::state_interface_configuration() const
@@ -36,26 +52,26 @@ controller_interface::InterfaceConfiguration ScaledJointTrajectoryController::st
   return conf;
 }
 
-rclcpp_lifecycle::node_interfaces::LifecycleNodeInterface::CallbackReturn
-ScaledJointTrajectoryController::on_activate(const rclcpp_lifecycle::State& state)
+controller_interface::CallbackReturn ScaledJointTrajectoryController::on_activate(const rclcpp_lifecycle::State& state)
 {
   TimeData time_data;
-  time_data.time = node_->now();
-  time_data.period = rclcpp::Duration(0, 0);
-  time_data.uptime = node_->now();
+  time_data.time = get_node()->now();
+  time_data.period = rclcpp::Duration::from_nanoseconds(0);
+  time_data.uptime = get_node()->now();
   time_data_.initRT(time_data);
   return JointTrajectoryController::on_activate(state);
 }
 
-controller_interface::return_type ScaledJointTrajectoryController::update()
+controller_interface::return_type ScaledJointTrajectoryController::update(const rclcpp::Time& time,
+                                                                          const rclcpp::Duration& /*period*/)
 {
-  if (state_interfaces_.back().get_name() == "speed_scaling") {
+  if (state_interfaces_.back().get_interface_name() == "speed_scaling_factor") {
     scaling_factor_ = state_interfaces_.back().get_value();
   } else {
     RCLCPP_ERROR(get_node()->get_logger(), "Speed scaling interface not found in hardware interface.");
   }
 
-  if (get_current_state().id() == lifecycle_msgs::msg::State::PRIMARY_STATE_INACTIVE) {
+  if (get_state().id() == lifecycle_msgs::msg::State::PRIMARY_STATE_INACTIVE) {
     return controller_interface::return_type::OK;
   }
 
@@ -90,7 +106,7 @@ controller_interface::return_type ScaledJointTrajectoryController::update()
   }
 
   JointTrajectoryPoint state_current, state_desired, state_error;
-  const auto joint_num = joint_names_.size();
+  const auto joint_num = params_.joints.size();
   resize_joint_trajectory_point(state_current, joint_num);
 
   // current state update
@@ -133,11 +149,11 @@ controller_interface::return_type ScaledJointTrajectoryController::update()
     // Main Speed scaling difference...
     // Adjust time with scaling factor
     TimeData time_data;
-    time_data.time = node_->now();
+    time_data.time = time;
     rcl_duration_value_t period = (time_data.time - time_data_.readFromRT()->time).nanoseconds();
-    time_data.period = rclcpp::Duration(scaling_factor_ * period);
+    time_data.period = rclcpp::Duration::from_nanoseconds(scaling_factor_ * period);
     time_data.uptime = time_data_.readFromRT()->uptime + time_data.period;
-    rclcpp::Time traj_time = time_data_.readFromRT()->uptime + rclcpp::Duration(period);
+    rclcpp::Time traj_time = time_data_.readFromRT()->uptime + rclcpp::Duration::from_nanoseconds(period);
     time_data_.writeFromNonRT(time_data);
 
     // if sampling the first time, set the point before you sample
@@ -149,7 +165,10 @@ controller_interface::return_type ScaledJointTrajectoryController::update()
     // find segment for current timestamp
     joint_trajectory_controller::TrajectoryPointConstIter start_segment_itr, end_segment_itr;
     const bool valid_point =
-        (*traj_point_active_ptr_)->sample(traj_time, state_desired, start_segment_itr, end_segment_itr);
+        (*traj_point_active_ptr_)
+            ->sample(traj_time,
+                     joint_trajectory_controller::interpolation_methods::InterpolationMethod::VARIABLE_DEGREE_SPLINE,
+                     state_desired, start_segment_itr, end_segment_itr);
 
     if (valid_point) {
       bool abort = false;
@@ -186,8 +205,8 @@ controller_interface::return_type ScaledJointTrajectoryController::update()
       if (active_goal) {
         // send feedback
         auto feedback = std::make_shared<FollowJTrajAction::Feedback>();
-        feedback->header.stamp = node_->now();
-        feedback->joint_names = joint_names_;
+        feedback->header.stamp = time;
+        feedback->joint_names = params_.joints;
 
         feedback->actual = state_current;
         feedback->desired = state_desired;
@@ -199,10 +218,10 @@ controller_interface::return_type ScaledJointTrajectoryController::update()
           auto result = std::make_shared<FollowJTrajAction::Result>();
 
           if (abort) {
-            RCLCPP_WARN(node_->get_logger(), "Aborted due to state tolerance violation");
+            RCLCPP_WARN(get_node()->get_logger(), "Aborted due to state tolerance violation");
             result->set__error_code(FollowJTrajAction::Result::PATH_TOLERANCE_VIOLATED);
           } else if (outside_goal_tolerance) {
-            RCLCPP_WARN(node_->get_logger(), "Aborted due to goal tolerance violation");
+            RCLCPP_WARN(get_node()->get_logger(), "Aborted due to goal tolerance violation");
             result->set__error_code(FollowJTrajAction::Result::GOAL_TOLERANCE_VIOLATED);
           }
           active_goal->setAborted(result);
@@ -217,7 +236,7 @@ controller_interface::return_type ScaledJointTrajectoryController::update()
             active_goal->setSucceeded(res);
             rt_active_goal_.writeFromNonRT(RealtimeGoalHandlePtr());
 
-            RCLCPP_INFO(node_->get_logger(), "Goal reached, success!");
+            RCLCPP_INFO(get_node()->get_logger(), "Goal reached, success!");
           } else if (default_tolerances_.goal_time_tolerance != 0.0) {
             // if we exceed goal_time_toleralance set it to aborted
             const rclcpp::Time traj_start = (*traj_point_active_ptr_)->get_trajectory_start_time();
@@ -225,13 +244,14 @@ controller_interface::return_type ScaledJointTrajectoryController::update()
 
             // TODO(anyone): This will break in speed scaling we have to discuss how to handle the goal
             // time when the robot scales itself down.
-            const double difference = node_->now().seconds() - traj_end.seconds();
+            const double difference = time.seconds() - traj_end.seconds();
             if (difference > default_tolerances_.goal_time_tolerance) {
               auto result = std::make_shared<FollowJTrajAction::Result>();
               result->set__error_code(FollowJTrajAction::Result::GOAL_TOLERANCE_VIOLATED);
               active_goal->setAborted(result);
               rt_active_goal_.writeFromNonRT(RealtimeGoalHandlePtr());
-              RCLCPP_WARN(node_->get_logger(), "Aborted due goal_time_tolerance exceeding by %f seconds", difference);
+              RCLCPP_WARN(get_node()->get_logger(), "Aborted due goal_time_tolerance exceeding by %f seconds",
+                          difference);
             }
           }
         }

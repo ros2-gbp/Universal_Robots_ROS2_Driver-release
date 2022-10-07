@@ -1,7 +1,6 @@
 cmake_minimum_required(VERSION 3.5)
 project(ur_robot_driver)
 
-add_compile_options(-std=c++11)
 add_compile_options(-Wall)
 add_compile_options(-Wextra)
 add_compile_options(-Wno-unused-parameter)
@@ -19,14 +18,14 @@ find_package(hardware_interface REQUIRED)
 find_package(pluginlib REQUIRED)
 find_package(rclcpp REQUIRED)
 find_package(rclcpp_lifecycle REQUIRED)
+find_package(rclpy REQUIRED)
 find_package(std_msgs REQUIRED)
 find_package(std_srvs REQUIRED)
+find_package(tf2_geometry_msgs REQUIRED)
 find_package(ur_client_library REQUIRED)
 find_package(ur_dashboard_msgs REQUIRED)
 
-include_directories(
-  include
-)
+include_directories(include)
 
 set(THIS_PACKAGE_INCLUDE_DEPENDS
   controller_manager
@@ -38,6 +37,7 @@ set(THIS_PACKAGE_INCLUDE_DEPENDS
   rclcpp_lifecycle
   std_msgs
   std_srvs
+  tf2_geometry_msgs
   ur_client_library
   ur_dashboard_msgs
 )
@@ -72,6 +72,15 @@ add_executable(dashboard_client
 target_link_libraries(dashboard_client ${catkin_LIBRARIES} ur_client_library::urcl)
 ament_target_dependencies(dashboard_client ${${PROJECT_NAME}_EXPORTED_TARGETS} ${THIS_PACKAGE_INCLUDE_DEPENDS})
 
+add_executable(ur_ros2_control_node src/ur_ros2_control_node.cpp)
+target_include_directories(ur_ros2_control_node PUBLIC ${controller_manager_INCLUDE_DIRS})
+target_link_libraries(ur_ros2_control_node ${controller_manager_LIBRARIES})
+ament_target_dependencies(ur_ros2_control_node
+  controller_interface
+  hardware_interface
+  rclcpp
+)
+
 add_executable(controller_stopper_node
   src/controller_stopper.cpp
   src/controller_stopper_node.cpp
@@ -79,7 +88,7 @@ add_executable(controller_stopper_node
 ament_target_dependencies(controller_stopper_node ${${PROJECT_NAME}_EXPORTED_TARGETS} ${THIS_PACKAGE_INCLUDE_DEPENDS})
 
 install(
-  TARGETS dashboard_client controller_stopper_node
+  TARGETS dashboard_client ur_ros2_control_node controller_stopper_node
   DESTINATION lib/${PROJECT_NAME}
 )
 
@@ -93,21 +102,17 @@ install(
   DESTINATION include
 )
 
-
 ## EXPORTS
 ament_export_include_directories(
-        include
+  include
 )
 ament_export_libraries(
-        ur_robot_driver_plugin
-)
-
-install(PROGRAMS scripts/tool_communication
-  DESTINATION bin
+  ur_robot_driver_plugin
 )
 
 install(DIRECTORY resources
   DESTINATION share/${PROJECT_NAME}
+  REGEX "/ursim/" EXCLUDE
 )
 
 
@@ -119,7 +124,29 @@ ament_export_dependencies(
   hardware_interface
   pluginlib
   rclcpp
+  rclcpp_lifecycle
   ${THIS_PACKAGE_INCLUDE_DEPENDS}
+)
+
+# Install Python execs
+ament_python_install_package(${PROJECT_NAME})
+
+# Install Python executables
+install(PROGRAMS
+  scripts/tool_communication.py
+  DESTINATION lib/${PROJECT_NAME}
+)
+
+install(PROGRAMS scripts/wait_dashboard_server.sh
+  DESTINATION bin
+)
+
+install(PROGRAMS scripts/start_ursim.sh
+  DESTINATION lib/${PROJECT_NAME}
+)
+
+install(DIRECTORY config launch
+  DESTINATION share/${PROJECT_NAME}
 )
 
 ament_package()
@@ -127,8 +154,8 @@ ament_package()
 if(BUILD_TESTING)
   find_package(ur_controllers REQUIRED)
   find_package(ur_description REQUIRED)
-  find_package(ur_bringup REQUIRED)
   find_package(ur_msgs REQUIRED)
   find_package(launch_testing_ament_cmake)
-  add_launch_test(test/integration_test.py)
+  add_launch_test(test/integration_test_1.py)
+  add_launch_test(test/integration_test_2.py)
 endif()
