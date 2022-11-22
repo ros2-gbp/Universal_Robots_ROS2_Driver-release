@@ -2,6 +2,9 @@
 Changelog for package ur_moveit_config
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+2.2.5 (2022-11-19)
+------------------
+
 2.2.4 (2022-10-07)
 ------------------
 * Fix selecting the right controller given fake_hw
