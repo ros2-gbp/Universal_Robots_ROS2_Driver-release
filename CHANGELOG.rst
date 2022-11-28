@@ -1,7 +1,11 @@
+2.2.6 (2022-11-28)
+------------------
+* Cleanup humble branch (`#545 <https://github.com/UniversalRobots/Universal_Robots_ROS2_Driver/issues/545>`_)
+* Contributors: Felix Exner (fexner)
+
 2.2.5 (2022-11-19)
 ------------------
 * ur_robot_driver: Controller_stopper fix deprecation warning
-  Use `activate_controllers` instead of `start_controllers`.
 * Fix tool voltage setup (`#526 <https://github.com/UniversalRobots/Universal_Robots_ROS2_Driver/issues/526>`_)
   * Move BEGIN_REPLACE inside of header
   * Change default value of tool_voltage
