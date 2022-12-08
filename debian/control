@@ -1,0 +1,12 @@
+Source: ros-foxy-ur-robot-driver
+Section: misc
+Priority: optional
+Maintainer: Marvin Große Besselmann <grosse@fzi.de>
+Build-Depends: debhelper (>= 9.0.0), ros-foxy-ament-cmake, ros-foxy-controller-manager, ros-foxy-controller-manager-msgs, ros-foxy-geometry-msgs, ros-foxy-hardware-interface, ros-foxy-launch-testing-ament-cmake <!nocheck>, ros-foxy-pluginlib, ros-foxy-rclcpp, ros-foxy-rclcpp-lifecycle, ros-foxy-rclpy <!nocheck>, ros-foxy-std-msgs, ros-foxy-std-srvs, ros-foxy-ur-bringup <!nocheck>, ros-foxy-ur-client-library, ros-foxy-ur-controllers, ros-foxy-ur-dashboard-msgs, ros-foxy-ur-description, ros-foxy-ur-msgs, ros-foxy-ros-workspace
+Homepage: 
+Standards-Version: 3.9.2
+
+Package: ros-foxy-ur-robot-driver
+Architecture: any
+Depends: ${shlibs:Depends}, ${misc:Depends}, ros-foxy-controller-manager, ros-foxy-controller-manager-msgs, ros-foxy-geometry-msgs, ros-foxy-hardware-interface, ros-foxy-pluginlib, ros-foxy-rclcpp, ros-foxy-rclcpp-lifecycle, ros-foxy-std-msgs, ros-foxy-std-srvs, ros-foxy-ur-bringup, ros-foxy-ur-client-library, ros-foxy-ur-controllers, ros-foxy-ur-dashboard-msgs, ros-foxy-ur-description, ros-foxy-ur-msgs, ros-foxy-ros-workspace
+Description: The new driver for Universal Robots UR3, UR5 and UR10 robots with CB3 controllers and the e-series.
