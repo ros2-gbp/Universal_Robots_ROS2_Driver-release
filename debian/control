@@ -1,0 +1,12 @@
+Source: ros-foxy-ur-controllers
+Section: misc
+Priority: optional
+Maintainer: Marvin Große Besselmann <grosse@fzi.de>
+Build-Depends: debhelper (>= 9.0.0), ros-foxy-ament-cmake, ros-foxy-controller-interface, ros-foxy-joint-trajectory-controller, ros-foxy-lifecycle-msgs, ros-foxy-pluginlib, ros-foxy-rclcpp-lifecycle, ros-foxy-rcutils, ros-foxy-realtime-tools, ros-foxy-std-msgs, ros-foxy-ur-dashboard-msgs, ros-foxy-ur-msgs, ros-foxy-ros-workspace
+Homepage: 
+Standards-Version: 3.9.2
+
+Package: ros-foxy-ur-controllers
+Architecture: any
+Depends: ${shlibs:Depends}, ${misc:Depends}, ros-foxy-controller-interface, ros-foxy-joint-trajectory-controller, ros-foxy-lifecycle-msgs, ros-foxy-pluginlib, ros-foxy-rclcpp-lifecycle, ros-foxy-rcutils, ros-foxy-realtime-tools, ros-foxy-std-msgs, ros-foxy-ur-dashboard-msgs, ros-foxy-ur-msgs, ros-foxy-ros-workspace
+Description: Provides controllers that use the speed scaling interface of Universal Robots.
