@@ -8,7 +8,7 @@ on:
   pull_request:
   push:
     branches:
-      - main
+      - foxy
 
 jobs:
   pre-commit:
@@ -21,6 +21,6 @@ jobs:
         python-version: 3.9.7
     - name: Install system hooks
       run: sudo apt-get install clang-format-10 cppcheck
-    - uses: pre-commit/action@v2.0.3
+    - uses: pre-commit/action@v2.0.2
       with:
         extra_args: --all-files --hook-stage manual
