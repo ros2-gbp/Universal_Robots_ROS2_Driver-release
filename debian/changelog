@@ -1,0 +1,34 @@
+ros-foxy-ur-calibration (2.0.2-2focal) focal; urgency=high
+
+  * Added changelog of ur_calibration
+  * Fixed package version of ur_calibration
+    That one was old
+  * Add ur_calibration package (#451 <https://github.com/UniversalRobots/Universal_Robots_ROS2_Driver/issues/451>)
+    Co-authored-by: Mads Holm Peters <mailto:79145214+urmahp@users.noreply.github.com>
+  * Contributors: Felix Exner
+  * Add ur_calibration package (#451 <https://github.com/UniversalRobots/Universal_Robots_ROS2_Driver/issues/451>)
+    Co-authored-by: Mads Holm Peters <mailto:79145214+urmahp@users.noreply.github.com>
+  * Contributors: Felix Exner
+
+ -- Felix Exner <exner@fzi.de>  Tue, 06 Dec 2022 23:00:00 -0000
+
+ros-foxy-ur-calibration (2.0.1-2focal) focal; urgency=high
+
+
+
+ -- Felix Exner <exner@fzi.de>  Sun, 31 Jul 2022 22:00:00 -0000
+
+ros-foxy-ur-calibration (2.0.0-2focal) focal; urgency=high
+
+
+
+ -- Felix Exner <exner@fzi.de>  Sun, 19 Jun 2022 22:00:00 -0000
+
+ros-foxy-ur-calibration (0.0.3-2focal) focal; urgency=high
+
+  * Initial copy of the ROS1 driver
+  * Contributors: AndyZe
+
+ -- Felix Exner <exner@fzi.de>  Wed, 28 Oct 2020 23:00:00 -0000
+
+
