@@ -1,0 +1,12 @@
+Source: ros-foxy-ur-description
+Section: misc
+Priority: optional
+Maintainer: Marvin Große Besselmann <grosse@fzi.de>
+Build-Depends: debhelper (>= 9.0.0), ros-foxy-ament-cmake, ros-foxy-ros-workspace
+Homepage: 
+Standards-Version: 3.9.2
+
+Package: ros-foxy-ur-description
+Architecture: any
+Depends: ${shlibs:Depends}, ${misc:Depends}, ros-foxy-joint-state-publisher, ros-foxy-launch, ros-foxy-launch-ros, ros-foxy-robot-state-publisher, ros-foxy-rviz2, ros-foxy-urdf, ros-foxy-xacro, ros-foxy-ros-workspace
+Description: URDF description for Universal Robots
