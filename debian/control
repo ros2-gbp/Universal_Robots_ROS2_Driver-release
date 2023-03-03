@@ -1,0 +1,13 @@
+Source: ros-rolling-ur-bringup
+Section: misc
+Priority: optional
+Maintainer: Denis Stogl <denis@stoglrobotics.de>
+Build-Depends: debhelper (>= 9.0.0), ros-rolling-ament-cmake, ros-rolling-ament-cmake-python, ros-rolling-rclpy, ros-rolling-ros-workspace
+Homepage: 
+Standards-Version: 3.9.2
+
+Package: ros-rolling-ur-bringup
+Architecture: any
+Depends: ${shlibs:Depends}, ${misc:Depends}, ros-rolling-controller-manager, ros-rolling-force-torque-sensor-broadcaster, ros-rolling-joint-state-broadcaster, ros-rolling-joint-state-publisher, ros-rolling-joint-trajectory-controller, ros-rolling-launch, ros-rolling-launch-ros, ros-rolling-position-controllers, ros-rolling-rclpy, ros-rolling-robot-state-publisher, ros-rolling-ros2-controllers-test-nodes, ros-rolling-rviz2, ros-rolling-ur-controllers, ros-rolling-ur-description, ros-rolling-urdf, ros-rolling-velocity-controllers, ros-rolling-xacro, ros-rolling-ros-workspace
+Description: Launch file and run-time configurations, e.g.
+ controllers.
