@@ -1,16 +1,12 @@
 cmake_minimum_required(VERSION 3.5)
 project(ur_controllers)
 
-# Default to C++14
-if(NOT CMAKE_CXX_STANDARD)
-  set(CMAKE_CXX_STANDARD 14)
-endif()
-
 if(CMAKE_COMPILER_IS_GNUCXX OR CMAKE_CXX_COMPILER_ID MATCHES "Clang")
   add_compile_options(-Wall -Wextra)
 endif()
 
 find_package(ament_cmake REQUIRED)
+find_package(angles REQUIRED)
 find_package(controller_interface REQUIRED)
 find_package(joint_trajectory_controller REQUIRED)
 find_package(lifecycle_msgs REQUIRED)
@@ -18,12 +14,13 @@ find_package(pluginlib REQUIRED)
 find_package(rclcpp_lifecycle REQUIRED)
 find_package(rcutils REQUIRED)
 find_package(realtime_tools REQUIRED)
-find_package(sensor_msgs REQUIRED)
 find_package(std_msgs REQUIRED)
+find_package(std_srvs REQUIRED)
 find_package(ur_dashboard_msgs REQUIRED)
 find_package(ur_msgs REQUIRED)
 
 set(THIS_PACKAGE_INCLUDE_DEPENDS
+  angles
   controller_interface
   joint_trajectory_controller
   lifecycle_msgs
@@ -31,8 +28,8 @@ set(THIS_PACKAGE_INCLUDE_DEPENDS
   rclcpp_lifecycle
   rcutils
   realtime_tools
-  sensor_msgs
   std_msgs
+  std_srvs
   ur_dashboard_msgs
   ur_msgs
 )
@@ -42,7 +39,6 @@ include_directories(include)
 add_library(${PROJECT_NAME} SHARED
   src/scaled_joint_trajectory_controller.cpp
   src/speed_scaling_state_broadcaster.cpp
-  src/force_torque_sensor_broadcaster.cpp
   src/gpio_controller.cpp)
 
 target_include_directories(${PROJECT_NAME} PRIVATE

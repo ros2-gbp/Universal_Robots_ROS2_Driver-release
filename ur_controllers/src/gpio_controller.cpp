@@ -1,16 +1,30 @@
 // Copyright (c) 2021 PickNik LLC
 //
-// Licensed under the Apache License, Version 2.0 (the "License");
-// you may not use this file except in compliance with the License.
-// You may obtain a copy of the License at
+// Redistribution and use in source and binary forms, with or without
+// modification, are permitted provided that the following conditions are met:
 //
-//     http://www.apache.org/licenses/LICENSE-2.0
+//    * Redistributions of source code must retain the above copyright
+//      notice, this list of conditions and the following disclaimer.
 //
-// Unless required by applicable law or agreed to in writing, software
-// distributed under the License is distributed on an "AS IS" BASIS,
-// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-// See the License for the specific language governing permissions and
-// limitations under the License.
+//    * Redistributions in binary form must reproduce the above copyright
+//      notice, this list of conditions and the following disclaimer in the
+//      documentation and/or other materials provided with the distribution.
+//
+//    * Neither the name of the {copyright_holder} nor the names of its
+//      contributors may be used to endorse or promote products derived from
+//      this software without specific prior written permission.
+//
+// THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
+// AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+// IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
+// ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE
+// LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
+// CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
+// SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
+// INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
+// CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+// ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
+// POSSIBILITY OF SUCH DAMAGE.
 
 //----------------------------------------------------------------------
 /*!\file
@@ -27,6 +41,13 @@
 
 namespace ur_controllers
 {
+controller_interface::CallbackReturn GPIOController::on_init()
+{
+  initMsgs();
+
+  return controller_interface::CallbackReturn::SUCCESS;
+}
+
 controller_interface::InterfaceConfiguration GPIOController::command_interface_configuration() const
 {
   controller_interface::InterfaceConfiguration config;
@@ -40,11 +61,28 @@ controller_interface::InterfaceConfiguration GPIOController::command_interface_c
     config.names.emplace_back("gpio/standard_analog_output_cmd_" + std::to_string(i));
   }
 
+  config.names.emplace_back("gpio/tool_voltage_cmd");
+
   config.names.emplace_back("gpio/io_async_success");
 
   config.names.emplace_back("speed_scaling/target_speed_fraction_cmd");
 
   config.names.emplace_back("speed_scaling/target_speed_fraction_async_success");
+
+  config.names.emplace_back("resend_robot_program/resend_robot_program_cmd");
+
+  config.names.emplace_back("resend_robot_program/resend_robot_program_async_success");
+
+  // payload stuff
+  config.names.emplace_back("payload/mass");
+  config.names.emplace_back("payload/cog.x");
+  config.names.emplace_back("payload/cog.y");
+  config.names.emplace_back("payload/cog.z");
+  config.names.emplace_back("payload/payload_async_success");
+
+  // zero ft sensor
+  config.names.emplace_back("zero_ftsensor/zero_ftsensor_cmd");
+  config.names.emplace_back("zero_ftsensor/zero_ftsensor_async_success");
 
   return config;
 }
@@ -108,14 +146,8 @@ controller_interface::InterfaceConfiguration ur_controllers::GPIOController::sta
   return config;
 }
 
-controller_interface::return_type ur_controllers::GPIOController::init(const std::string& controller_name)
-{
-  initMsgs();
-
-  return ControllerInterface::init(controller_name);
-}
-
-controller_interface::return_type ur_controllers::GPIOController::update()
+controller_interface::return_type ur_controllers::GPIOController::update(const rclcpp::Time& /*time*/,
+                                                                         const rclcpp::Duration& /*period*/)
 {
   publishIO();
   publishToolData();
@@ -125,7 +157,7 @@ controller_interface::return_type ur_controllers::GPIOController::update()
   return controller_interface::return_type::OK;
 }
 
-rclcpp_lifecycle::node_interfaces::LifecycleNodeInterface::CallbackReturn
+controller_interface::CallbackReturn
 ur_controllers::GPIOController::on_configure(const rclcpp_lifecycle::State& /*previous_state*/)
 {
   return LifecycleNodeInterface::CallbackReturn::SUCCESS;
@@ -209,7 +241,7 @@ void GPIOController::publishProgramRunning()
   }
 }
 
-rclcpp_lifecycle::node_interfaces::LifecycleNodeInterface::CallbackReturn
+controller_interface::CallbackReturn
 ur_controllers::GPIOController::on_activate(const rclcpp_lifecycle::State& /*previous_state*/)
 {
   while (state_interfaces_[StateInterfaces::INITIALIZED_FLAG].get_value() == 0.0) {
@@ -241,13 +273,24 @@ ur_controllers::GPIOController::on_activate(const rclcpp_lifecycle::State& /*pre
     set_speed_slider_srv_ = get_node()->create_service<ur_msgs::srv::SetSpeedSliderFraction>(
         "~/set_speed_slider",
         std::bind(&GPIOController::setSpeedSlider, this, std::placeholders::_1, std::placeholders::_2));
+
+    resend_robot_program_srv_ = get_node()->create_service<std_srvs::srv::Trigger>(
+        "~/resend_robot_program",
+        std::bind(&GPIOController::resendRobotProgram, this, std::placeholders::_1, std::placeholders::_2));
+
+    set_payload_srv_ = get_node()->create_service<ur_msgs::srv::SetPayload>(
+        "~/set_payload", std::bind(&GPIOController::setPayload, this, std::placeholders::_1, std::placeholders::_2));
+
+    tare_sensor_srv_ = get_node()->create_service<std_srvs::srv::Trigger>(
+        "~/zero_ftsensor",
+        std::bind(&GPIOController::zeroFTSensor, this, std::placeholders::_1, std::placeholders::_2));
   } catch (...) {
     return LifecycleNodeInterface::CallbackReturn::ERROR;
   }
   return LifecycleNodeInterface::CallbackReturn::SUCCESS;
 }
 
-rclcpp_lifecycle::node_interfaces::LifecycleNodeInterface::CallbackReturn
+controller_interface::CallbackReturn
 ur_controllers::GPIOController::on_deactivate(const rclcpp_lifecycle::State& /*previous_state*/)
 {
   try {
@@ -272,7 +315,7 @@ bool GPIOController::setIO(ur_msgs::srv::SetIO::Request::SharedPtr req, ur_msgs:
     command_interfaces_[CommandInterfaces::IO_ASYNC_SUCCESS].set_value(ASYNC_WAITING);
     command_interfaces_[req->pin].set_value(static_cast<double>(req->state));
 
-    RCLCPP_INFO(node_->get_logger(), "Setting digital output '%d' to state: '%1.0f'.", req->pin, req->state);
+    RCLCPP_INFO(get_node()->get_logger(), "Setting digital output '%d' to state: '%1.0f'.", req->pin, req->state);
 
     while (command_interfaces_[CommandInterfaces::IO_ASYNC_SUCCESS].get_value() == ASYNC_WAITING) {
       // Asynchronous wait until the hardware interface has set the io value
@@ -286,7 +329,20 @@ bool GPIOController::setIO(ur_msgs::srv::SetIO::Request::SharedPtr req, ur_msgs:
     command_interfaces_[CommandInterfaces::IO_ASYNC_SUCCESS].set_value(ASYNC_WAITING);
     command_interfaces_[CommandInterfaces::ANALOG_OUTPUTS_CMD + req->pin].set_value(static_cast<double>(req->state));
 
-    RCLCPP_INFO(node_->get_logger(), "Setting analog output '%d' to state: '%1.0f'.", req->pin, req->state);
+    RCLCPP_INFO(get_node()->get_logger(), "Setting analog output '%d' to state: '%1.0f'.", req->pin, req->state);
+
+    while (command_interfaces_[CommandInterfaces::IO_ASYNC_SUCCESS].get_value() == ASYNC_WAITING) {
+      // Asynchronous wait until the hardware interface has set the io value
+      std::this_thread::sleep_for(std::chrono::milliseconds(50));
+    }
+
+    resp->success = static_cast<bool>(command_interfaces_[CommandInterfaces::IO_ASYNC_SUCCESS].get_value());
+    return resp->success;
+  } else if (req->fun == req->FUN_SET_TOOL_VOLTAGE) {
+    command_interfaces_[CommandInterfaces::IO_ASYNC_SUCCESS].set_value(ASYNC_WAITING);
+    command_interfaces_[CommandInterfaces::TOOL_VOLTAGE_CMD].set_value(static_cast<double>(req->state));
+
+    RCLCPP_INFO(get_node()->get_logger(), "Setting tool voltage to: '%1.0f'.", req->state);
 
     while (command_interfaces_[CommandInterfaces::IO_ASYNC_SUCCESS].get_value() == ASYNC_WAITING) {
       // Asynchronous wait until the hardware interface has set the io value
@@ -305,7 +361,7 @@ bool GPIOController::setSpeedSlider(ur_msgs::srv::SetSpeedSliderFraction::Reques
                                     ur_msgs::srv::SetSpeedSliderFraction::Response::SharedPtr resp)
 {
   if (req->speed_slider_fraction >= 0.01 && req->speed_slider_fraction <= 1.0) {
-    RCLCPP_INFO(node_->get_logger(), "Setting speed slider to %.2f%%.", req->speed_slider_fraction * 100.0);
+    RCLCPP_INFO(get_node()->get_logger(), "Setting speed slider to %.2f%%.", req->speed_slider_fraction * 100.0);
     // reset success flag
     command_interfaces_[CommandInterfaces::TARGET_SPEED_FRACTION_ASYNC_SUCCESS].set_value(ASYNC_WAITING);
     // set commanding value for speed slider
@@ -319,11 +375,89 @@ bool GPIOController::setSpeedSlider(ur_msgs::srv::SetSpeedSliderFraction::Reques
     resp->success =
         static_cast<bool>(command_interfaces_[CommandInterfaces::TARGET_SPEED_FRACTION_ASYNC_SUCCESS].get_value());
   } else {
-    RCLCPP_WARN(node_->get_logger(), "The desired speed slider fraction must be within range (0; 1.0]. Request "
-                                     "ignored.");
+    RCLCPP_WARN(get_node()->get_logger(), "The desired speed slider fraction must be within range (0; 1.0]. Request "
+                                          "ignored.");
     resp->success = false;
     return false;
   }
+  return true;
+}
+
+bool GPIOController::resendRobotProgram(std_srvs::srv::Trigger::Request::SharedPtr /*req*/,
+                                        std_srvs::srv::Trigger::Response::SharedPtr resp)
+{
+  // reset success flag
+  command_interfaces_[CommandInterfaces::RESEND_ROBOT_PROGRAM_ASYNC_SUCCESS].set_value(ASYNC_WAITING);
+  // call the service in the hardware
+  command_interfaces_[CommandInterfaces::RESEND_ROBOT_PROGRAM_CMD].set_value(1.0);
+
+  while (command_interfaces_[CommandInterfaces::RESEND_ROBOT_PROGRAM_ASYNC_SUCCESS].get_value() == ASYNC_WAITING) {
+    // Asynchronous wait until the hardware interface has set the slider value
+    std::this_thread::sleep_for(std::chrono::milliseconds(50));
+  }
+  resp->success =
+      static_cast<bool>(command_interfaces_[CommandInterfaces::RESEND_ROBOT_PROGRAM_ASYNC_SUCCESS].get_value());
+
+  if (resp->success) {
+    RCLCPP_INFO(get_node()->get_logger(), "Successfully resent robot program");
+  } else {
+    RCLCPP_ERROR(get_node()->get_logger(), "Could not resend robot program");
+    return false;
+  }
+
+  return true;
+}
+
+bool GPIOController::setPayload(const ur_msgs::srv::SetPayload::Request::SharedPtr req,
+                                ur_msgs::srv::SetPayload::Response::SharedPtr resp)
+{
+  // reset success flag
+  command_interfaces_[CommandInterfaces::PAYLOAD_ASYNC_SUCCESS].set_value(ASYNC_WAITING);
+
+  command_interfaces_[CommandInterfaces::PAYLOAD_MASS].set_value(req->mass);
+  command_interfaces_[CommandInterfaces::PAYLOAD_COG_X].set_value(req->center_of_gravity.x);
+  command_interfaces_[CommandInterfaces::PAYLOAD_COG_Y].set_value(req->center_of_gravity.y);
+  command_interfaces_[CommandInterfaces::PAYLOAD_COG_Z].set_value(req->center_of_gravity.z);
+
+  while (command_interfaces_[CommandInterfaces::PAYLOAD_ASYNC_SUCCESS].get_value() == ASYNC_WAITING) {
+    // Asynchronous wait until the hardware interface has set the payload
+    std::this_thread::sleep_for(std::chrono::milliseconds(50));
+  }
+
+  resp->success = static_cast<bool>(command_interfaces_[CommandInterfaces::PAYLOAD_ASYNC_SUCCESS].get_value());
+
+  if (resp->success) {
+    RCLCPP_INFO(get_node()->get_logger(), "Payload has been set successfully");
+  } else {
+    RCLCPP_ERROR(get_node()->get_logger(), "Could not set the payload");
+    return false;
+  }
+
+  return true;
+}
+
+bool GPIOController::zeroFTSensor(std_srvs::srv::Trigger::Request::SharedPtr /*req*/,
+                                  std_srvs::srv::Trigger::Response::SharedPtr resp)
+{
+  // reset success flag
+  command_interfaces_[CommandInterfaces::ZERO_FTSENSOR_ASYNC_SUCCESS].set_value(ASYNC_WAITING);
+  // call the service in the hardware
+  command_interfaces_[CommandInterfaces::ZERO_FTSENSOR_CMD].set_value(1.0);
+
+  while (command_interfaces_[CommandInterfaces::ZERO_FTSENSOR_ASYNC_SUCCESS].get_value() == ASYNC_WAITING) {
+    // Asynchronous wait until the hardware interface has set the slider value
+    std::this_thread::sleep_for(std::chrono::milliseconds(50));
+  }
+
+  resp->success = static_cast<bool>(command_interfaces_[CommandInterfaces::ZERO_FTSENSOR_ASYNC_SUCCESS].get_value());
+
+  if (resp->success) {
+    RCLCPP_INFO(get_node()->get_logger(), "Successfully zeroed the force torque sensor");
+  } else {
+    RCLCPP_ERROR(get_node()->get_logger(), "Could not zero the force torque sensor");
+    return false;
+  }
+
   return true;
 }
 

@@ -1,16 +1,30 @@
 // Copyright (c) 2021 PickNik LLC
 //
-// Licensed under the Apache License, Version 2.0 (the "License");
-// you may not use this file except in compliance with the License.
-// You may obtain a copy of the License at
+// Redistribution and use in source and binary forms, with or without
+// modification, are permitted provided that the following conditions are met:
 //
-//     http://www.apache.org/licenses/LICENSE-2.0
+//    * Redistributions of source code must retain the above copyright
+//      notice, this list of conditions and the following disclaimer.
 //
-// Unless required by applicable law or agreed to in writing, software
-// distributed under the License is distributed on an "AS IS" BASIS,
-// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-// See the License for the specific language governing permissions and
-// limitations under the License.
+//    * Redistributions in binary form must reproduce the above copyright
+//      notice, this list of conditions and the following disclaimer in the
+//      documentation and/or other materials provided with the distribution.
+//
+//    * Neither the name of the {copyright_holder} nor the names of its
+//      contributors may be used to endorse or promote products derived from
+//      this software without specific prior written permission.
+//
+// THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
+// AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+// IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
+// ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE
+// LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
+// CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
+// SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
+// INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
+// CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+// ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
+// POSSIBILITY OF SUCH DAMAGE.
 
 //----------------------------------------------------------------------
 /*!\file
@@ -29,6 +43,8 @@
 #include <unordered_map>
 #include <vector>
 
+#include "std_srvs/srv/trigger.hpp"
+
 #include "controller_interface/controller_interface.hpp"
 #include "ur_msgs/msg/io_states.hpp"
 #include "ur_msgs/msg/tool_data_msg.hpp"
@@ -36,6 +52,9 @@
 #include "ur_dashboard_msgs/msg/safety_mode.hpp"
 #include "ur_msgs/srv/set_io.hpp"
 #include "ur_msgs/srv/set_speed_slider_fraction.hpp"
+#include "ur_msgs/srv/set_payload.hpp"
+#include "rclcpp/time.hpp"
+#include "rclcpp/duration.hpp"
 #include "std_msgs/msg/bool.hpp"
 
 namespace ur_controllers
@@ -44,9 +63,19 @@ enum CommandInterfaces
 {
   DIGITAL_OUTPUTS_CMD = 0u,
   ANALOG_OUTPUTS_CMD = 18,
-  IO_ASYNC_SUCCESS = 20,
-  TARGET_SPEED_FRACTION_CMD = 21,
-  TARGET_SPEED_FRACTION_ASYNC_SUCCESS = 22
+  TOOL_VOLTAGE_CMD = 20,
+  IO_ASYNC_SUCCESS = 21,
+  TARGET_SPEED_FRACTION_CMD = 22,
+  TARGET_SPEED_FRACTION_ASYNC_SUCCESS = 23,
+  RESEND_ROBOT_PROGRAM_CMD = 24,
+  RESEND_ROBOT_PROGRAM_ASYNC_SUCCESS = 25,
+  PAYLOAD_MASS = 26,
+  PAYLOAD_COG_X = 27,
+  PAYLOAD_COG_Y = 28,
+  PAYLOAD_COG_Z = 29,
+  PAYLOAD_ASYNC_SUCCESS = 30,
+  ZERO_FTSENSOR_CMD = 31,
+  ZERO_FTSENSOR_ASYNC_SUCCESS = 32,
 };
 
 enum StateInterfaces
@@ -77,9 +106,7 @@ public:
 
   controller_interface::InterfaceConfiguration state_interface_configuration() const override;
 
-  controller_interface::return_type init(const std::string& controller_name) override;
-
-  controller_interface::return_type update() override;
+  controller_interface::return_type update(const rclcpp::Time& time, const rclcpp::Duration& period) override;
 
   CallbackReturn on_configure(const rclcpp_lifecycle::State& previous_state) override;
 
@@ -87,11 +114,21 @@ public:
 
   CallbackReturn on_deactivate(const rclcpp_lifecycle::State& previous_state) override;
 
+  CallbackReturn on_init() override;
+
 private:
   bool setIO(ur_msgs::srv::SetIO::Request::SharedPtr req, ur_msgs::srv::SetIO::Response::SharedPtr resp);
 
   bool setSpeedSlider(ur_msgs::srv::SetSpeedSliderFraction::Request::SharedPtr req,
                       ur_msgs::srv::SetSpeedSliderFraction::Response::SharedPtr resp);
+
+  bool resendRobotProgram(std_srvs::srv::Trigger::Request::SharedPtr req,
+                          std_srvs::srv::Trigger::Response::SharedPtr resp);
+
+  bool setPayload(const ur_msgs::srv::SetPayload::Request::SharedPtr req,
+                  ur_msgs::srv::SetPayload::Response::SharedPtr resp);
+
+  bool zeroFTSensor(std_srvs::srv::Trigger::Request::SharedPtr req, std_srvs::srv::Trigger::Response::SharedPtr resp);
 
   void publishIO();
 
@@ -114,8 +151,11 @@ protected:
   double target_speed_fraction_cmd_;
 
   // services
+  rclcpp::Service<std_srvs::srv::Trigger>::SharedPtr resend_robot_program_srv_;
   rclcpp::Service<ur_msgs::srv::SetSpeedSliderFraction>::SharedPtr set_speed_slider_srv_;
   rclcpp::Service<ur_msgs::srv::SetIO>::SharedPtr set_io_srv_;
+  rclcpp::Service<ur_msgs::srv::SetPayload>::SharedPtr set_payload_srv_;
+  rclcpp::Service<std_srvs::srv::Trigger>::SharedPtr tare_sensor_srv_;
 
   std::shared_ptr<rclcpp::Publisher<ur_msgs::msg::IOStates>> io_pub_;
   std::shared_ptr<rclcpp::Publisher<ur_msgs::msg::ToolDataMsg>> tool_data_pub_;

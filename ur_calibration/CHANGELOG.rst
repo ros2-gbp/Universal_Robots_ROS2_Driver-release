@@ -2,26 +2,30 @@
 Changelog for package ur_calibration
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-2.0.2 (2022-12-07)
+2.3.0 (2023-03-02)
 ------------------
-* Added changelog of ur_calibration
-* Fixed package version of ur_calibration
-  That one was old
-* Add ur_calibration package (`#451 <https://github.com/UniversalRobots/Universal_Robots_ROS2_Driver/issues/451>`_)
-  Co-authored-by: Mads Holm Peters <79145214+urmahp@users.noreply.github.com>
+* Fixes launchfile references (`#490 <https://github.com/UniversalRobots/Universal_Robots_ROS2_Driver/issues/490>`_)
+  The filename with the dual type ending was wrong.
 * Contributors: Felix Exner
 
-* Add ur_calibration package (`#451 <https://github.com/UniversalRobots/Universal_Robots_ROS2_Driver/issues/451>`_)
-  Co-authored-by: Mads Holm Peters <79145214+urmahp@users.noreply.github.com>
+2.2.4 (2022-10-07)
+------------------
+
+2.2.3 (2022-07-27)
+------------------
+
+2.2.2 (2022-07-19)
+------------------
+* Made sure all past maintainers are listed as authors (`#429 <https://github.com/UniversalRobots/Universal_Robots_ROS2_Driver/issues/429>`_)
 * Contributors: Felix Exner
 
-2.0.1 (2022-08-01)
+2.2.1 (2022-06-27)
 ------------------
 
-2.0.0 (2022-06-20)
+2.2.0 (2022-06-20)
 ------------------
-
-0.0.3 (2020-10-29)
-------------------
-* Initial copy of the ROS1 driver
-* Contributors: AndyZe
+* Updated package maintainers
+* Update license to BSD-3-Clause (`#277 <https://github.com/UniversalRobots/Universal_Robots_ROS2_Driver/issues/277>`_)
+* Add missing dependency on angles and update formatting for linters. (`#283 <https://github.com/UniversalRobots/Universal_Robots_ROS2_Driver/issues/283>`_)
+* Calibration extraction package (`#186 <https://github.com/UniversalRobots/Universal_Robots_ROS2_Driver/issues/186>`_)
+* Contributors: Denis Štogl, Felix Exner, livanov93

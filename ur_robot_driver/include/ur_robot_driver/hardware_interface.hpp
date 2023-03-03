@@ -1,16 +1,30 @@
 // Copyright 2019 FZI Forschungszentrum Informatik
 //
-// Licensed under the Apache License, Version 2.0 (the "License");
-// you may not use this file except in compliance with the License.
-// You may obtain a copy of the License at
+// Redistribution and use in source and binary forms, with or without
+// modification, are permitted provided that the following conditions are met:
 //
-//     http://www.apache.org/licenses/LICENSE-2.0
+//    * Redistributions of source code must retain the above copyright
+//      notice, this list of conditions and the following disclaimer.
 //
-// Unless required by applicable law or agreed to in writing, software
-// distributed under the License is distributed on an "AS IS" BASIS,
-// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-// See the License for the specific language governing permissions and
-// limitations under the License.
+//    * Redistributions in binary form must reproduce the above copyright
+//      notice, this list of conditions and the following disclaimer in the
+//      documentation and/or other materials provided with the distribution.
+//
+//    * Neither the name of the {copyright_holder} nor the names of its
+//      contributors may be used to endorse or promote products derived from
+//      this software without specific prior written permission.
+//
+// THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
+// AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+// IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
+// ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE
+// LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
+// CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
+// SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
+// INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
+// CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+// ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
+// POSSIBILITY OF SUCH DAMAGE.
 
 //----------------------------------------------------------------------
 /*!\file
@@ -35,7 +49,6 @@
 #include "hardware_interface/hardware_info.hpp"
 #include "hardware_interface/system_interface.hpp"
 #include "hardware_interface/types/hardware_interface_return_values.hpp"
-#include "hardware_interface/types/hardware_interface_status_values.hpp"
 #include "hardware_interface/visibility_control.h"
 
 // UR stuff
@@ -45,10 +58,10 @@
 
 // ROS
 #include "rclcpp/macros.hpp"
-
-using hardware_interface::HardwareInfo;
-using hardware_interface::return_type;
-using hardware_interface::status;
+#include "rclcpp_lifecycle/node_interfaces/lifecycle_node_interface.hpp"
+#include "rclcpp_lifecycle/state.hpp"
+#include "geometry_msgs/msg/transform_stamped.hpp"
+#include "tf2_geometry_msgs/tf2_geometry_msgs.hpp"
 
 namespace ur_robot_driver
 {
@@ -57,6 +70,13 @@ enum class PausingState
   PAUSED,
   RUNNING,
   RAMPUP
+};
+
+enum StoppingInterface
+{
+  NONE,
+  STOP_POSITION,
+  STOP_VELOCITY
 };
 
 /*!
@@ -69,26 +89,23 @@ class URPositionHardwareInterface : public hardware_interface::SystemInterface
 public:
   RCLCPP_SHARED_PTR_DEFINITIONS(URPositionHardwareInterface);
 
-  return_type configure(const HardwareInfo& system_info) final;
+  hardware_interface::CallbackReturn on_init(const hardware_interface::HardwareInfo& system_info) final;
 
   std::vector<hardware_interface::StateInterface> export_state_interfaces() final;
 
   std::vector<hardware_interface::CommandInterface> export_command_interfaces() final;
 
-  status get_status() const final
-  {
-    return status_;
-  }
+  hardware_interface::CallbackReturn on_activate(const rclcpp_lifecycle::State& previous_state) final;
+  hardware_interface::CallbackReturn on_deactivate(const rclcpp_lifecycle::State& previous_state) final;
 
-  std::string get_name() const final
-  {
-    return info_.name;
-  }
+  hardware_interface::return_type read(const rclcpp::Time& time, const rclcpp::Duration& period) final;
+  hardware_interface::return_type write(const rclcpp::Time& time, const rclcpp::Duration& period) final;
 
-  return_type start() final;
-  return_type stop() final;
-  return_type read() final;
-  return_type write() final;
+  hardware_interface::return_type prepare_command_mode_switch(const std::vector<std::string>& start_interfaces,
+                                                              const std::vector<std::string>& stop_interfaces) final;
+
+  hardware_interface::return_type perform_command_mode_switch(const std::vector<std::string>& start_interfaces,
+                                                              const std::vector<std::string>& stop_interfaces) final;
 
   /*!
    * \brief Callback to handle a change in the current state of the URCaps program running on the
@@ -113,9 +130,8 @@ protected:
   void initAsyncIO();
   void checkAsyncIO();
   void updateNonDoubleValues();
-
-  HardwareInfo info_;
-  status status_;
+  void extractToolPose();
+  void transformForceTorque();
 
   urcl::vector6d_t urcl_position_commands_;
   urcl::vector6d_t urcl_position_commands_old_;
@@ -150,16 +166,31 @@ protected:
   std::bitset<4> robot_status_bits_;
   std::bitset<11> safety_status_bits_;
 
+  // transform stuff
+  tf2::Vector3 tcp_force_;
+  tf2::Vector3 tcp_torque_;
+  geometry_msgs::msg::TransformStamped tcp_transform_;
+
   // asynchronous commands
   std::array<double, 18> standard_dig_out_bits_cmd_;
   std::array<double, 2> standard_analog_output_cmd_;
+  double tool_voltage_cmd_;
   double io_async_success_;
   double target_speed_fraction_cmd_;
   double scaling_async_success_;
+  double resend_robot_program_cmd_;
+  double resend_robot_program_async_success_;
+  double zero_ftsensor_cmd_;
+  double zero_ftsensor_async_success_;
   bool first_pass_;
   bool initialized_;
   double system_interface_initialized_;
   bool async_thread_shutdown_;
+
+  // payload stuff
+  urcl::vector3d_t payload_center_of_gravity_;
+  double payload_mass_;
+  double payload_async_success_;
 
   // copy of non double values
   std::array<double, 18> actual_dig_out_bits_copy_;
@@ -179,6 +210,12 @@ protected:
 
   PausingState pausing_state_;
   double pausing_ramp_up_increment_;
+
+  // resources switching aux vars
+  std::vector<uint> stop_modes_;
+  std::vector<std::string> start_modes_;
+  bool position_controller_running_;
+  bool velocity_controller_running_;
 
   std::unique_ptr<urcl::UrDriver> ur_driver_;
   std::shared_ptr<std::thread> async_thread_;
