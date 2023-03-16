@@ -94,6 +94,7 @@ def generate_test_description():
             "robot_ip": "192.168.56.101",
             "ur_type": ur_type,
             "launch_rviz": "false",
+            "controller_spawner_timeout": str(TIMEOUT_WAIT_SERVICE_INITIAL),
             "initial_joint_controller": "scaled_joint_trajectory_controller",
             "headless_mode": "true",
             "launch_dashboard_client": "false",
@@ -147,10 +148,17 @@ class RobotDriverTest(unittest.TestCase):
 
     def init_robot(self):
 
-        # Wait longer for the first service client as the robot driver is still starting up
-        power_on_client = waitForService(
-            self.node, "/dashboard_client/power_on", Trigger, timeout=TIMEOUT_WAIT_SERVICE_INITIAL
-        )
+        # Wait longer for the first service clients (for both the driver and the dashboard client) as the robot driver is still starting up
+        service_interfaces_initial = {
+            "/dashboard_client/power_on": Trigger,
+            "/controller_manager/switch_controller": SwitchController,
+        }
+        self.service_clients = {
+            srv_name: waitForService(
+                self.node, srv_name, srv_type, timeout=TIMEOUT_WAIT_SERVICE_INITIAL
+            )
+            for (srv_name, srv_type) in service_interfaces_initial.items()
+        }
 
         # Connect to the rest of the required interfaces
         service_interfaces = {
@@ -159,12 +167,12 @@ class RobotDriverTest(unittest.TestCase):
             "/io_and_status_controller/set_io": SetIO,
             "/io_and_status_controller/resend_robot_program": Trigger,
         }
-        self.service_clients = {
-            srv_name: waitForService(self.node, srv_name, srv_type)
-            for (srv_name, srv_type) in service_interfaces.items()
-        }
-
-        self.service_clients["/dashboard_client/power_on"] = power_on_client
+        self.service_clients.update(
+            {
+                srv_name: waitForService(self.node, srv_name, srv_type)
+                for (srv_name, srv_type) in service_interfaces.items()
+            }
+        )
 
         # test action appearance
         self.jtc_action_client = waitForAction(
@@ -188,7 +196,7 @@ class RobotDriverTest(unittest.TestCase):
     def test_start_scaled_jtc_controller(self):
         req = SwitchController.Request()
         req.strictness = SwitchController.Request.BEST_EFFORT
-        req.start_controllers = ["scaled_joint_trajectory_controller"]
+        req.activate_controllers = ["scaled_joint_trajectory_controller"]
         result = self.call_service("/controller_manager/switch_controller", req)
 
         self.assertEqual(result.ok, True)
