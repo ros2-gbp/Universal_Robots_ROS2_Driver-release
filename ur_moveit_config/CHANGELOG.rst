@@ -2,6 +2,9 @@
 Changelog for package ur_moveit_config
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+2.3.1 (2023-03-16)
+------------------
+
 2.3.0 (2023-03-02)
 ------------------
 * Fix capitalization of docstring
