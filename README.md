@@ -1,229 +1,96 @@
-# Universal Robots ROS2 Driver
+# ur_robot_driver
 
-Universal Robots has become a dominant supplier of lightweight, robotic manipulators for industry, as well as for scientific research and education.
-<center><img src="ur_robot_driver/doc/installation/initial_setup_images/e-Series.jpg" alt="Universal Robot e-Series family" style="width: 80%;"/></center>
+This package contains the actual driver for UR robots. It is part of the *universal_robots_driver*
+repository and requires other packages from that repository. Also, see the [main repository's
+README](../README.md) for information on how to install and startup this driver.
 
-This is one of the very first ROS2 manipulator drivers. Some of the new features are enabled by ROS2 and include decreased latency, improved security, and more flexibility regarding middleware configuration. The package contains launch files to quickly get started using the driver as a standalone version or in combination with MoveIt2
+## ROS-API
+The ROS API is documented in a [standalone document](doc/ROS_INTERFACE.md).
 
-This driver is developed on top of [Universal_Robots_Client_Library](https://github.com/UniversalRobots/Universal_Robots_Client_Library) and support some key cobot functionalities like; pause at emergency stop, safeguard stop, automatic speed scaling to avoid violate the safety setting and manually speed scaling from the teach pendant. In addition the externalControl URCap makes it possible to include ROS2 behaviors in the robot program.
+## Technical details
+The following image shows a very coarse overview of the driver's architecture.
 
-The driver is compatible across the entire line of UR robots -- from 3 kg payload to 16 kg payload and includes both the CB3 and the E-series.
+![Architecture overview](doc/architecture_coarse.svg "Architecture overview")
 
+Upon connection to the primary interface the robot sends version and calibration information which
+is consumed by the *calibration_check*. If the calibration reported by the robot doesn't match the
+one configured (See [calibration guide](../ur_calibration/README.md)) an error will be printed to Roslog.
 
-Check also [presentations and videos](ur_robot_driver/doc/resources/README.md) about this driver.
+Real-time data from the robot is read through the RTDE interface. This is done automatically as soon
+as a connection to the robot could be established. Thus joint states and IO data will be immediately
+available.
 
+To actually control the robot, a program node from the **External Control** URCap must be running on
+the robot interpreting commands sent from an external source. When this program is not running, no
+controllers moving the robot around will be available. Please see the [initial setup
+guide](doc/installation/robot_setup.rst) on how to install and start this on the robot.
 
-## Build Status
+The URScript that will be running on the robot is requested by the **External Control** program node
+from the remote ROS PC. The robot *ur_control.launch* file has a parameter called `urscript_file` to
+select a different program than the default one that will be sent as a response to a program
+request.
 
-<table width="100%">
-  <tr>
-    <th>ROS2 Distro</th>
-    <th>Foxy</th>
-    <th>Galactic</th>
-    <th>Humble</th>
-    <th>Rolling</th>
-  </tr>
-  <tr>
-    <th>Branch</th>
-    <td><a href="https://github.com/UniversalRobots/Universal_Robots_ROS2_Driver/tree/foxy">foxy</a></td>
-    <td><a href="https://github.com/UniversalRobots/Universal_Robots_ROS2_Driver/tree/galactic">galactic</a></td>
-    <td><a href="https://github.com/UniversalRobots/Universal_Robots_ROS2_Driver/tree/humble">humble</a></td>
-    <td><a href="https://github.com/UniversalRobots/Universal_Robots_ROS2_Driver/tree/main">main</a></td>
-  </tr>
-  <tr>
-    <th>Build Status</th>
-    <td>
-      <a href="https://github.com/UniversalRobots/Universal_Robots_ROS2_Driver/actions/workflows/foxy-binary-build.yml?query=event%3Aschedule++">
-         <img src="https://github.com/UniversalRobots/Universal_Robots_ROS2_Driver/actions/workflows/foxy-binary-build.yml/badge.svg?event=schedule"
-              alt="Foxy Binary Build"/>
-      </a> <br />
-      <a href="https://github.com/UniversalRobots/Universal_Robots_ROS2_Driver/actions/workflows/foxy-semi-binary-build.yml?query=event%3Aschedule++">
-         <img src="https://github.com/UniversalRobots/Universal_Robots_ROS2_Driver/actions/workflows/foxy-semi-binary-build.yml/badge.svg?event=schedule"
-              alt="Foxy Semi-Binary Build"/>
-      </a>
-    </td>
-    <td>
-      <a href="https://github.com/UniversalRobots/Universal_Robots_ROS2_Driver/actions/workflows/galactic-binary-build.yml?query=event%3Aschedule++">
-         <img src="https://github.com/UniversalRobots/Universal_Robots_ROS2_Driver/actions/workflows/galactic-binary-build.yml/badge.svg?event=schedule"
-              alt="Galactic Binary Build"/>
-      </a> <br />
-      <a href="https://github.com/UniversalRobots/Universal_Robots_ROS2_Driver/actions/workflows/galactic-semi-binary-build.yml?query=event%3Aschedule++">
-         <img src="https://github.com/UniversalRobots/Universal_Robots_ROS2_Driver/actions/workflows/galactic-semi-binary-build.yml/badge.svg?event=schedule"
-              alt="Galactic Semi-Binary Build"/>
-      </a>
-    </td>
-    <td>
-      <a href="https://github.com/UniversalRobots/Universal_Robots_ROS2_Driver/actions/workflows/humble-binary-main.yml?query=event%3Aschedule++">
-         <img src="https://github.com/UniversalRobots/Universal_Robots_ROS2_Driver/actions/workflows/humble-binary-main.yml/badge.svg?event=schedule"
-              alt="Humble Binary Main"/>
-      </a> <br />
-      <a href="https://github.com/UniversalRobots/Universal_Robots_ROS2_Driver/actions/workflows/humble-binary-testing.yml?query=event%3Aschedule++">
-         <img src="https://github.com/UniversalRobots/Universal_Robots_ROS2_Driver/actions/workflows/humble-binary-testing.yml/badge.svg?event=schedule"
-              alt="Humble Binary Testing"/>
-      </a> <br />
-      <a href="https://github.com/UniversalRobots/Universal_Robots_ROS2_Driver/actions/workflows/humble-semi-binary-main.yml?query=event%3Aschedule++">
-         <img src="https://github.com/UniversalRobots/Universal_Robots_ROS2_Driver/actions/workflows/humble-semi-binary-main.yml/badge.svg?event=schedule"
-              alt="Humble Semi-Binary Main"/>
-      </a> <br />
-      <a href="https://github.com/UniversalRobots/Universal_Robots_ROS2_Driver/actions/workflows/humble-semi-binary-testing.yml?query=event%3Aschedule++">
-         <img src="https://github.com/UniversalRobots/Universal_Robots_ROS2_Driver/actions/workflows/humble-semi-binary-testing.yml/badge.svg?event=schedule"
-              alt="Humble Semi-Binary Testing"/>
-      </a>
-    </td>
-    <td>
-      <a href="https://github.com/UniversalRobots/Universal_Robots_ROS2_Driver/actions/workflows/rolling-binary-main.yml?query=branch%3Amain+">
-         <img src="https://github.com/UniversalRobots/Universal_Robots_ROS2_Driver/actions/workflows/rolling-binary-main.yml/badge.svg?branch=main"
-              alt="Rolling Binary Main"/>
-      </a> <br />
-      <a href="https://github.com/UniversalRobots/Universal_Robots_ROS2_Driver/actions/workflows/rolling-binary-testing.yml?query=branch%3Amain+">
-         <img src="https://github.com/UniversalRobots/Universal_Robots_ROS2_Driver/actions/workflows/rolling-binary-testing.yml/badge.svg?branch=main"
-              alt="Rolling Binary Testing"/>
-      </a> <br />
-      <a href="https://github.com/UniversalRobots/Universal_Robots_ROS2_Driver/actions/workflows/rolling-semi-binary-main.yml?query=branch%3Amain+">
-         <img src="https://github.com/UniversalRobots/Universal_Robots_ROS2_Driver/actions/workflows/rolling-semi-binary-main.yml/badge.svg?branch=main"
-              alt="Rolling Semi-Binary Main"/>
-      </a> <br />
-      <a href="https://github.com/UniversalRobots/Universal_Robots_ROS2_Driver/actions/workflows/rolling-semi-binary-testing.yml?query=branch%3Amain+">
-         <img src="https://github.com/UniversalRobots/Universal_Robots_ROS2_Driver/actions/workflows/rolling-semi-binary-testing.yml/badge.svg?branch=main"
-              alt="Rolling Semi-Binary Testing"/>
-      </a>
-    </td>
-  </tr>
-</table>
+**Custom script snippets** can be sent to the robot on a topic basis. By default, they will
+interrupt other programs (such as the one controlling the robot). For a certain subset of functions,
+it is however possible to send them as secondary programs. See [UR
+documentation](https://www.universal-robots.com/how-tos-and-faqs/how-to/ur-how-tos/secondary-program-17257/)
+on details.
+<br/>
+**Note to e-Series users:**
+The robot won't accept script code from a remote source unless the robot is put into
+*remote_control-mode*. However, if put into *remote_control-mode*, the program containing the
+**External Control** program node can't be started from the panel.
+For this purpose, please use the **dashboard** services to load, start and stop the main program
+running on the robot. See the [ROS-API documentation](doc/ROS_INTERFACE.md) for details on the
+dashboard services.
 
+For using the **tool communication interface** on e-Series robots, a `socat` script is prepared to
+forward the robot's tool communication interface to a local device on the ROS PC. See [the tool
+communication setup guide](doc/setup_tool_communication.rst) for details.
 
-**NOTE**: There are two build stages checking current and future compatibility of the driver.
+This driver is using [ROS-Control](https://wiki.ros.org/ros_control) for any control statements.
+Therefore, it can be used with all position-based controllers available in ROS-Control. However, we
+recommend using the controllers from the `ur_controllers` package. See it's
+[documentation](../ur_controllers/README.md) for details. **Note: Speed scaling support will only be
+available using the controllers from `ur_controllers`**
 
-1. Binary builds - against released packages (main and testing) in ROS distributions. Shows that
-   direct local build is possible and is the most relevant workflow for users.
+## A note about modes
+The term **mode** is used in different meanings inside this driver.
 
-   Uses repos file: `src/Universal_Robots_ROS2_Driver/Universal_Robots_ROS2_Driver-not-released.<ros-distro>.repos`
+### Remote control mode
+On the e-series the robot itself can operate in different command modes: It can be either in **local control
+mode** where the teach pendant is the single point of command or in **remote control mode**, where
+motions from the TP, starting & loading programs from the TP activating the freedrive mode are
+blocked. Note that the **remote control mode** has to be explicitly enabled in the robot's settings
+under **Settings** -> **System** -> **Remote Control**. See the robot's manual for details.
 
-1. Semi-binary builds - against released core ROS packages (main and testing), but the immediate dependencies are pulled from source.
-   Shows that local build with dependencies is possible and if fails there we can expect that after the next package sync we will not be able to build.
+The **remote control mode** is needed for many aspects of this driver such as
+ * headless mode (see below)
+ * sending script code to the robot
+ * many dashboard functionalities such as
+   * restarting the robot after protective / EM-Stop
+   * powering on the robot and do brake release
+   * loading and starting programs
+ * the `set_mode` action, as it uses the dashboard calls mentioned above
 
-   Uses repos file: `src/Universal_Robots_ROS2_Driver/Universal_Robots_ROS2_Driver.repos`
+### Headless mode
+Inside this driver, there's the **headless** mode, which can be either enabled or not. When the
+[headless mode](./doc/ROS_INTERFACE.md#headless_mode-default-false) is activated, required script
+code for external control will be sent to the robot directly when the driver starts. As soon as
+other script code is sent to the robot either by sending it directly through this driver or by
+pressing any motion-related button on the teach pendant, the script will be overwritten by this
+action and has to be restarted by using the
+[resend_robot_program](./doc/ROS_INTERFACE.md#resend_robot_program-std_srvstrigger) service. If this
+is necessary, you will see the output `Connection to robot dropped, waiting for new connection.`
+from the driver. Note that pressing "play" on the TP won't start the external control again, but
+whatever program is currently loaded on the controller. This mode doesn't require the "External
+Control" URCap being installed on the robot as the program is sent to the robot directly. However,
+we recommend to use the non-headless mode and leverage the `set_mode` action to start program
+execution without the teach pendant. The **headless** mode might be removed in future releases.
 
-Each of these stages also performs integration tests using ursim. In order to execute these tests locally, they have to be enabled:
-  ```
-  colcon build --packages-select ur_robot_driver --cmake-args -DUR_ROBOT_DRIVER_BUILD_INTEGRATION_TESTS=On
-  ```
+**Note for the e-Series:** In order to leverage the **headless** mode on the e-Series the robot must
+be in **remote_control_mode** as explained above.
 
-
-## Packages in the Repository:
-
-  - `ur` - Meta-package that provides a single point of installation for the released packages.
-  - `ur_calibration` - tool for extracting calibration information from a real robot.
-  - `ur_controllers` - implementations of controllers specific for UR robots.
-  - `ur_dashboard_msgs` - package defining messages used by dashboard node.
-  - `ur_moveit_config` - example MoveIt configuration for UR robots.
-  - `ur_robot_driver` - driver / hardware interface for communication with UR robots.
-
-## Getting Started
-
-For getting started, you'll basically need three steps:
-
-1. **Install the driver** (see below). You can either install this driver from binary packages or build it from source. We recommend a
-binary package installation unless you want to join development and submit changes.
-
-2. **Start & Setup the robot**. Once you've installed the driver, [setup the
-robot](https://docs.ros.org/en/ros2_packages/rolling/api/ur_robot_driver/installation/robot_setup.html)
-
-Please do this step carefully and extract the calibration as explained
-[here](https://docs.ros.org/en/ros2_packages/rolling/api/ur_robot_driver/installation/robot_setup.html#extract-calibration-information).
-Otherwise the TCP's pose will not be correct inside the ROS ecosystem.
-
-If no real robot is required, you can [use a simulated
-robot](https://docs.ros.org/en/ros2_packages/rolling/api/ur_robot_driver/usage.html#usage-with-official-ur-simulator)
-that will behave almost exactly like the real robot.
-
-
-3. **Start the driver**. See the [usage
-   documentation](https://docs.ros.org/en/ros2_packages/rolling/api/ur_robot_driver/usage.html) for
-   details.
-
-### Install from binary packages
-1. [Install ROS2](https://docs.ros.org/en/rolling/Installation/Ubuntu-Install-Debians.html). This
-      branch supports only ROS2 Rolling. For other ROS2 versions, please see the respective
-      branches.
-2. Install the driver using
-   ```
-   sudo apt-get install ros-${ROS_DISTRO}-ur-robot-driver
-   ```
-
-### Build from source
-Before building from source please make sure that you actually need to do that. Building from source
-might require some special treatment, especially when it comes to dependency management.
-Dependencies might change from time to time. Upstream packages (such as the library) might change
-their features / API which require changes in this repo. Therefore, this repo's source builds might
-require upstream repositories to be present in a certain version as otherwise builds might fail.
-Starting from scratch following exactly the steps below should always work, but simply pulling and
-building might fail occasionally.
-
-1. [Install ROS2](https://docs.ros.org/en/rolling/Installation/Ubuntu-Install-Debians.html). This
-      branch supports only ROS2 Rolling. For other ROS2 versions, please see the respective
-      branches.
-
-   Once installed, please make sure to actually [source ROS2](https://docs.ros.org/en/rolling/Tutorials/Beginner-CLI-Tools/Configuring-ROS2-Environment.html#source-the-setup-files) before proceeding.
-
-3. Make sure that `colcon`, its extensions and `vcs` are installed:
-   ```
-   sudo apt install python3-colcon-common-extensions python3-vcstool
-   ```
-
-4. Create a new ROS2 workspace:
-   ```
-   export COLCON_WS=~/workspace/ros_ur_driver
-   mkdir -p $COLCON_WS/src
-   ```
-
-5. Clone relevant packages, install dependencies, compile, and source the workspace by using:
-   ```
-   cd $COLCON_WS
-   git clone https://github.com/UniversalRobots/Universal_Robots_ROS2_Driver.git src/Universal_Robots_ROS2_Driver
-   vcs import src --skip-existing --input src/Universal_Robots_ROS2_Driver/Universal_Robots_ROS2_Driver-not-released.${ROS_DISTRO}.repos
-   rosdep update
-   rosdep install --ignore-src --from-paths src -y
-   colcon build --cmake-args -DCMAKE_BUILD_TYPE=Release
-   source install/setup.bash
-   ```
-
-6. When consecutive pulls leads to build errors, please make sure to update the upstream packages before
-   filing an issue:
-   ```
-   cd $COLCON_WS
-   vcs import src --skip-existing --input src/Universal_Robots_ROS2_Driver/Universal_Robots_ROS2_Driver-not-released.${ROS_DISTRO}.repos
-   rosdep update
-   rosdep install --ignore-src --from-paths src -y
-   ```
-
-## MoveIt! support
-
-[MoveIt!](https://moveit.ros.org) support is built-in into this driver already.
-Watch MoveIt in action with the Universal Robots ROS2 driver:
-
-[![Video: MoveIt2 Demo](https://img.youtube.com/vi/d_cVXoZZ52w/0.jpg)](https://www.youtube.com/watch?v=d_cVXoZZ52w)
-
-  *The video shows free-space trajectory planning around a modeled collision scene object using the MoveIt2 MotionPlanning widget for Rviz2.*
-
-See the [MoveIt!
-section](https://docs.ros.org/en/ros2_packages/rolling/api/ur_robot_driver/usage.html#using-moveit)
-of the [Usage
-guide](https://docs.ros.org/en/ros2_packages/rolling/api/ur_robot_driver/usage.html) for details.
-
-## Expected Changes in the Near Future
-
-- Trajectory control currently only supports position commands. In the future, velocity control will be added.
-
-
-## Contributor Guidelines
-Code is auto-formatted with clang-format 14 whenever a git commit is made. Please ensure these dependencies are installed:
-  ```
-  pip3 install pre-commit
-  sudo apt install clang-format-14
-  ```
-
-Prepare the pre-commit formatting to run like this:
-  ```
-  pre-commit install
-  ```
+## controller_stopper
+A small helper node that stops and restarts ROS controllers based on a boolean status topic. When the status goes to `false`, all running controllers except a set of predefined *consistent_controllers* gets stopped. If status returns to `true` the stopped controllers are restarted.
+This is done by Subscribing to a robot's running state topic. Ideally this topic is latched and only publishes on changes. However, this node only reacts on state changes, so a state published each cycle would also be fine.
