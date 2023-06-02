@@ -150,6 +150,7 @@ class RobotDriverTest(unittest.TestCase):
         rclpy.shutdown()
 
     def init_robot(self):
+
         # Wait longer for the first service clients:
         #  - The robot has to start up
         #  - The controller_manager has to start
@@ -210,7 +211,7 @@ class RobotDriverTest(unittest.TestCase):
     def test_start_scaled_jtc_controller(self):
         req = SwitchController.Request()
         req.strictness = SwitchController.Request.BEST_EFFORT
-        req.activate_controllers = ["scaled_joint_trajectory_controller"]
+        req.start_controllers = ["scaled_joint_trajectory_controller"]
         result = self.call_service("/controller_manager/switch_controller", req)
 
         self.assertEqual(result.ok, True)

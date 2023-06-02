@@ -53,39 +53,23 @@ Check also [presentations and videos](ur_robot_driver/doc/resources/README.md) a
       </a>
     </td>
     <td>
-      <a href="https://github.com/UniversalRobots/Universal_Robots_ROS2_Driver/actions/workflows/humble-binary-main.yml?query=event%3Aschedule++">
-         <img src="https://github.com/UniversalRobots/Universal_Robots_ROS2_Driver/actions/workflows/humble-binary-main.yml/badge.svg?event=schedule"
-              alt="Humble Binary Main"/>
+      <a href="https://github.com/UniversalRobots/Universal_Robots_ROS2_Driver/actions/workflows/humble-binary-build.yml?query=event%3Aschedule++">
+         <img src="https://github.com/UniversalRobots/Universal_Robots_ROS2_Driver/actions/workflows/humble-binary-build.yml/badge.svg?event=schedule"
+              alt="Humble Binary Build"/>
       </a> <br />
-      <a href="https://github.com/UniversalRobots/Universal_Robots_ROS2_Driver/actions/workflows/humble-binary-testing.yml?query=event%3Aschedule++">
-         <img src="https://github.com/UniversalRobots/Universal_Robots_ROS2_Driver/actions/workflows/humble-binary-testing.yml/badge.svg?event=schedule"
-              alt="Humble Binary Testing"/>
-      </a> <br />
-      <a href="https://github.com/UniversalRobots/Universal_Robots_ROS2_Driver/actions/workflows/humble-semi-binary-main.yml?query=event%3Aschedule++">
-         <img src="https://github.com/UniversalRobots/Universal_Robots_ROS2_Driver/actions/workflows/humble-semi-binary-main.yml/badge.svg?event=schedule"
-              alt="Humble Semi-Binary Main"/>
-      </a> <br />
-      <a href="https://github.com/UniversalRobots/Universal_Robots_ROS2_Driver/actions/workflows/humble-semi-binary-testing.yml?query=event%3Aschedule++">
-         <img src="https://github.com/UniversalRobots/Universal_Robots_ROS2_Driver/actions/workflows/humble-semi-binary-testing.yml/badge.svg?event=schedule"
-              alt="Humble Semi-Binary Testing"/>
+      <a href="https://github.com/UniversalRobots/Universal_Robots_ROS2_Driver/actions/workflows/humble-semi-binary-build.yml?query=event%3Aschedule++">
+         <img src="https://github.com/UniversalRobots/Universal_Robots_ROS2_Driver/actions/workflows/humble-semi-binary-build.yml/badge.svg?event=schedule"
+              alt="Humble Semi-Binary Build"/>
       </a>
     </td>
     <td>
-      <a href="https://github.com/UniversalRobots/Universal_Robots_ROS2_Driver/actions/workflows/rolling-binary-main.yml?query=branch%3Amain+">
-         <img src="https://github.com/UniversalRobots/Universal_Robots_ROS2_Driver/actions/workflows/rolling-binary-main.yml/badge.svg?branch=main"
-              alt="Rolling Binary Main"/>
+      <a href="https://github.com/UniversalRobots/Universal_Robots_ROS2_Driver/actions/workflows/rolling-binary-build.yml?query=branch%3Amain+">
+         <img src="https://github.com/UniversalRobots/Universal_Robots_ROS2_Driver/actions/workflows/rolling-binary-build.yml/badge.svg?branch=main"
+              alt="Rolling Binary Build"/>
       </a> <br />
-      <a href="https://github.com/UniversalRobots/Universal_Robots_ROS2_Driver/actions/workflows/rolling-binary-testing.yml?query=branch%3Amain+">
-         <img src="https://github.com/UniversalRobots/Universal_Robots_ROS2_Driver/actions/workflows/rolling-binary-testing.yml/badge.svg?branch=main"
-              alt="Rolling Binary Testing"/>
-      </a> <br />
-      <a href="https://github.com/UniversalRobots/Universal_Robots_ROS2_Driver/actions/workflows/rolling-semi-binary-main.yml?query=branch%3Amain+">
-         <img src="https://github.com/UniversalRobots/Universal_Robots_ROS2_Driver/actions/workflows/rolling-semi-binary-main.yml/badge.svg?branch=main"
-              alt="Rolling Semi-Binary Main"/>
-      </a> <br />
-      <a href="https://github.com/UniversalRobots/Universal_Robots_ROS2_Driver/actions/workflows/rolling-semi-binary-testing.yml?query=branch%3Amain+">
-         <img src="https://github.com/UniversalRobots/Universal_Robots_ROS2_Driver/actions/workflows/rolling-semi-binary-testing.yml/badge.svg?branch=main"
-              alt="Rolling Semi-Binary Testing"/>
+      <a href="https://github.com/UniversalRobots/Universal_Robots_ROS2_Driver/actions/workflows/rolling-semi-binary-build.yml?query=branch%3Amain+">
+         <img src="https://github.com/UniversalRobots/Universal_Robots_ROS2_Driver/actions/workflows/rolling-semi-binary-build.yml/badge.svg?branch=main"
+              alt="Rolling Semi-Binary Build"/>
       </a>
     </td>
   </tr>
@@ -94,8 +78,7 @@ Check also [presentations and videos](ur_robot_driver/doc/resources/README.md) a
 
 **NOTE**: There are two build stages checking current and future compatibility of the driver.
 
-1. Binary builds - against released packages (main and testing) in ROS distributions. Shows that
-   direct local build is possible and is the most relevant workflow for users.
+1. Binary builds - against released packages (main and testing) in ROS distributions. Shows that direct local build is possible.
 
    Uses repos file: `src/Universal_Robots_ROS2_Driver/Universal_Robots_ROS2_Driver-not-released.<ros-distro>.repos`
 
@@ -113,11 +96,14 @@ Each of these stages also performs integration tests using ursim. In order to ex
 ## Packages in the Repository:
 
   - `ur` - Meta-package that provides a single point of installation for the released packages.
+  - `ur_bringup` - launch file and run-time configurations, e.g. controllers (DEPRECATED).
   - `ur_calibration` - tool for extracting calibration information from a real robot.
   - `ur_controllers` - implementations of controllers specific for UR robots.
   - `ur_dashboard_msgs` - package defining messages used by dashboard node.
   - `ur_moveit_config` - example MoveIt configuration for UR robots.
   - `ur_robot_driver` - driver / hardware interface for communication with UR robots.
+
+Deprecation: The `ur_bringup` package is deprecated and will be removed from Iron Irwini on.
 
 ## Getting Started
 
@@ -127,24 +113,24 @@ For getting started, you'll basically need three steps:
 binary package installation unless you want to join development and submit changes.
 
 2. **Start & Setup the robot**. Once you've installed the driver, [setup the
-robot](https://docs.ros.org/en/ros2_packages/rolling/api/ur_robot_driver/installation/robot_setup.html)
+   robot](https://docs.ros.org/en/ros2_packages/humble/api/ur_robot_driver/installation/robot_setup.html)
 
 Please do this step carefully and extract the calibration as explained
-[here](https://docs.ros.org/en/ros2_packages/rolling/api/ur_robot_driver/installation/robot_setup.html#extract-calibration-information).
+[here](https://docs.ros.org/en/ros2_packages/humble/api/ur_robot_driver/installation/robot_setup.html#extract-calibration-information).
 Otherwise the TCP's pose will not be correct inside the ROS ecosystem.
 
 If no real robot is required, you can [use a simulated
-robot](https://docs.ros.org/en/ros2_packages/rolling/api/ur_robot_driver/usage.html#usage-with-official-ur-simulator)
+robot](https://docs.ros.org/en/ros2_packages/humble/api/ur_robot_driver/usage.html#usage-with-official-ur-simulator)
 that will behave almost exactly like the real robot.
 
 
 3. **Start the driver**. See the [usage
-   documentation](https://docs.ros.org/en/ros2_packages/rolling/api/ur_robot_driver/usage.html) for
+   documentation](https://docs.ros.org/en/ros2_packages/humble/api/ur_robot_driver/usage.html) for
    details.
 
 ### Install from binary packages
-1. [Install ROS2](https://docs.ros.org/en/rolling/Installation/Ubuntu-Install-Debians.html). This
-      branch supports only ROS2 Rolling. For other ROS2 versions, please see the respective
+1. [Install ROS2](https://docs.ros.org/en/humble/Installation/Ubuntu-Install-Debians.html). This
+      branch supports only ROS2 Humble. For other ROS2 versions, please see the respective
       branches.
 2. Install the driver using
    ```
@@ -160,11 +146,11 @@ require upstream repositories to be present in a certain version as otherwise bu
 Starting from scratch following exactly the steps below should always work, but simply pulling and
 building might fail occasionally.
 
-1. [Install ROS2](https://docs.ros.org/en/rolling/Installation/Ubuntu-Install-Debians.html). This
-      branch supports only ROS2 Rolling. For other ROS2 versions, please see the respective
-      branches.
+1. [Install ROS2](https://docs.ros.org/en/humble/Installation/Ubuntu-Install-Debians.html).
+   branch supports only ROS2 Humble. For other ROS2 versions, please see the respective
+   branches.
 
-   Once installed, please make sure to actually [source ROS2](https://docs.ros.org/en/rolling/Tutorials/Beginner-CLI-Tools/Configuring-ROS2-Environment.html#source-the-setup-files) before proceeding.
+   Once installed, please make sure to actually [source ROS2](https://docs.ros.org/en/humble/Tutorials/Beginner-CLI-Tools/Configuring-ROS2-Environment.html#source-the-setup-files) before proceeding.
 
 3. Make sure that `colcon`, its extensions and `vcs` are installed:
    ```
@@ -180,7 +166,7 @@ building might fail occasionally.
 5. Clone relevant packages, install dependencies, compile, and source the workspace by using:
    ```
    cd $COLCON_WS
-   git clone https://github.com/UniversalRobots/Universal_Robots_ROS2_Driver.git src/Universal_Robots_ROS2_Driver
+   git clone -b humble https://github.com/UniversalRobots/Universal_Robots_ROS2_Driver.git src/Universal_Robots_ROS2_Driver
    vcs import src --skip-existing --input src/Universal_Robots_ROS2_Driver/Universal_Robots_ROS2_Driver-not-released.${ROS_DISTRO}.repos
    rosdep update
    rosdep install --ignore-src --from-paths src -y
@@ -207,9 +193,9 @@ Watch MoveIt in action with the Universal Robots ROS2 driver:
   *The video shows free-space trajectory planning around a modeled collision scene object using the MoveIt2 MotionPlanning widget for Rviz2.*
 
 See the [MoveIt!
-section](https://docs.ros.org/en/ros2_packages/rolling/api/ur_robot_driver/usage.html#using-moveit)
-of the [Usage
-guide](https://docs.ros.org/en/ros2_packages/rolling/api/ur_robot_driver/usage.html) for details.
+section](https://docs.ros.org/en/ros2_packages/humble/api/ur_robot_driver/usage.html#using-moveit)
+of the [Usage guide](https://docs.ros.org/en/ros2_packages/humble/api/ur_robot_driver/usage.html)
+for details.
 
 ## Expected Changes in the Near Future
 
