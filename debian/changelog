@@ -1,0 +1,56 @@
+ros-humble-ur-calibration (2.2.7-1jammy) jammy; urgency=high
+
+
+
+ -- Felix Exner <exner@fzi.de>  Thu, 01 Jun 2023 22:00:00 -0000
+
+ros-humble-ur-calibration (2.2.6-1jammy) jammy; urgency=high
+
+
+
+ -- Felix Exner <exner@fzi.de>  Sun, 27 Nov 2022 23:00:00 -0000
+
+ros-humble-ur-calibration (2.2.5-1jammy) jammy; urgency=high
+
+  * Fixes launchfile references (#490 <https://github.com/UniversalRobots/Universal_Robots_ROS2_Driver/issues/490>)
+    The filename with the dual type ending was wrong.
+  * Contributors: Felix Exner
+
+ -- Felix Exner <exner@fzi.de>  Fri, 18 Nov 2022 23:00:00 -0000
+
+ros-humble-ur-calibration (2.2.4-1jammy) jammy; urgency=high
+
+
+
+ -- Felix Exner <exner@fzi.de>  Thu, 06 Oct 2022 22:00:00 -0000
+
+ros-humble-ur-calibration (2.2.3-1jammy) jammy; urgency=high
+
+
+
+ -- Felix Exner <exner@fzi.de>  Tue, 26 Jul 2022 22:00:00 -0000
+
+ros-humble-ur-calibration (2.2.2-1jammy) jammy; urgency=high
+
+  * Made sure all past maintainers are listed as authors (#429 <https://github.com/UniversalRobots/Universal_Robots_ROS2_Driver/issues/429>)
+  * Contributors: Felix Exner
+
+ -- Felix Exner <exner@fzi.de>  Mon, 18 Jul 2022 22:00:00 -0000
+
+ros-humble-ur-calibration (2.2.1-1jammy) jammy; urgency=high
+
+
+
+ -- Felix Exner <exner@fzi.de>  Sun, 26 Jun 2022 22:00:00 -0000
+
+ros-humble-ur-calibration (2.2.0-1jammy) jammy; urgency=high
+
+  * Updated package maintainers
+  * Update license to BSD-3-Clause (#277 <https://github.com/UniversalRobots/Universal_Robots_ROS2_Driver/issues/277>)
+  * Add missing dependency on angles and update formatting for linters. (#283 <https://github.com/UniversalRobots/Universal_Robots_ROS2_Driver/issues/283>)
+  * Calibration extraction package (#186 <https://github.com/UniversalRobots/Universal_Robots_ROS2_Driver/issues/186>)
+  * Contributors: Denis Štogl, Felix Exner, livanov93
+
+ -- Felix Exner <exner@fzi.de>  Sun, 19 Jun 2022 22:00:00 -0000
+
+
