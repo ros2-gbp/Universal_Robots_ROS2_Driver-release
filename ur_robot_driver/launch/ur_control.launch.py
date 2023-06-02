@@ -29,13 +29,13 @@
 #
 # Author: Denis Stogl
 
-from launch import LaunchDescription
-from launch.actions import DeclareLaunchArgument
-from launch.actions import OpaqueFunction
-from launch.conditions import IfCondition, UnlessCondition
-from launch.substitutions import Command, FindExecutable, LaunchConfiguration, PathJoinSubstitution
 from launch_ros.actions import Node
 from launch_ros.substitutions import FindPackageShare
+
+from launch import LaunchDescription
+from launch.actions import DeclareLaunchArgument, OpaqueFunction
+from launch.conditions import IfCondition, UnlessCondition
+from launch.substitutions import Command, FindExecutable, LaunchConfiguration, PathJoinSubstitution
 
 
 def launch_setup(context, *args, **kwargs):
@@ -51,9 +51,10 @@ def launch_setup(context, *args, **kwargs):
     controllers_file = LaunchConfiguration("controllers_file")
     description_package = LaunchConfiguration("description_package")
     description_file = LaunchConfiguration("description_file")
-    prefix = LaunchConfiguration("prefix")
+    tf_prefix = LaunchConfiguration("tf_prefix")
     use_fake_hardware = LaunchConfiguration("use_fake_hardware")
     fake_sensor_commands = LaunchConfiguration("fake_sensor_commands")
+    controller_spawner_timeout = LaunchConfiguration("controller_spawner_timeout")
     initial_joint_controller = LaunchConfiguration("initial_joint_controller")
     activate_joint_controller = LaunchConfiguration("activate_joint_controller")
     launch_rviz = LaunchConfiguration("launch_rviz")
@@ -68,6 +69,8 @@ def launch_setup(context, *args, **kwargs):
     tool_device_name = LaunchConfiguration("tool_device_name")
     tool_tcp_port = LaunchConfiguration("tool_tcp_port")
     tool_voltage = LaunchConfiguration("tool_voltage")
+    reverse_ip = LaunchConfiguration("reverse_ip")
+    script_command_port = LaunchConfiguration("script_command_port")
 
     joint_limit_params = PathJoinSubstitution(
         [FindPackageShare(description_package), "config", ur_type, "joint_limits.yaml"]
@@ -82,7 +85,7 @@ def launch_setup(context, *args, **kwargs):
         [FindPackageShare(description_package), "config", ur_type, "visual_parameters.yaml"]
     )
     script_filename = PathJoinSubstitution(
-        [FindPackageShare("ur_robot_driver"), "resources", "ros_control.urscript"]
+        [FindPackageShare("ur_client_library"), "resources", "external_control.urscript"]
     )
     input_recipe_filename = PathJoinSubstitution(
         [FindPackageShare("ur_robot_driver"), "resources", "rtde_input_recipe.txt"]
@@ -133,8 +136,8 @@ def launch_setup(context, *args, **kwargs):
             "output_recipe_filename:=",
             output_recipe_filename,
             " ",
-            "prefix:=",
-            prefix,
+            "tf_prefix:=",
+            tf_prefix,
             " ",
             "use_fake_hardware:=",
             use_fake_hardware,
@@ -171,6 +174,12 @@ def launch_setup(context, *args, **kwargs):
             " ",
             "tool_voltage:=",
             tool_voltage,
+            " ",
+            "reverse_ip:=",
+            reverse_ip,
+            " ",
+            "script_command_port:=",
+            script_command_port,
             " ",
         ]
     )
@@ -271,55 +280,58 @@ def launch_setup(context, *args, **kwargs):
         arguments=["-d", rviz_config_file],
     )
 
-    joint_state_broadcaster_spawner = Node(
-        package="controller_manager",
-        executable="spawner",
-        arguments=["joint_state_broadcaster", "--controller-manager", "/controller_manager"],
-    )
+    # Spawn controllers
+    def controller_spawner(name, active=True):
+        inactive_flags = ["--inactive"] if not active else []
+        return Node(
+            package="controller_manager",
+            executable="spawner",
+            arguments=[
+                name,
+                "--controller-manager",
+                "/controller_manager",
+                "--controller-manager-timeout",
+                controller_spawner_timeout,
+            ]
+            + inactive_flags,
+        )
 
-    io_and_status_controller_spawner = Node(
-        package="controller_manager",
-        executable="spawner",
-        arguments=["io_and_status_controller", "-c", "/controller_manager"],
-    )
+    controller_spawner_names = [
+        "joint_state_broadcaster",
+        "io_and_status_controller",
+        "speed_scaling_state_broadcaster",
+        "force_torque_sensor_broadcaster",
+    ]
+    controller_spawner_inactive_names = ["forward_position_controller"]
 
-    speed_scaling_state_broadcaster_spawner = Node(
-        package="controller_manager",
-        executable="spawner",
-        arguments=[
-            "speed_scaling_state_broadcaster",
-            "--controller-manager",
-            "/controller_manager",
-        ],
-    )
-
-    force_torque_sensor_broadcaster_spawner = Node(
-        package="controller_manager",
-        executable="spawner",
-        arguments=[
-            "force_torque_sensor_broadcaster",
-            "--controller-manager",
-            "/controller_manager",
-        ],
-    )
-
-    forward_position_controller_spawner_stopped = Node(
-        package="controller_manager",
-        executable="spawner",
-        arguments=["forward_position_controller", "-c", "/controller_manager", "--inactive"],
-    )
+    controller_spawners = [controller_spawner(name) for name in controller_spawner_names] + [
+        controller_spawner(name, active=False) for name in controller_spawner_inactive_names
+    ]
 
     # There may be other controllers of the joints, but this is the initially-started one
     initial_joint_controller_spawner_started = Node(
         package="controller_manager",
         executable="spawner",
-        arguments=[initial_joint_controller, "-c", "/controller_manager"],
+        arguments=[
+            initial_joint_controller,
+            "-c",
+            "/controller_manager",
+            "--controller-manager-timeout",
+            controller_spawner_timeout,
+        ],
         condition=IfCondition(activate_joint_controller),
     )
     initial_joint_controller_spawner_stopped = Node(
         package="controller_manager",
         executable="spawner",
-        arguments=[initial_joint_controller, "-c", "/controller_manager", "--inactive"],
+        arguments=[
+            initial_joint_controller,
+            "-c",
+            "/controller_manager",
+            "--controller-manager-timeout",
+            controller_spawner_timeout,
+            "--inactive",
+        ],
         condition=UnlessCondition(activate_joint_controller),
     )
 
@@ -331,14 +343,9 @@ def launch_setup(context, *args, **kwargs):
         controller_stopper_node,
         robot_state_publisher_node,
         rviz_node,
-        joint_state_broadcaster_spawner,
-        io_and_status_controller_spawner,
-        speed_scaling_state_broadcaster_spawner,
-        force_torque_sensor_broadcaster_spawner,
-        forward_position_controller_spawner_stopped,
         initial_joint_controller_spawner_stopped,
         initial_joint_controller_spawner_started,
-    ]
+    ] + controller_spawners
 
     return nodes_to_start
 
@@ -412,10 +419,10 @@ def generate_launch_description():
     )
     declared_arguments.append(
         DeclareLaunchArgument(
-            "prefix",
+            "tf_prefix",
             default_value='""',
-            description="Prefix of the joint names, useful for \
-        multi-robot setup. If changed than also joint names in the controllers' configuration \
+            description="tf_prefix of the joint names, useful for \
+        multi-robot setup. If changed, also joint names in the controllers' configuration \
         have to be updated.",
         )
     )
@@ -439,6 +446,13 @@ def generate_launch_description():
             "headless_mode",
             default_value="false",
             description="Enable headless mode for robot control",
+        )
+    )
+    declared_arguments.append(
+        DeclareLaunchArgument(
+            "controller_spawner_timeout",
+            default_value="10",
+            description="Timeout used when spawning controllers.",
         )
     )
     declared_arguments.append(
@@ -532,6 +546,20 @@ def generate_launch_description():
             "tool_voltage",
             default_value="0",  # 0 being a conservative value that won't destroy anything
             description="Tool voltage that will be setup.",
+        )
+    )
+    declared_arguments.append(
+        DeclareLaunchArgument(
+            "reverse_ip",
+            default_value="0.0.0.0",
+            description="IP that will be used for the robot controller to communicate back to the driver.",
+        )
+    )
+    declared_arguments.append(
+        DeclareLaunchArgument(
+            "script_command_port",
+            default_value="50004",
+            description="Port that will be opened to forward script commands from the driver to the robot",
         )
     )
 

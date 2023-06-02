@@ -88,6 +88,7 @@ class URPositionHardwareInterface : public hardware_interface::SystemInterface
 {
 public:
   RCLCPP_SHARED_PTR_DEFINITIONS(URPositionHardwareInterface);
+  virtual ~URPositionHardwareInterface();
 
   hardware_interface::CallbackReturn on_init(const hardware_interface::HardwareInfo& system_info) final;
 
@@ -174,11 +175,16 @@ protected:
   // asynchronous commands
   std::array<double, 18> standard_dig_out_bits_cmd_;
   std::array<double, 2> standard_analog_output_cmd_;
+  double tool_voltage_cmd_;
   double io_async_success_;
   double target_speed_fraction_cmd_;
   double scaling_async_success_;
   double resend_robot_program_cmd_;
   double resend_robot_program_async_success_;
+  double zero_ftsensor_cmd_;
+  double zero_ftsensor_async_success_;
+  double hand_back_control_cmd_;
+  double hand_back_control_async_success_;
   bool first_pass_;
   bool initialized_;
   double system_interface_initialized_;
@@ -216,6 +222,8 @@ protected:
 
   std::unique_ptr<urcl::UrDriver> ur_driver_;
   std::shared_ptr<std::thread> async_thread_;
+
+  bool rtde_comm_has_been_started_ = false;
 };
 }  // namespace ur_robot_driver
 
