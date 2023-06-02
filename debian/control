@@ -1,0 +1,12 @@
+Source: ros-rolling-ur-controllers
+Section: misc
+Priority: optional
+Maintainer: Denis Stogl <denis@stoglrobotics.de>
+Build-Depends: debhelper (>= 9.0.0), ros-rolling-ament-cmake, ros-rolling-angles, ros-rolling-controller-interface, ros-rolling-joint-trajectory-controller, ros-rolling-lifecycle-msgs, ros-rolling-pluginlib, ros-rolling-rclcpp-lifecycle, ros-rolling-rcutils, ros-rolling-realtime-tools, ros-rolling-std-msgs, ros-rolling-std-srvs, ros-rolling-ur-dashboard-msgs, ros-rolling-ur-msgs, ros-rolling-ros-workspace
+Homepage: 
+Standards-Version: 3.9.2
+
+Package: ros-rolling-ur-controllers
+Architecture: any
+Depends: ${shlibs:Depends}, ${misc:Depends}, ros-rolling-angles, ros-rolling-controller-interface, ros-rolling-joint-trajectory-controller, ros-rolling-lifecycle-msgs, ros-rolling-pluginlib, ros-rolling-rclcpp-lifecycle, ros-rolling-rcutils, ros-rolling-realtime-tools, ros-rolling-std-msgs, ros-rolling-std-srvs, ros-rolling-ur-dashboard-msgs, ros-rolling-ur-msgs, ros-rolling-ros-workspace
+Description: Provides controllers that use the speed scaling interface of Universal Robots.
