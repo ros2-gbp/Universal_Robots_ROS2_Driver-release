@@ -54,10 +54,13 @@ from std_srvs.srv import Trigger
 from trajectory_msgs.msg import JointTrajectory, JointTrajectoryPoint
 from ur_msgs.msg import IOStates
 from ur_msgs.srv import SetIO
+from ur_dashboard_msgs.msg import RobotMode
+from ur_dashboard_msgs.srv import GetRobotMode
 
 TIMEOUT_WAIT_SERVICE = 10
 TIMEOUT_WAIT_SERVICE_INITIAL = 60
 TIMEOUT_WAIT_ACTION = 10
+TIMEOUT_EXECUTE_TRAJECTORY = 30
 
 ROBOT_JOINTS = [
     "elbow_joint",
@@ -147,11 +150,14 @@ class RobotDriverTest(unittest.TestCase):
         rclpy.shutdown()
 
     def init_robot(self):
-
-        # Wait longer for the first service clients (for both the driver and the dashboard client) as the robot driver is still starting up
+        # Wait longer for the first service clients:
+        #  - The robot has to start up
+        #  - The controller_manager has to start
+        #  - The controllers need to load and activate
         service_interfaces_initial = {
             "/dashboard_client/power_on": Trigger,
             "/controller_manager/switch_controller": SwitchController,
+            "/io_and_status_controller/set_io": SetIO,
         }
         self.service_clients = {
             srv_name: waitForService(
@@ -163,8 +169,9 @@ class RobotDriverTest(unittest.TestCase):
         # Connect to the rest of the required interfaces
         service_interfaces = {
             "/dashboard_client/brake_release": Trigger,
+            "/dashboard_client/stop": Trigger,
+            "/dashboard_client/get_robot_mode": GetRobotMode,
             "/controller_manager/switch_controller": SwitchController,
-            "/io_and_status_controller/set_io": SetIO,
             "/io_and_status_controller/resend_robot_program": Trigger,
         }
         self.service_clients.update(
@@ -174,20 +181,27 @@ class RobotDriverTest(unittest.TestCase):
             }
         )
 
-        # test action appearance
-        self.jtc_action_client = waitForAction(
-            self.node,
-            "/scaled_joint_trajectory_controller/follow_joint_trajectory",
-            FollowJointTrajectory,
-        )
+        action_interfaces = {
+            "/scaled_joint_trajectory_controller/follow_joint_trajectory": FollowJointTrajectory
+        }
+        self.action_clients = {
+            action_name: waitForAction(self.node, action_name, action_type)
+            for (action_name, action_type) in action_interfaces.items()
+        }
 
+    def setUp(self):
         # Start robot
         empty_req = Trigger.Request()
-        self.call_service(self, "/dashboard_client/power_on", empty_req)
-        self.call_service(self, "/dashboard_client/brake_release", empty_req)
-        self.call_service(self, "/io_and_status_controller/resend_robot_program", empty_req)
+        self.call_service("/dashboard_client/power_on", empty_req)
+        self.call_service("/dashboard_client/brake_release", empty_req)
         time.sleep(1)
-        self.call_service(self, "/io_and_status_controller/resend_robot_program", empty_req)
+        robot_mode_resp = self.call_service(
+            "/dashboard_client/get_robot_mode", GetRobotMode.Request()
+        )
+        self.assertEqual(robot_mode_resp.robot_mode.mode, RobotMode.RUNNING)
+        self.call_service("/dashboard_client/stop", empty_req)
+        time.sleep(1)
+        self.call_service("/io_and_status_controller/resend_robot_program", empty_req)
 
     #
     # Test functions
@@ -275,12 +289,17 @@ class RobotDriverTest(unittest.TestCase):
         # Sending trajectory goal
         self.node.get_logger().info("Sending simple goal")
         goal_response = self.call_action(
-            self.jtc_action_client, FollowJointTrajectory.Goal(trajectory=trajectory)
+            "/scaled_joint_trajectory_controller/follow_joint_trajectory",
+            FollowJointTrajectory.Goal(trajectory=trajectory),
         )
         self.assertEqual(goal_response.accepted, True)
 
         # Verify execution
-        result = self.get_result(self.jtc_action_client, goal_response)
+        result = self.get_result(
+            "/scaled_joint_trajectory_controller/follow_joint_trajectory",
+            goal_response,
+            TIMEOUT_EXECUTE_TRAJECTORY,
+        )
         self.assertEqual(result.error_code, FollowJointTrajectory.Result.SUCCESSFUL)
         self.node.get_logger().info("Received result SUCCESSFUL")
 
@@ -307,7 +326,8 @@ class RobotDriverTest(unittest.TestCase):
         # Send illegal goal
         self.node.get_logger().info("Sending illegal goal")
         goal_response = self.call_action(
-            self.jtc_action_client, FollowJointTrajectory.Goal(trajectory=trajectory)
+            "/scaled_joint_trajectory_controller/follow_joint_trajectory",
+            FollowJointTrajectory.Goal(trajectory=trajectory),
         )
 
         # Verify the failure is correctly detected
@@ -336,12 +356,18 @@ class RobotDriverTest(unittest.TestCase):
         # see https://github.com/ros-controls/ros2_controllers/issues/249
         # self.node.get_logger().info("Sending scaled goal without time restrictions")
         self.node.get_logger().info("Sending goal for robot to follow")
-        goal_response = self.call_action(self.jtc_action_client, goal)
+        goal_response = self.call_action(
+            "/scaled_joint_trajectory_controller/follow_joint_trajectory", goal
+        )
 
         self.assertEqual(goal_response.accepted, True)
 
         if goal_response.accepted:
-            result = self.get_result(self.jtc_action_client, goal_response)
+            result = self.get_result(
+                "/scaled_joint_trajectory_controller/follow_joint_trajectory",
+                goal_response,
+                TIMEOUT_EXECUTE_TRAJECTORY,
+            )
             self.assertIn(
                 result.error_code,
                 (
@@ -359,12 +385,12 @@ class RobotDriverTest(unittest.TestCase):
         # self.node.get_logger().info("Sending scaled goal with time restrictions")
         #
         # goal.goal_time_tolerance = Duration(nanosec=10000000)
-        # goal_response = self.call_action(self.jtc_action_client, goal)
+        # goal_response = self.call_action("/scaled_joint_trajectory_controller/follow_joint_trajectory", goal)
         #
         # self.assertEqual(goal_response.accepted, True)
         #
         # if goal_response.accepted:
-        #     result = self.get_result(self.jtc_action_client, goal_response)
+        #     result = self.get_result("/scaled_joint_trajectory_controller/follow_joint_trajectory", goal_response, TIMEOUT_EXECUTE_TRAJECTORY)
         #     self.assertEqual(result.error_code, FollowJointTrajectory.Result.GOAL_TOLERANCE_VIOLATED)
         #     self.node.get_logger().info("Received result GOAL_TOLERANCE_VIOLATED")
 
@@ -382,8 +408,9 @@ class RobotDriverTest(unittest.TestCase):
         else:
             raise Exception(f"Exception while calling service: {future.exception()}")
 
-    def call_action(self, ac_client, g):
-        future = ac_client.send_goal_async(g)
+    def call_action(self, action_name, goal):
+        self.node.get_logger().info(f"Sending goal to action server '{action_name}'")
+        future = self.action_clients[action_name].send_goal_async(goal)
         rclpy.spin_until_future_complete(self.node, future)
 
         if future.result() is not None:
@@ -391,10 +418,15 @@ class RobotDriverTest(unittest.TestCase):
         else:
             raise Exception(f"Exception while calling action: {future.exception()}")
 
-    def get_result(self, ac_client, goal_response):
-        future_res = ac_client._get_result_async(goal_response)
-        rclpy.spin_until_future_complete(self.node, future_res)
+    def get_result(self, action_name, goal_response, timeout):
+        self.node.get_logger().info(
+            f"Waiting for result for action server '{action_name}' (timeout: {timeout} seconds)"
+        )
+        future_res = self.action_clients[action_name]._get_result_async(goal_response)
+        rclpy.spin_until_future_complete(self.node, future_res, timeout_sec=timeout)
+
         if future_res.result() is not None:
+            self.node.get_logger().info(f"Received result {future_res.result().result}")
             return future_res.result().result
         else:
             raise Exception(f"Exception while calling action: {future_res.exception()}")
