@@ -1,3 +1,3 @@
 [git-buildpackage]
-upstream-tag=release/iron/ur/2.3.2-2
+upstream-tag=@(release_tag)
 upstream-tree=tag
