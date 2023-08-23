@@ -30,6 +30,7 @@
 # Author: Denis Stogl
 
 from launch_ros.actions import Node
+from launch_ros.parameter_descriptions import ParameterFile
 from launch_ros.substitutions import FindPackageShare
 
 from launch import LaunchDescription
@@ -204,7 +205,11 @@ def launch_setup(context, *args, **kwargs):
     control_node = Node(
         package="controller_manager",
         executable="ros2_control_node",
-        parameters=[robot_description, update_rate_config_file, initial_joint_controllers],
+        parameters=[
+            robot_description,
+            update_rate_config_file,
+            ParameterFile(initial_joint_controllers, allow_substs=True),
+        ],
         output="screen",
         condition=IfCondition(use_fake_hardware),
     )
@@ -212,7 +217,11 @@ def launch_setup(context, *args, **kwargs):
     ur_control_node = Node(
         package="ur_robot_driver",
         executable="ur_ros2_control_node",
-        parameters=[robot_description, update_rate_config_file, initial_joint_controllers],
+        parameters=[
+            robot_description,
+            update_rate_config_file,
+            ParameterFile(initial_joint_controllers, allow_substs=True),
+        ],
         output="screen",
         condition=UnlessCondition(use_fake_hardware),
     )
@@ -240,6 +249,13 @@ def launch_setup(context, *args, **kwargs):
                 "device_name": tool_device_name,
             }
         ],
+    )
+
+    urscript_interface = Node(
+        package="ur_robot_driver",
+        executable="urscript_interface",
+        parameters=[{"robot_ip": robot_ip}],
+        output="screen",
     )
 
     controller_stopper_node = Node(
@@ -340,6 +356,7 @@ def launch_setup(context, *args, **kwargs):
         dashboard_client_node,
         tool_communication_node,
         controller_stopper_node,
+        urscript_interface,
         robot_state_publisher_node,
         rviz_node,
         initial_joint_controller_spawner_stopped,
@@ -419,7 +436,7 @@ def generate_launch_description():
     declared_arguments.append(
         DeclareLaunchArgument(
             "tf_prefix",
-            default_value='""',
+            default_value="",
             description="tf_prefix of the joint names, useful for \
         multi-robot setup. If changed, also joint names in the controllers' configuration \
         have to be updated.",
