@@ -31,6 +31,7 @@
 import time
 import unittest
 
+import launch_testing
 import pytest
 import rclpy
 from builtin_interfaces.msg import Duration
@@ -52,10 +53,10 @@ from rclpy.action import ActionClient
 from rclpy.node import Node
 from std_srvs.srv import Trigger
 from trajectory_msgs.msg import JointTrajectory, JointTrajectoryPoint
-from ur_msgs.msg import IOStates
-from ur_msgs.srv import SetIO
 from ur_dashboard_msgs.msg import RobotMode
 from ur_dashboard_msgs.srv import GetRobotMode
+from ur_msgs.msg import IOStates
+from ur_msgs.srv import SetIO
 
 TIMEOUT_WAIT_SERVICE = 10
 TIMEOUT_WAIT_SERVICE_INITIAL = 60
@@ -73,7 +74,11 @@ ROBOT_JOINTS = [
 
 
 @pytest.mark.launch_test
-def generate_test_description():
+@launch_testing.parametrize(
+    "tf_prefix",
+    [(""), ("my_ur_")],
+)
+def generate_test_description(tf_prefix):
     declared_arguments = []
 
     declared_arguments.append(
@@ -102,12 +107,18 @@ def generate_test_description():
             "headless_mode": "true",
             "launch_dashboard_client": "false",
             "start_joint_controller": "false",
+            "tf_prefix": tf_prefix,
         }.items(),
     )
     ursim = ExecuteProcess(
         cmd=[
             PathJoinSubstitution(
-                [FindPackagePrefix("ur_robot_driver"), "lib", "ur_robot_driver", "start_ursim.sh"]
+                [
+                    FindPackagePrefix("ur_client_library"),
+                    "lib",
+                    "ur_client_library",
+                    "start_ursim.sh",
+                ]
             ),
             " ",
             "-m ",
@@ -269,7 +280,7 @@ class RobotDriverTest(unittest.TestCase):
         # Clean up io subscription
         self.node.destroy_subscription(io_states_sub)
 
-    def test_trajectory(self):
+    def test_trajectory(self, tf_prefix):
         """Test robot movement."""
         # Construct test trajectory
         test_trajectory = [
@@ -279,7 +290,7 @@ class RobotDriverTest(unittest.TestCase):
         ]
 
         trajectory = JointTrajectory(
-            joint_names=ROBOT_JOINTS,
+            joint_names=[tf_prefix + joint for joint in ROBOT_JOINTS],
             points=[
                 JointTrajectoryPoint(positions=test_pos, time_from_start=test_time)
                 for (test_time, test_pos) in test_trajectory
@@ -303,7 +314,7 @@ class RobotDriverTest(unittest.TestCase):
         self.assertEqual(result.error_code, FollowJointTrajectory.Result.SUCCESSFUL)
         self.node.get_logger().info("Received result SUCCESSFUL")
 
-    def test_illegal_trajectory(self):
+    def test_illegal_trajectory(self, tf_prefix):
         """
         Test trajectory server.
 
@@ -316,7 +327,7 @@ class RobotDriverTest(unittest.TestCase):
         ]
 
         trajectory = JointTrajectory(
-            joint_names=ROBOT_JOINTS,
+            joint_names=[tf_prefix + joint for joint in ROBOT_JOINTS],
             points=[
                 JointTrajectoryPoint(positions=test_pos, time_from_start=test_time)
                 for (test_time, test_pos) in test_trajectory
@@ -334,7 +345,7 @@ class RobotDriverTest(unittest.TestCase):
         self.assertEqual(goal_response.accepted, False)
         self.node.get_logger().info("Goal response REJECTED")
 
-    def test_trajectory_scaled(self):
+    def test_trajectory_scaled(self, tf_prefix):
         """Test robot movement."""
         # Construct test trajectory
         test_trajectory = [
@@ -343,7 +354,7 @@ class RobotDriverTest(unittest.TestCase):
         ]
 
         trajectory = JointTrajectory(
-            joint_names=ROBOT_JOINTS,
+            joint_names=[tf_prefix + joint for joint in ROBOT_JOINTS],
             points=[
                 JointTrajectoryPoint(positions=test_pos, time_from_start=test_time)
                 for (test_time, test_pos) in test_trajectory
