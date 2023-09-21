@@ -65,7 +65,7 @@ def generate_test_description():
             "ur_type",
             default_value="ur5e",
             description="Type/series of used UR robot.",
-            choices=["ur3", "ur3e", "ur5", "ur5e", "ur10", "ur10e", "ur16e"],
+            choices=["ur3", "ur3e", "ur5", "ur5e", "ur10", "ur10e", "ur16e", "ur20"],
         )
     )
 
@@ -89,9 +89,9 @@ def generate_test_description():
         cmd=[
             PathJoinSubstitution(
                 [
-                    FindPackagePrefix("ur_client_library"),
+                    FindPackagePrefix("ur_robot_driver"),
                     "lib",
-                    "ur_client_library",
+                    "ur_robot_driver",
                     "start_ursim.sh",
                 ]
             ),

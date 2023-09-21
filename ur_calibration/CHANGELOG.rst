@@ -2,13 +2,11 @@
 Changelog for package ur_calibration
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-2.4.0 (2023-08-28)
+2.3.4 (2023-09-21)
 ------------------
-* Use mock_hardware and mock_sensor_commands instead of fake (`#739 <https://github.com/UniversalRobots/Universal_Robots_ROS2_Driver/issues/739>`_)
-  * Use mock_hardware and mock_sensor_commands instead of fake
-  This has been deprecated a while back and was never adapted.
-  * Update documentation to mock_hardware
-* Contributors: Felix Exner (fexner)
+
+2.3.3 (2023-08-23)
+------------------
 
 2.3.2 (2023-06-02)
 ------------------
