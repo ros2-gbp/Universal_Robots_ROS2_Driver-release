@@ -2,34 +2,24 @@
 Changelog for package ur_moveit_config
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-2.4.1 (2023-09-21)
+2.2.9 (2023-09-22)
 ------------------
-* Added support for UR20 (`#797 <https://github.com/UniversalRobots/Universal_Robots_ROS2_Driver/issues/797>`_)
-* Contributors: Felix Exner
+* Added support for UR20 (`#805 <https://github.com/UniversalRobots/Universal_Robots_ROS2_Driver/issues/805>`_)
+* Contributors: mergify[bot], Felix Exner
 
-2.4.0 (2023-08-28)
-------------------
-* Use mock_hardware and mock_sensor_commands instead of fake (`#739 <https://github.com/UniversalRobots/Universal_Robots_ROS2_Driver/issues/739>`_)
-  * Use mock_hardware and mock_sensor_commands instead of fake
-  This has been deprecated a while back and was never adapted.
-  * Update documentation to mock_hardware
-* Contributors: Felix Exner (fexner)
-
-2.3.2 (2023-06-02)
-------------------
-* Fixed formatting (`#685 <https://github.com/UniversalRobots/Universal_Robots_ROS2_Driver/issues/685>`_)
-  * Removed empty lines from python files
-  * Fixed typo in changelogs
-* Define default maximum accelerations for MoveIt (`#645 <https://github.com/UniversalRobots/Universal_Robots_ROS2_Driver/issues/645>`_)
-* Contributors: Felix Exner (fexner), RobertWilbrandt
-
-2.3.1 (2023-03-16)
+2.2.8 (2023-06-26)
 ------------------
 
-2.3.0 (2023-03-02)
+2.2.7 (2023-06-02)
 ------------------
-* Fix capitalization of docstring
-* Contributors: Felix Exner
+* Update linters & checkers (backport `#426 <https://github.com/UniversalRobots/Universal_Robots_ROS2_Driver/issues/426>`_) (`#556 <https://github.com/UniversalRobots/Universal_Robots_ROS2_Driver/issues/556>`_)
+* Contributors: mergify[bot], Felix Exner
+
+2.2.6 (2022-11-28)
+------------------
+
+2.2.5 (2022-11-19)
+------------------
 
 2.2.4 (2022-10-07)
 ------------------
