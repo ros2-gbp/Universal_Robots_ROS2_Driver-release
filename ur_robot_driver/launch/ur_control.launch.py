@@ -40,7 +40,6 @@ from launch.substitutions import Command, FindExecutable, LaunchConfiguration, P
 
 
 def launch_setup(context, *args, **kwargs):
-
     # Initialize Arguments
     ur_type = LaunchConfiguration("ur_type")
     robot_ip = LaunchConfiguration("robot_ip")
@@ -53,8 +52,8 @@ def launch_setup(context, *args, **kwargs):
     description_package = LaunchConfiguration("description_package")
     description_file = LaunchConfiguration("description_file")
     tf_prefix = LaunchConfiguration("tf_prefix")
-    use_fake_hardware = LaunchConfiguration("use_fake_hardware")
-    fake_sensor_commands = LaunchConfiguration("fake_sensor_commands")
+    use_mock_hardware = LaunchConfiguration("use_mock_hardware")
+    mock_sensor_commands = LaunchConfiguration("mock_sensor_commands")
     controller_spawner_timeout = LaunchConfiguration("controller_spawner_timeout")
     initial_joint_controller = LaunchConfiguration("initial_joint_controller")
     activate_joint_controller = LaunchConfiguration("activate_joint_controller")
@@ -72,6 +71,9 @@ def launch_setup(context, *args, **kwargs):
     tool_voltage = LaunchConfiguration("tool_voltage")
     reverse_ip = LaunchConfiguration("reverse_ip")
     script_command_port = LaunchConfiguration("script_command_port")
+    reverse_port = LaunchConfiguration("reverse_port")
+    script_sender_port = LaunchConfiguration("script_sender_port")
+    trajectory_port = LaunchConfiguration("trajectory_port")
 
     joint_limit_params = PathJoinSubstitution(
         [FindPackageShare(description_package), "config", ur_type, "joint_limits.yaml"]
@@ -140,11 +142,11 @@ def launch_setup(context, *args, **kwargs):
             "tf_prefix:=",
             tf_prefix,
             " ",
-            "use_fake_hardware:=",
-            use_fake_hardware,
+            "use_mock_hardware:=",
+            use_mock_hardware,
             " ",
-            "fake_sensor_commands:=",
-            fake_sensor_commands,
+            "mock_sensor_commands:=",
+            mock_sensor_commands,
             " ",
             "headless_mode:=",
             headless_mode,
@@ -182,6 +184,15 @@ def launch_setup(context, *args, **kwargs):
             "script_command_port:=",
             script_command_port,
             " ",
+            "reverse_port:=",
+            reverse_port,
+            " ",
+            "script_sender_port:=",
+            script_sender_port,
+            " ",
+            "trajectory_port:=",
+            trajectory_port,
+            " ",
         ]
     )
     robot_description = {"robot_description": robot_description_content}
@@ -212,7 +223,7 @@ def launch_setup(context, *args, **kwargs):
             ParameterFile(initial_joint_controllers, allow_substs=True),
         ],
         output="screen",
-        condition=IfCondition(use_fake_hardware),
+        condition=IfCondition(use_mock_hardware),
     )
 
     ur_control_node = Node(
@@ -224,12 +235,12 @@ def launch_setup(context, *args, **kwargs):
             ParameterFile(initial_joint_controllers, allow_substs=True),
         ],
         output="screen",
-        condition=UnlessCondition(use_fake_hardware),
+        condition=UnlessCondition(use_mock_hardware),
     )
 
     dashboard_client_node = Node(
         package="ur_robot_driver",
-        condition=IfCondition(launch_dashboard_client) and UnlessCondition(use_fake_hardware),
+        condition=IfCondition(launch_dashboard_client) and UnlessCondition(use_mock_hardware),
         executable="dashboard_client",
         name="dashboard_client",
         output="screen",
@@ -257,6 +268,7 @@ def launch_setup(context, *args, **kwargs):
         executable="urscript_interface",
         parameters=[{"robot_ip": robot_ip}],
         output="screen",
+        condition=UnlessCondition(use_mock_hardware),
     )
 
     controller_stopper_node = Node(
@@ -265,7 +277,7 @@ def launch_setup(context, *args, **kwargs):
         name="controller_stopper",
         output="screen",
         emulate_tty=True,
-        condition=UnlessCondition(use_fake_hardware),
+        condition=UnlessCondition(use_mock_hardware),
         parameters=[
             {"headless_mode": headless_mode},
             {"joint_controller_active": activate_joint_controller},
@@ -445,17 +457,17 @@ def generate_launch_description():
     )
     declared_arguments.append(
         DeclareLaunchArgument(
-            "use_fake_hardware",
+            "use_mock_hardware",
             default_value="false",
-            description="Start robot with fake hardware mirroring command to its states.",
+            description="Start robot with mock hardware mirroring command to its states.",
         )
     )
     declared_arguments.append(
         DeclareLaunchArgument(
-            "fake_sensor_commands",
+            "mock_sensor_commands",
             default_value="false",
-            description="Enable fake command interfaces for sensors used for simple simulations. \
-            Used only if 'use_fake_hardware' parameter is true.",
+            description="Enable mock command interfaces for sensors used for simple simulations. \
+            Used only if 'use_mock_hardware' parameter is true.",
         )
     )
     declared_arguments.append(
@@ -576,8 +588,28 @@ def generate_launch_description():
         DeclareLaunchArgument(
             "script_command_port",
             default_value="50004",
-            description="Port that will be opened to forward script commands from the driver to the robot",
+            description="Port that will be opened to forward URScript commands to the robot.",
         )
     )
-
+    declared_arguments.append(
+        DeclareLaunchArgument(
+            "reverse_port",
+            default_value="50001",
+            description="Port that will be opened to send cyclic instructions from the driver to the robot controller.",
+        )
+    )
+    declared_arguments.append(
+        DeclareLaunchArgument(
+            "script_sender_port",
+            default_value="50002",
+            description="The driver will offer an interface to query the external_control URScript on this port.",
+        )
+    )
+    declared_arguments.append(
+        DeclareLaunchArgument(
+            "trajectory_port",
+            default_value="50003",
+            description="Port that will be opened for trajectory control.",
+        )
+    )
     return LaunchDescription(declared_arguments + [OpaqueFunction(function=launch_setup)])
