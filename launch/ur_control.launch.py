@@ -71,6 +71,9 @@ def launch_setup(context, *args, **kwargs):
     tool_voltage = LaunchConfiguration("tool_voltage")
     reverse_ip = LaunchConfiguration("reverse_ip")
     script_command_port = LaunchConfiguration("script_command_port")
+    reverse_port = LaunchConfiguration("reverse_port")
+    script_sender_port = LaunchConfiguration("script_sender_port")
+    trajectory_port = LaunchConfiguration("trajectory_port")
 
     joint_limit_params = PathJoinSubstitution(
         [FindPackageShare(description_package), "config", ur_type, "joint_limits.yaml"]
@@ -181,6 +184,15 @@ def launch_setup(context, *args, **kwargs):
             "script_command_port:=",
             script_command_port,
             " ",
+            "reverse_port:=",
+            reverse_port,
+            " ",
+            "script_sender_port:=",
+            script_sender_port,
+            " ",
+            "trajectory_port:=",
+            trajectory_port,
+            " ",
         ]
     )
     robot_description = {"robot_description": robot_description_content}
@@ -256,6 +268,7 @@ def launch_setup(context, *args, **kwargs):
         executable="urscript_interface",
         parameters=[{"robot_ip": robot_ip}],
         output="screen",
+        condition=UnlessCondition(use_mock_hardware),
     )
 
     controller_stopper_node = Node(
@@ -575,8 +588,28 @@ def generate_launch_description():
         DeclareLaunchArgument(
             "script_command_port",
             default_value="50004",
-            description="Port that will be opened to forward script commands from the driver to the robot",
+            description="Port that will be opened to forward URScript commands to the robot.",
         )
     )
-
+    declared_arguments.append(
+        DeclareLaunchArgument(
+            "reverse_port",
+            default_value="50001",
+            description="Port that will be opened to send cyclic instructions from the driver to the robot controller.",
+        )
+    )
+    declared_arguments.append(
+        DeclareLaunchArgument(
+            "script_sender_port",
+            default_value="50002",
+            description="The driver will offer an interface to query the external_control URScript on this port.",
+        )
+    )
+    declared_arguments.append(
+        DeclareLaunchArgument(
+            "trajectory_port",
+            default_value="50003",
+            description="Port that will be opened for trajectory control.",
+        )
+    )
     return LaunchDescription(declared_arguments + [OpaqueFunction(function=launch_setup)])
