@@ -1,44 +1,36 @@
-2.4.2 (2023-11-23)
+2.3.5 (2023-12-06)
 ------------------
-* [README] Move installation instructions to subpage (`#870 <https://github.com/UniversalRobots/Universal_Robots_ROS2_Driver/issues/870>`_)
-* Add backward_ros to driver (`#872 <https://github.com/UniversalRobots/Universal_Robots_ROS2_Driver/issues/872>`_)
-* Simplify tests (`#849 <https://github.com/UniversalRobots/Universal_Robots_ROS2_Driver/issues/849>`_)
-* Port configuration  (`#835 <https://github.com/UniversalRobots/Universal_Robots_ROS2_Driver/issues/835>`_)
-  Added possibility to change the reverse_port, script_sender_port and trajectory_port
-* [README] Update link to MoveIt! documentation
-* Do not start urscipt_interface when using mock hardware
-* Contributors: Felix Durchdewald, Felix Exner, RobertWilbrandt
+* Move installation instructions to subpage (`#885 <https://github.com/UniversalRobots/Universal_Robots_ROS2_Driver/issues/885>`_)
+  (cherry picked from commit 202a70c5f8f67c9e3ee2723084c0170a5a1050ae)
+  Co-authored-by: Felix Exner (fexner) <exner@fzi.de>
+* Add backward_ros to driver (`#872 <https://github.com/UniversalRobots/Universal_Robots_ROS2_Driver/issues/872>`_) (`#879 <https://github.com/UniversalRobots/Universal_Robots_ROS2_Driver/issues/879>`_)
+  (cherry picked from commit 21b7aa38e27382a206066111833c0a62377aa589)
+  Co-authored-by: Felix Exner (fexner) <exner@fzi.de>
+* Port configuration  (`#835 <https://github.com/UniversalRobots/Universal_Robots_ROS2_Driver/issues/835>`_) (`#848 <https://github.com/UniversalRobots/Universal_Robots_ROS2_Driver/issues/848>`_)
+  (cherry picked from commit f16ae2af7eb63f8d1c74c7e873347d4f32cacf4f)
+  Co-authored-by: Felix Durchdewald <145785497+fdurchdewald@users.noreply.github.com>
+* Update link to MoveIt! documentation (`#846 <https://github.com/UniversalRobots/Universal_Robots_ROS2_Driver/issues/846>`_)
+  (cherry picked from commit 3311cf849578ae38408088555c79397932c03cc4)
+  Co-authored-by: Felix Exner (fexner) <exner@fzi.de>
+* Contributors: mergify[bot]
 
-2.4.1 (2023-09-21)
+2.3.4 (2023-09-21)
 ------------------
-* Added a test that sjtc correctly aborts on violation of constraints (`#810 <https://github.com/UniversalRobots/Universal_Robots_ROS2_Driver/pull/810>`_)
-* Added support for UR20 (`#797 <https://github.com/UniversalRobots/Universal_Robots_ROS2_Driver/issues/797>`_)
-* Contributors: Felix Exner
-
-2.4.0 (2023-08-28)
-------------------
-* Start ursim from lib (`#733 <https://github.com/UniversalRobots/Universal_Robots_ROS2_Driver/issues/733>`_)
-  * Forward start_ursim.sh to the one from the client library
-  * Update docs and tests to start ursim from the ur_client_library script
-* Update velocity-control on feature list (`#573 <https://github.com/UniversalRobots/Universal_Robots_ROS2_Driver/issues/573>`_)
-  ros2_controllers jtc does support velocity control by now, so we should not state it doesn't.
+* Added a test that sjtc correctly aborts on violation of constraints (`#813 <https://github.com/UniversalRobots/Universal_Robots_ROS2_Driver/issues/813>`_)
+* Added support for UR20 (`#806 <https://github.com/UniversalRobots/Universal_Robots_ROS2_Driver/issues/806>`_)
 * Introduced tf_prefix into log handler (`#713 <https://github.com/UniversalRobots/Universal_Robots_ROS2_Driver/issues/713>`_)
-  * Introduced tf_prefix into log handler
-  * added default argument to prefix
-  ---------
-  Co-authored-by: Lennart Nachtigall <firesurfer@firesurfer.de>
-  Co-authored-by: Felix Exner <exner@fzi.de>
-  Co-authored-by: Lennart Nachtigall <lennart.nachtigall@sci-mo.de>
-* Run robot driver test also with tf_prefix (`#729 <https://github.com/UniversalRobots/Universal_Robots_ROS2_Driver/issues/729>`_)
+* Contributors: Felix Exner, Lennart Nachtigall
+
+2.3.3 (2023-08-23)
+------------------
+* Run robot driver test also with tf_prefix (`#729 <https://github.com/UniversalRobots/Universal_Robots_ROS2_Driver/issues/729>`_) (`#752 <https://github.com/UniversalRobots/Universal_Robots_ROS2_Driver/issues/752>`_)
   * Run robot driver test also with tf_prefix
   * Use tf_prefix substitution in controllers config file
   * Set default value of tf_prefix in launchfile to empty instead of '""'
   ---------
   Co-authored-by: Robert Wilbrandt <wilbrandt@fzi.de>
-* Use mock_hardware and mock_sensor_commands instead of fake (`#739 <https://github.com/UniversalRobots/Universal_Robots_ROS2_Driver/issues/739>`_)
-  * Use mock_hardware and mock_sensor_commands instead of fake
-  This has been deprecated a while back and was never adapted.
-  * Update documentation to mock_hardware
+  (cherry picked from commit 79bfddc7ac4cd3a69594da26ce6ae8b8024eae73)
+  Co-authored-by: Felix Exner (fexner) <exner@fzi.de>
 * Urscript interface (`#721 <https://github.com/UniversalRobots/Universal_Robots_ROS2_Driver/issues/721>`_)
   * Add a urscript interface node
   * Add urscript_interface to standard launchfile
@@ -60,7 +52,7 @@
   This is, in fact, very close to what the actual controller_manager_node
   does except that we always use FIFO scheduling independent of the actual
   kernel in use.
-* Contributors: Felix Exner (fexner), Lennart Nachtigall
+* Contributors: Felix Exner (fexner), mergify[bot]
 
 2.3.2 (2023-06-02)
 ------------------
