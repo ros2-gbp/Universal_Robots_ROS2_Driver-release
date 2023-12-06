@@ -1,154 +1,78 @@
-# Universal Robots ROS2 Driver
+# ur_calibration
 
-Universal Robots has become a dominant supplier of lightweight, robotic manipulators for industry, as well as for scientific research and education.
-<center><img src="ur_robot_driver/doc/installation/initial_setup_images/e-Series.jpg" alt="Universal Robot e-Series family" style="width: 80%;"/></center>
+Package for extracting the factory calibration from a UR robot and changing it to be used by `ur_description` to gain a correct URDF model.
 
-This is one of the very first ROS2 manipulator drivers. Some of the new features are enabled by ROS2 and include decreased latency, improved security, and more flexibility regarding middleware configuration. The package contains launch files to quickly get started using the driver as a standalone version or in combination with MoveIt2
+Each UR robot is calibrated inside the factory giving exact forward and inverse kinematics. To also
+make use of this in ROS, you first have to extract the calibration information from the robot.
 
-This driver is developed on top of [Universal_Robots_Client_Library](https://github.com/UniversalRobots/Universal_Robots_Client_Library) and support some key cobot functionalities like; pause at emergency stop, safeguard stop, automatic speed scaling to avoid violate the safety setting and manually speed scaling from the teach pendant. In addition the externalControl URCap makes it possible to include ROS2 behaviors in the robot program.
+Though this step is not necessary, to control the robot using this driver, it is highly recommended
+to do so, as end effector positions might be off in the magnitude of centimeters.
 
-The driver is compatible across the entire line of UR robots -- from 3 kg payload to 16 kg payload and includes both the CB3 and the E-series.
+## Nodes
+### calibration_correction
+This node extracts calibration information directly from a robot, calculates the URDF correction and
+saves it into a .yaml file.
 
+In the launch folder of the ur_calibration package is a helper script:
 
-Check also [presentations and videos](ur_robot_driver/doc/resources/README.md) about this driver.
+```bash
+$ ros2 launch ur_calibration calibration_correction.launch.py \
+robot_ip:=<robot_ip> target_filename:="${HOME}/my_robot_calibration.yaml"
+```
 
+For the parameter `robot_ip` insert the IP address on which the ROS pc can reach the robot. As
+`target_filename` provide an absolute path where the result will be saved to.
 
-## Release Status
+## Creating a calibration / launch package for all local robots
+When dealing with multiple robots in one organization it might make sense to store calibration data
+into a package dedicated to that purpose only. To do so, create a new package (if it doesn't already
+exist)
 
-<table width="100%">
-  <tr>
-    <th>ROS2 Distro</th>
-    <th>Foxy (EOL)</th>
-    <th>Galactic (EOL)</th>
-    <th>Humble</th>
-    <th>Iron</th>
-    <th>Rolling</th>
-  </tr>
-  <tr>
-    <th>Branch</th>
-    <td><a href="https://github.com/UniversalRobots/Universal_Robots_ROS2_Driver/tree/foxy">foxy</a></td>
-    <td><a href="https://github.com/UniversalRobots/Universal_Robots_ROS2_Driver/tree/galactic">galactic</a></td>
-    <td><a href="https://github.com/UniversalRobots/Universal_Robots_ROS2_Driver/tree/humble">humble</a></td>
-    <td><a href="https://github.com/UniversalRobots/Universal_Robots_ROS2_Driver/tree/iron">iron</a></td>
-    <td><a href="https://github.com/UniversalRobots/Universal_Robots_ROS2_Driver/tree/main">main</a></td>
-  </tr>
-  <tr>
-    <th>Release status</th>
-    <td>
-      <a href="https://github.com/UniversalRobots/Universal_Robots_ROS2_Driver/actions/workflows/foxy-binary-build.yml?query=event%3Aschedule++">
-         <img src="https://github.com/UniversalRobots/Universal_Robots_ROS2_Driver/actions/workflows/foxy-binary-build.yml/badge.svg?event=schedule"
-              alt="Foxy Binary Build"/>
-      </a> <br />
-    </td>
-    <td>
-      <a href="https://github.com/UniversalRobots/Universal_Robots_ROS2_Driver/actions/workflows/galactic-binary-build.yml?query=event%3Aschedule++">
-         <img src="https://github.com/UniversalRobots/Universal_Robots_ROS2_Driver/actions/workflows/galactic-binary-build.yml/badge.svg?event=schedule"
-              alt="Galactic Binary Build"/>
-      </a> <br />
-    </td>
-    <td>
-      <a href='https://build.ros2.org/job/Hbin_uJ64__ur_calibration__ubuntu_jammy_amd64__binary/'><img src='https://build.ros2.org/job/Hbin_uJ64__ur_calibration__ubuntu_jammy_amd64__binary/badge/icon?subject=ur_calibration'></a><br/>
-      <a href='https://build.ros2.org/job/Hbin_uJ64__ur_controllers__ubuntu_jammy_amd64__binary/'><img src='https://build.ros2.org/job/Hbin_uJ64__ur_controllers__ubuntu_jammy_amd64__binary/badge/icon?subject=ur_controllers'></a>
-      <a href='https://build.ros2.org/job/Hbin_uJ64__ur_dashboard_msgs__ubuntu_jammy_amd64__binary/'><img src='https://build.ros2.org/job/Hbin_uJ64__ur_dashboard_msgs__ubuntu_jammy_amd64__binary/badge/icon?subject=ur_dashboard_msgs'></a>
-      <a href='https://build.ros2.org/job/Hbin_uJ64__ur_moveit_config__ubuntu_jammy_amd64__binary/'><img src='https://build.ros2.org/job/Hbin_uJ64__ur_moveit_config__ubuntu_jammy_amd64__binary/badge/icon?subject=ur_moveit_config'></a>
-      <a href='https://build.ros2.org/job/Hbin_uJ64__ur_robot_driver__ubuntu_jammy_amd64__binary/'><img src='https://build.ros2.org/job/Hbin_uJ64__ur_robot_driver__ubuntu_jammy_amd64__binary/badge/icon?subject=ur_robot_driver'></a>
-    </td>
-    <td>
-      <a href='https://build.ros2.org/job/Ibin_uJ64__ur_calibration__ubuntu_jammy_amd64__binary/'><img src='https://build.ros2.org/job/Ibin_uJ64__ur_calibration__ubuntu_jammy_amd64__binary/badge/icon?subject=ur_calibration'></a><br/>
-      <a href='https://build.ros2.org/job/Ibin_uJ64__ur_controllers__ubuntu_jammy_amd64__binary/'><img src='https://build.ros2.org/job/Ibin_uJ64__ur_controllers__ubuntu_jammy_amd64__binary/badge/icon?subject=ur_controllers'></a>
-      <a href='https://build.ros2.org/job/Ibin_uJ64__ur_dashboard_msgs__ubuntu_jammy_amd64__binary/'><img src='https://build.ros2.org/job/Ibin_uJ64__ur_dashboard_msgs__ubuntu_jammy_amd64__binary/badge/icon?subject=ur_dashboard_msgs'></a>
-      <a href='https://build.ros2.org/job/Ibin_uJ64__ur_moveit_config__ubuntu_jammy_amd64__binary/'><img src='https://build.ros2.org/job/Ibin_uJ64__ur_moveit_config__ubuntu_jammy_amd64__binary/badge/icon?subject=ur_moveit_config'></a>
-      <a href='https://build.ros2.org/job/Ibin_uJ64__ur_robot_driver__ubuntu_jammy_amd64__binary/'><img src='https://build.ros2.org/job/Ibin_uJ64__ur_robot_driver__ubuntu_jammy_amd64__binary/badge/icon?subject=ur_robot_driver'></a>
-    </td>
-    <td>
-      <a href='https://build.ros2.org/job/Rbin_uJ64__ur_calibration__ubuntu_jammy_amd64__binary/'><img src='https://build.ros2.org/job/Rbin_uJ64__ur_calibration__ubuntu_jammy_amd64__binary/badge/icon?subject=ur_calibration'></a><br/>
-      <a href='https://build.ros2.org/job/Rbin_uJ64__ur_controllers__ubuntu_jammy_amd64__binary/'><img src='https://build.ros2.org/job/Rbin_uJ64__ur_controllers__ubuntu_jammy_amd64__binary/badge/icon?subject=ur_controllers'></a>
-      <a href='https://build.ros2.org/job/Rbin_uJ64__ur_dashboard_msgs__ubuntu_jammy_amd64__binary/'><img src='https://build.ros2.org/job/Rbin_uJ64__ur_dashboard_msgs__ubuntu_jammy_amd64__binary/badge/icon?subject=ur_dashboard_msgs'></a>
-      <a href='https://build.ros2.org/job/Rbin_uJ64__ur_moveit_config__ubuntu_jammy_amd64__binary/'><img src='https://build.ros2.org/job/Rbin_uJ64__ur_moveit_config__ubuntu_jammy_amd64__binary/badge/icon?subject=ur_moveit_config'></a>
-      <a href='https://build.ros2.org/job/Rbin_uJ64__ur_robot_driver__ubuntu_jammy_amd64__binary/'><img src='https://build.ros2.org/job/Rbin_uJ64__ur_robot_driver__ubuntu_jammy_amd64__binary/badge/icon?subject=ur_robot_driver'></a>
-    </td>
-  </tr>
-</table>
+```bash
+# Replace your actual colcon_ws folder
+$ cd <colcon_ws>/src
+$ ros2 pkg  create <organization_name>_ur_launch --build-type ament_cmake  --dependencies ur_client_library \
+--description "Package containing calibrations and launch files for our UR robots."
+# Create a skeleton package
+$ mkdir -p <organization_name>_ur_launch/etc
+$ mkdir -p <organization_name>_ur_launch/launch
+$ echo 'install(DIRECTORY etc launch DESTINATION share/${PROJECT_NAME})' >> <organization_name>_ur_launch/CMakeLists.txt
+$ colcon build --packages-select <organization_name>_ur_launch
+```
 
-The table above shows the build status for each package of this repo from the [ROS buildfarm](https://build.ros2.org/). For end-of-life (EOL) distributions the nightly binary builds from our CI are shown. EOL distributions will receive no more updates and may be lacking features.
+We can use the new package to store the calibration data in that package. We recommend naming each
+robot individually, e.g. *ex-ur10-1*.
 
-A more [detailed build status](ci_status.md) shows the state of all CI workflows inside this repo.
-Please note that the detailed view is intended for developers, while the one here should give end
-users an overview of the current released state.
+```bash
+$ ros2 launch ur_calibration calibration_correction.launch.py \
+robot_ip:=<robot_ip> \
+target_filename:="$(ros2 pkg prefix <organization_name>_ur_launch)/share/<organization_name>_ur_launch/etc/ex-ur10-1_calibration.yaml"
+```
 
-## Packages in the Repository:
+To make life easier, we create a launchfile for this particular robot. We base it upon the
+respective launchfile in the driver:
 
-  - `ur` - Meta-package that provides a single point of installation for the released packages.
-  - `ur_calibration` - tool for extracting calibration information from a real robot.
-  - `ur_controllers` - implementations of controllers specific for UR robots.
-  - `ur_dashboard_msgs` - package defining messages used by dashboard node.
-  - `ur_moveit_config` - example MoveIt configuration for UR robots.
-  - `ur_robot_driver` - driver / hardware interface for communication with UR robots.
+```bash
+# Replace your actual colcon_ws folder
+$ cd <colcon_ws>/src/<organization_name>_ur_launch/launch
+$ cp $(ros2 pkg prefix ur_robot_driver)/share/ur_robot_driver/launch/ur_control.launch.py ex-ur10-1.launch.py
+```
 
-## Getting Started
+Next, modify the parameter section of the new launchfile to match your actual calibration:
 
-For getting started, you'll basically need three steps:
+```py
+kinematics_params = PathJoinSubstitution(
+        [FindPackageShare("<organization_name>_ur_launch"), "etc", "", "ex-ur10-1_calibration.yaml"]
+    )
 
-1. **Install the driver**
-   ```bash
-   sudo apt-get install ros-rolling-ur
-   ```
-   See the [installation instructions](https://docs.ros.org/en/ros2_packages/rolling/api/ur_robot_driver/installation/installation.html) for more details and source-build instructions.
+```
 
-2. **Start & Setup the robot**. Once you've installed the driver, [setup the
-   robot](https://docs.ros.org/en/ros2_packages/rolling/api/ur_robot_driver/installation/robot_setup.html)
-   and [create a program for external
-   control](https://docs.ros.org/en/ros2_packages/rolling/api/ur_robot_driver/installation/install_urcap_e_series.html).
+Then, anybody cloning this repository can startup the robot simply by launching
 
-   Please do this step carefully and extract the calibration as explained
-   [here](https://docs.ros.org/en/ros2_packages/rolling/api/ur_robot_driver/installation/robot_setup.html#extract-calibration-information).
-   Otherwise the TCP's pose will not be correct inside the ROS ecosystem.
-
-   If no real robot is required, you can [use a simulated
-   robot](https://docs.ros.org/en/ros2_packages/rolling/api/ur_robot_driver/usage.html#usage-with-official-ur-simulator)
-   that will behave almost exactly like the real robot.
-
-
-3. **Start the driver**. See the [usage
-   documentation](https://docs.ros.org/en/ros2_packages/rolling/api/ur_robot_driver/usage.html) for
-   details.
-
-   ```bash
-   # Replace ur5e with one of ur3, ur3e, ur5, ur5e, ur10, ur10e, ur16e, ur20
-   # Replace the IP address with the IP address of your actual robot / URSim
-   ros2 launch ur_robot_driver ur_control.launch.py ur_type:=ur5e robot_ip:=192.168.56.101
-   ```
-
-4. Unless started in [headless mode](https://docs.ros.org/en/ros2_packages/rolling/api/ur_robot_driver/ROS_INTERFACE.html#headless-mode): Run the external_control program by **pressing `play` on the teach pendant**.
-
-
-## MoveIt! support
-
-[MoveIt!](https://moveit.ros.org) support is built-in into this driver already.
-Watch MoveIt in action with the Universal Robots ROS2 driver:
-
-[![Video: MoveIt2 Demo](https://img.youtube.com/vi/d_cVXoZZ52w/0.jpg)](https://www.youtube.com/watch?v=d_cVXoZZ52w)
-
-  *The video shows free-space trajectory planning around a modeled collision scene object using the MoveIt2 MotionPlanning widget for Rviz2.*
-
-See the [MoveIt!
-section](https://docs.ros.org/en/ros2_packages/rolling/api/ur_robot_driver/usage.html#using-moveit)
-of the [Usage
-guide](https://docs.ros.org/en/ros2_packages/rolling/api/ur_robot_driver/usage.html) for details.
-
-## Expected Changes in the Near Future
-
-- Trajectory control currently only supports position commands. In the future, velocity control will be added.
-
-
-## Contributor Guidelines
-Code is auto-formatted with clang-format 14 whenever a git commit is made. Please ensure these dependencies are installed:
-  ```
-  pip3 install pre-commit
-  sudo apt install clang-format-14
-  ```
-
-Prepare the pre-commit formatting to run like this:
-  ```
-  pre-commit install
-  ```
+```bash
+# Replace your actual colcon_ws folder
+$ cd <colcon_ws>
+$ colcon build --packages-select <organization_name>_ur_launch
+$ ros2 launch <organization_name>_ur_launch ex-ur10-1.launch.py
+robot_ip:=xxx.yyy.zzz.www ur_type:=ur5e  use_fake_hardware:=false launch_rviz:=true
+```
