@@ -1,0 +1,12 @@
+Source: ros-iron-ur-robot-driver
+Section: misc
+Priority: optional
+Maintainer: Denis Stogl <denis@stoglrobotics.de>
+Build-Depends: debhelper (>= 9.0.0), docker.io <!nocheck>, ros-iron-ament-cmake, ros-iron-ament-cmake-python, ros-iron-backward-ros, ros-iron-controller-manager, ros-iron-controller-manager-msgs, ros-iron-geometry-msgs, ros-iron-hardware-interface, ros-iron-launch-testing-ament-cmake <!nocheck>, ros-iron-pluginlib, ros-iron-rclcpp, ros-iron-rclcpp-lifecycle, ros-iron-rclpy, ros-iron-std-msgs, ros-iron-std-srvs, ros-iron-tf2-geometry-msgs, ros-iron-ur-client-library, ros-iron-ur-controllers, ros-iron-ur-dashboard-msgs, ros-iron-ur-description, ros-iron-ur-msgs, ros-iron-ros-workspace
+Homepage: 
+Standards-Version: 3.9.2
+
+Package: ros-iron-ur-robot-driver
+Architecture: any
+Depends: ${shlibs:Depends}, ${misc:Depends}, ros-iron-backward-ros, ros-iron-controller-manager, ros-iron-controller-manager-msgs, ros-iron-force-torque-sensor-broadcaster, ros-iron-geometry-msgs, ros-iron-hardware-interface, ros-iron-joint-state-broadcaster, ros-iron-joint-state-publisher, ros-iron-joint-trajectory-controller, ros-iron-launch, ros-iron-launch-ros, ros-iron-pluginlib, ros-iron-position-controllers, ros-iron-rclcpp, ros-iron-rclcpp-lifecycle, ros-iron-rclpy, ros-iron-robot-state-publisher, ros-iron-ros2-controllers-test-nodes, ros-iron-rviz2, ros-iron-std-msgs, ros-iron-std-srvs, ros-iron-tf2-geometry-msgs, ros-iron-ur-client-library, ros-iron-ur-controllers, ros-iron-ur-dashboard-msgs, ros-iron-ur-description, ros-iron-ur-msgs, ros-iron-urdf, ros-iron-velocity-controllers, ros-iron-xacro, socat, ros-iron-ros-workspace
+Description: The new driver for Universal Robots UR3, UR5 and UR10 robots with CB3 controllers and the e-series.
