@@ -114,7 +114,12 @@ def generate_test_description(tf_prefix):
     ursim = ExecuteProcess(
         cmd=[
             PathJoinSubstitution(
-                [FindPackagePrefix("ur_robot_driver"), "lib", "ur_robot_driver", "start_ursim.sh"]
+                [
+                    FindPackagePrefix("ur_client_library"),
+                    "lib",
+                    "ur_client_library",
+                    "start_ursim.sh",
+                ]
             ),
             " ",
             "-m ",
@@ -157,6 +162,7 @@ class RobotDriverTest(unittest.TestCase):
         rclpy.shutdown()
 
     def init_robot(self):
+
         # Wait longer for the first service clients:
         #  - The robot has to start up
         #  - The controller_manager has to start
@@ -217,7 +223,7 @@ class RobotDriverTest(unittest.TestCase):
     def test_start_scaled_jtc_controller(self):
         req = SwitchController.Request()
         req.strictness = SwitchController.Request.BEST_EFFORT
-        req.activate_controllers = ["scaled_joint_trajectory_controller"]
+        req.start_controllers = ["scaled_joint_trajectory_controller"]
         result = self.call_service("/controller_manager/switch_controller", req)
 
         self.assertEqual(result.ok, True)
@@ -446,7 +452,7 @@ class RobotDriverTest(unittest.TestCase):
             self.assertTrue(
                 all(
                     [
-                        abs(a - b) < 0.01
+                        abs(a - b) < 0.2
                         for a, b in zip(state_after_sleep.position, state_when_aborted.position)
                     ]
                 )

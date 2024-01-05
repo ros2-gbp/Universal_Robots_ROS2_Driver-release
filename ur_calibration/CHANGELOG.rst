@@ -2,26 +2,22 @@
 Changelog for package ur_calibration
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-2.3.5 (2023-12-06)
+2.2.10 (2024-01-03)
+-------------------
+
+2.2.9 (2023-09-22)
 ------------------
 
-2.3.4 (2023-09-21)
+2.2.8 (2023-06-26)
 ------------------
 
-2.3.3 (2023-08-23)
+2.2.7 (2023-06-02)
 ------------------
 
-2.3.2 (2023-06-02)
-------------------
-* Fixed formatting (`#685 <https://github.com/UniversalRobots/Universal_Robots_ROS2_Driver/issues/685>`_)
-  * Removed empty lines from python files
-  * Fixed typo in changelogs
-* Contributors: Felix Exner (fexner)
-
-2.3.1 (2023-03-16)
+2.2.6 (2022-11-28)
 ------------------
 
-2.3.0 (2023-03-02)
+2.2.5 (2022-11-19)
 ------------------
 * Fixes launchfile references (`#490 <https://github.com/UniversalRobots/Universal_Robots_ROS2_Driver/issues/490>`_)
   The filename with the dual type ending was wrong.
