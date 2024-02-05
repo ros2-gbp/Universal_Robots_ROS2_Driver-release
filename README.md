@@ -85,6 +85,10 @@ users an overview of the current released state.
   - `ur_moveit_config` - example MoveIt configuration for UR robots.
   - `ur_robot_driver` - driver / hardware interface for communication with UR robots.
 
+## System Requirements
+
+Please see the [requirements for the Universal_Robots_Client_Library](https://github.com/UniversalRobots/Universal_Robots_Client_Library#requirements), as this driver is build on top of Universal_Robots_Client_Library.
+
 ## Getting Started
 
 For getting started, you'll basically need three steps:
@@ -114,7 +118,7 @@ For getting started, you'll basically need three steps:
    details.
 
    ```bash
-   # Replace ur5e with one of ur3, ur3e, ur5, ur5e, ur10, ur10e, ur16e, ur20
+   # Replace ur5e with one of ur3, ur3e, ur5, ur5e, ur10, ur10e, ur16e, ur20, ur30
    # Replace the IP address with the IP address of your actual robot / URSim
    ros2 launch ur_robot_driver ur_control.launch.py ur_type:=ur5e robot_ip:=192.168.56.101
    ```
