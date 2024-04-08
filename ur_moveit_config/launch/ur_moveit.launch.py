@@ -31,20 +31,21 @@
 
 import os
 
+from launch import LaunchDescription
+from launch.actions import DeclareLaunchArgument
+from launch.actions import OpaqueFunction
+from launch.conditions import IfCondition
+from launch.substitutions import Command, FindExecutable, LaunchConfiguration, PathJoinSubstitution
 from launch_ros.actions import Node
 from launch_ros.substitutions import FindPackageShare
 from ur_moveit_config.launch_common import load_yaml
 
-from launch import LaunchDescription
-from launch.actions import DeclareLaunchArgument, OpaqueFunction
-from launch.conditions import IfCondition
-from launch.substitutions import Command, FindExecutable, LaunchConfiguration, PathJoinSubstitution
-
 
 def launch_setup(context, *args, **kwargs):
+
     # Initialize Arguments
     ur_type = LaunchConfiguration("ur_type")
-    use_mock_hardware = LaunchConfiguration("use_mock_hardware")
+    use_fake_hardware = LaunchConfiguration("use_fake_hardware")
     safety_limits = LaunchConfiguration("safety_limits")
     safety_pos_margin = LaunchConfiguration("safety_pos_margin")
     safety_k_position = LaunchConfiguration("safety_k_position")
@@ -52,7 +53,6 @@ def launch_setup(context, *args, **kwargs):
     description_package = LaunchConfiguration("description_package")
     description_file = LaunchConfiguration("description_file")
     moveit_config_package = LaunchConfiguration("moveit_config_package")
-    moveit_joint_limits_file = LaunchConfiguration("moveit_joint_limits_file")
     moveit_config_file = LaunchConfiguration("moveit_config_file")
     warehouse_sqlite_path = LaunchConfiguration("warehouse_sqlite_path")
     prefix = LaunchConfiguration("prefix")
@@ -146,28 +146,16 @@ def launch_setup(context, *args, **kwargs):
         [FindPackageShare(moveit_config_package), "config", "kinematics.yaml"]
     )
 
-    robot_description_planning = {
-        "robot_description_planning": load_yaml(
-            str(moveit_config_package.perform(context)),
-            os.path.join("config", str(moveit_joint_limits_file.perform(context))),
-        )
-    }
+    # robot_description_planning = {
+    # "robot_description_planning": load_yaml_abs(str(joint_limit_params.perform(context)))
+    # }
 
     # Planning Configuration
     ompl_planning_pipeline_config = {
         "move_group": {
-            "planning_plugins": ["ompl_interface/OMPLPlanner"],
-            "request_adapters": [
-                "default_planning_request_adapters/ResolveConstraintFrames",
-                "default_planning_request_adapters/ValidateWorkspaceBounds",
-                "default_planning_request_adapters/CheckStartStateBounds",
-                "default_planning_request_adapters/CheckStartStateCollision",
-            ],
-            "response_adapters": [
-                "default_planning_response_adapters/AddTimeOptimalParameterization",
-                "default_planning_response_adapters/ValidateSolution",
-                "default_planning_response_adapters/DisplayMotionPath",
-            ],
+            "planning_plugin": "ompl_interface/OMPLPlanner",
+            "request_adapters": """default_planner_request_adapters/AddTimeOptimalParameterization default_planner_request_adapters/FixWorkspaceBounds default_planner_request_adapters/FixStartStateBounds default_planner_request_adapters/FixStartStateCollision default_planner_request_adapters/FixStartStatePathConstraints""",
+            "start_state_max_bounds_error": 0.1,
         }
     }
     ompl_planning_yaml = load_yaml("ur_moveit_config", "config/ompl_planning.yaml")
@@ -175,8 +163,8 @@ def launch_setup(context, *args, **kwargs):
 
     # Trajectory Execution Configuration
     controllers_yaml = load_yaml("ur_moveit_config", "config/controllers.yaml")
-    # the scaled_joint_trajectory_controller does not work on mock hardware
-    change_controllers = context.perform_substitution(use_mock_hardware)
+    # the scaled_joint_trajectory_controller does not work on fake hardware
+    change_controllers = context.perform_substitution(use_fake_hardware)
     if change_controllers == "true":
         controllers_yaml["scaled_joint_trajectory_controller"]["default"] = False
         controllers_yaml["joint_trajectory_controller"]["default"] = True
@@ -214,7 +202,7 @@ def launch_setup(context, *args, **kwargs):
             robot_description,
             robot_description_semantic,
             robot_description_kinematics,
-            robot_description_planning,
+            # robot_description_planning,
             ompl_planning_pipeline_config,
             trajectory_execution,
             moveit_controllers,
@@ -240,7 +228,7 @@ def launch_setup(context, *args, **kwargs):
             robot_description_semantic,
             ompl_planning_pipeline_config,
             robot_description_kinematics,
-            robot_description_planning,
+            # robot_description_planning,
             warehouse_ros_config,
         ],
     )
@@ -251,7 +239,7 @@ def launch_setup(context, *args, **kwargs):
     servo_node = Node(
         package="moveit_servo",
         condition=IfCondition(launch_servo),
-        executable="servo_node",
+        executable="servo_node_main",
         parameters=[
             servo_params,
             robot_description,
@@ -266,6 +254,7 @@ def launch_setup(context, *args, **kwargs):
 
 
 def generate_launch_description():
+
     declared_arguments = []
     # UR specific arguments
     declared_arguments.append(
@@ -277,9 +266,9 @@ def generate_launch_description():
     )
     declared_arguments.append(
         DeclareLaunchArgument(
-            "use_mock_hardware",
+            "use_fake_hardware",
             default_value="false",
-            description="Indicate whether robot is running with mock hardware mirroring command to its states.",
+            description="Indicate whether robot is running with fake hardware mirroring command to its states.",
         )
     )
     declared_arguments.append(
@@ -332,13 +321,6 @@ def generate_launch_description():
             "moveit_config_file",
             default_value="ur.srdf.xacro",
             description="MoveIt SRDF/XACRO description file with the robot.",
-        )
-    )
-    declared_arguments.append(
-        DeclareLaunchArgument(
-            "moveit_joint_limits_file",
-            default_value="joint_limits.yaml",
-            description="MoveIt joint limits that augment or override the values from the URDF robot_description.",
         )
     )
     declared_arguments.append(
