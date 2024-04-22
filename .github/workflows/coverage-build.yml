@@ -2,7 +2,7 @@ name: Coverage Build
 on:
   pull_request:
     branches:
-      - iron
+      - main
 
 jobs:
   coverage:
@@ -13,13 +13,13 @@ jobs:
     strategy:
       fail-fast: false
     env:
-      ROS_DISTRO: iron
+      ROS_DISTRO: rolling
       ros_version: 2
     steps:
-      - uses: ros-tooling/setup-ros@v0.6
+      - uses: ros-tooling/setup-ros@v0.7
         with:
           required-ros-distributions: ${{ env.ROS_DISTRO }}
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
       - uses: ros-tooling/action-ros-ci@v0.3
         with:
           target-ros2-distro: ${{ env.ROS_DISTRO }}
@@ -45,7 +45,7 @@ jobs:
           file: ros_ws/lcov/total_coverage.info
           flags: unittests
           name: codecov-umbrella
-      - uses: actions/upload-artifact@v3
+      - uses: actions/upload-artifact@v4
         with:
           name: colcon-logs-${{ matrix.os }}
           path: ros_ws/log
