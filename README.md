@@ -1,3 +1,32 @@
+## ur_robot_driver (jazzy) - 2.4.4-1
+
+The packages in the `ur_robot_driver` repository were released into the `jazzy` distro by running `/usr/bin/bloom-release ur_robot_driver --rosdistro jazzy` on `Mon, 22 Apr 2024 11:35:10 -0000`
+
+These packages were released:
+- `ur`
+- `ur_calibration`
+- `ur_controllers`
+- `ur_dashboard_msgs`
+- `ur_moveit_config`
+- `ur_robot_driver`
+
+Version of package(s) in repository `ur_robot_driver`:
+
+- upstream repository: https://github.com/UniversalRobots/Universal_Robots_ROS2_Driver.git
+- release repository: https://github.com/ros2-gbp/Universal_Robots_ROS2_Driver-release.git
+- rosdistro version: `null`
+- old version: `null`
+- new version: `2.4.4-1`
+
+Versions of tools used:
+
+- bloom version: `0.11.2`
+- catkin_pkg version: `0.5.2`
+- rosdep version: `0.22.2`
+- rosdistro version: `0.9.0`
+- vcstools version: `0.1.42`
+
+
 ## ur_robot_driver (iron) - 2.3.6-1
 
 The packages in the `ur_robot_driver` repository were released into the `iron` distro by running `/usr/bin/bloom-release ur_robot_driver --rosdistro iron --track iron` on `Mon, 08 Apr 2024 11:47:23 -0000`
