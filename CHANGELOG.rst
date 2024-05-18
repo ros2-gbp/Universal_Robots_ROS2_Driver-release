@@ -2,6 +2,46 @@
 Changelog for package ur_moveit_config
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+2.3.7 (2024-05-16)
+------------------
+* Fix multi-line strings in DeclareLaunchArgument (`#948 <https://github.com/UniversalRobots/Universal_Robots_ROS2_Driver/issues/948>`_) (`#969 <https://github.com/UniversalRobots/Universal_Robots_ROS2_Driver/issues/969>`_)
+  Co-authored-by: Matthijs van der Burgh <matthijs.vander.burgh@live.nl>
+* Contributors: Matthijs van der Burgh
+
+2.3.6 (2024-04-08)
+------------------
+* Add UR30 support (`#949 <https://github.com/UniversalRobots/Universal_Robots_ROS2_Driver/issues/949>`_)
+* Contributors: Felix Exner, Vincenzo Di Pentima
+
+2.3.5 (2023-12-06)
+------------------
+* moveit_servo package executable name has changed (`#886 <https://github.com/UniversalRobots/Universal_Robots_ROS2_Driver/issues/886>`_)
+* Contributors: Felix Durchdewald, mergify[bot]
+
+2.3.4 (2023-09-21)
+------------------
+* Added support for UR20 (`#806 <https://github.com/UniversalRobots/Universal_Robots_ROS2_Driver/issues/806>`_)
+* Contributors: Felix Exner
+
+2.3.3 (2023-08-23)
+------------------
+
+2.3.2 (2023-06-02)
+------------------
+* Fixed formatting (`#685 <https://github.com/UniversalRobots/Universal_Robots_ROS2_Driver/issues/685>`_)
+  * Removed empty lines from python files
+  * Fixed typo in changelogs
+* Define default maximum accelerations for MoveIt (`#645 <https://github.com/UniversalRobots/Universal_Robots_ROS2_Driver/issues/645>`_)
+* Contributors: Felix Exner (fexner), RobertWilbrandt
+
+2.3.1 (2023-03-16)
+------------------
+
+2.3.0 (2023-03-02)
+------------------
+* Fix capitalization of docstring
+* Contributors: Felix Exner
+
 2.2.4 (2022-10-07)
 ------------------
 * Fix selecting the right controller given fake_hw
