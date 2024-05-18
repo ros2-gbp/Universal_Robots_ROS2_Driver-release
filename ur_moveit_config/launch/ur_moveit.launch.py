@@ -42,9 +42,10 @@ from launch.substitutions import Command, FindExecutable, LaunchConfiguration, P
 
 
 def launch_setup(context, *args, **kwargs):
+
     # Initialize Arguments
     ur_type = LaunchConfiguration("ur_type")
-    use_mock_hardware = LaunchConfiguration("use_mock_hardware")
+    use_fake_hardware = LaunchConfiguration("use_fake_hardware")
     safety_limits = LaunchConfiguration("safety_limits")
     safety_pos_margin = LaunchConfiguration("safety_pos_margin")
     safety_k_position = LaunchConfiguration("safety_k_position")
@@ -156,18 +157,9 @@ def launch_setup(context, *args, **kwargs):
     # Planning Configuration
     ompl_planning_pipeline_config = {
         "move_group": {
-            "planning_plugins": ["ompl_interface/OMPLPlanner"],
-            "request_adapters": [
-                "default_planning_request_adapters/ResolveConstraintFrames",
-                "default_planning_request_adapters/ValidateWorkspaceBounds",
-                "default_planning_request_adapters/CheckStartStateBounds",
-                "default_planning_request_adapters/CheckStartStateCollision",
-            ],
-            "response_adapters": [
-                "default_planning_response_adapters/AddTimeOptimalParameterization",
-                "default_planning_response_adapters/ValidateSolution",
-                "default_planning_response_adapters/DisplayMotionPath",
-            ],
+            "planning_plugin": "ompl_interface/OMPLPlanner",
+            "request_adapters": """default_planner_request_adapters/AddTimeOptimalParameterization default_planner_request_adapters/FixWorkspaceBounds default_planner_request_adapters/FixStartStateBounds default_planner_request_adapters/FixStartStateCollision default_planner_request_adapters/FixStartStatePathConstraints""",
+            "start_state_max_bounds_error": 0.1,
         }
     }
     ompl_planning_yaml = load_yaml("ur_moveit_config", "config/ompl_planning.yaml")
@@ -175,8 +167,8 @@ def launch_setup(context, *args, **kwargs):
 
     # Trajectory Execution Configuration
     controllers_yaml = load_yaml("ur_moveit_config", "config/controllers.yaml")
-    # the scaled_joint_trajectory_controller does not work on mock hardware
-    change_controllers = context.perform_substitution(use_mock_hardware)
+    # the scaled_joint_trajectory_controller does not work on fake hardware
+    change_controllers = context.perform_substitution(use_fake_hardware)
     if change_controllers == "true":
         controllers_yaml["scaled_joint_trajectory_controller"]["default"] = False
         controllers_yaml["joint_trajectory_controller"]["default"] = True
@@ -251,7 +243,7 @@ def launch_setup(context, *args, **kwargs):
     servo_node = Node(
         package="moveit_servo",
         condition=IfCondition(launch_servo),
-        executable="servo_node",
+        executable="servo_node_main",
         parameters=[
             servo_params,
             robot_description,
@@ -266,6 +258,7 @@ def launch_setup(context, *args, **kwargs):
 
 
 def generate_launch_description():
+
     declared_arguments = []
     # UR specific arguments
     declared_arguments.append(
@@ -277,9 +270,9 @@ def generate_launch_description():
     )
     declared_arguments.append(
         DeclareLaunchArgument(
-            "use_mock_hardware",
+            "use_fake_hardware",
             default_value="false",
-            description="Indicate whether robot is running with mock hardware mirroring command to its states.",
+            description="Indicate whether robot is running with fake hardware mirroring command to its states.",
         )
     )
     declared_arguments.append(
