@@ -39,7 +39,7 @@ from ament_index_python.packages import get_package_share_directory
 
 
 def construct_angle_radians(loader, node):
-    """utility function to construct radian values from yaml."""
+    """Utility function to construct radian values from yaml."""
     value = loader.construct_scalar(node)
     try:
         return float(value)
@@ -48,7 +48,7 @@ def construct_angle_radians(loader, node):
 
 
 def construct_angle_degrees(loader, node):
-    """utility function for converting degrees into radians from yaml."""
+    """Utility function for converting degrees into radians from yaml."""
     return math.radians(construct_angle_radians(loader, node))
 
 
@@ -70,7 +70,6 @@ def load_yaml(package_name, file_path):
 
 
 def load_yaml_abs(absolute_file_path):
-
     try:
         yaml.SafeLoader.add_constructor("!radians", construct_angle_radians)
         yaml.SafeLoader.add_constructor("!degrees", construct_angle_degrees)

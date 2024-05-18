@@ -2,6 +2,54 @@
 Changelog for package ur_moveit_config
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+2.4.5 (2024-05-16)
+------------------
+* Fix multi-line strings in DeclareLaunchArgument (`#948 <https://github.com/UniversalRobots/Universal_Robots_ROS2_Driver/issues/948>`_)
+* Contributors: Matthijs van der Burgh
+
+2.4.4 (2024-04-04)
+------------------
+
+2.4.3 (2024-02-02)
+------------------
+* fix move_group_node crash during initialization (`#906 <https://github.com/UniversalRobots/Universal_Robots_ROS2_Driver/issues/906>`_)
+* Add UR30 support (`#899 <https://github.com/UniversalRobots/Universal_Robots_ROS2_Driver/issues/899>`_)
+* Contributors: Chen Chen, Felix Exner (fexner)
+
+2.4.2 (2023-11-23)
+------------------
+* moveit_servo package executable name has changed (`#854 <https://github.com/UniversalRobots/Universal_Robots_ROS2_Driver/issues/854>`_)
+* Contributors: Felix Durchdewald
+
+2.4.1 (2023-09-21)
+------------------
+* Added support for UR20 (`#797 <https://github.com/UniversalRobots/Universal_Robots_ROS2_Driver/issues/797>`_)
+* Contributors: Felix Exner
+
+2.4.0 (2023-08-28)
+------------------
+* Use mock_hardware and mock_sensor_commands instead of fake (`#739 <https://github.com/UniversalRobots/Universal_Robots_ROS2_Driver/issues/739>`_)
+  * Use mock_hardware and mock_sensor_commands instead of fake
+  This has been deprecated a while back and was never adapted.
+  * Update documentation to mock_hardware
+* Contributors: Felix Exner (fexner)
+
+2.3.2 (2023-06-02)
+------------------
+* Fixed formatting (`#685 <https://github.com/UniversalRobots/Universal_Robots_ROS2_Driver/issues/685>`_)
+  * Removed empty lines from python files
+  * Fixed typo in changelogs
+* Define default maximum accelerations for MoveIt (`#645 <https://github.com/UniversalRobots/Universal_Robots_ROS2_Driver/issues/645>`_)
+* Contributors: Felix Exner (fexner), RobertWilbrandt
+
+2.3.1 (2023-03-16)
+------------------
+
+2.3.0 (2023-03-02)
+------------------
+* Fix capitalization of docstring
+* Contributors: Felix Exner
+
 2.2.4 (2022-10-07)
 ------------------
 * Fix selecting the right controller given fake_hw
