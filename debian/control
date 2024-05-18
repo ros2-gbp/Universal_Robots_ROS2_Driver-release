@@ -1,0 +1,12 @@
+Source: ros-iron-ur-moveit-config
+Section: misc
+Priority: optional
+Maintainer: Denis Stogl <denis@stoglrobotics.de>
+Build-Depends: debhelper (>= 9.0.0), ros-iron-ament-cmake, ros-iron-ament-cmake-python, ros-iron-ros-workspace
+Homepage: 
+Standards-Version: 3.9.2
+
+Package: ros-iron-ur-moveit-config
+Architecture: any
+Depends: ${shlibs:Depends}, ${misc:Depends}, ros-iron-launch, ros-iron-launch-ros, ros-iron-moveit-kinematics, ros-iron-moveit-planners-ompl, ros-iron-moveit-ros-move-group, ros-iron-moveit-ros-visualization, ros-iron-moveit-servo, ros-iron-moveit-simple-controller-manager, ros-iron-rviz2, ros-iron-ur-description, ros-iron-urdf, ros-iron-warehouse-ros-sqlite, ros-iron-xacro, ros-iron-ros-workspace
+Description: An example package with MoveIt2 configurations for UR robots.
