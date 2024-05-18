@@ -1,3 +1,174 @@
+2.3.7 (2024-05-16)
+------------------
+* Remove dependency to docker.io (backport of `#985 <https://github.com/UniversalRobots/Universal_Robots_ROS2_Driver/issues/985>`_)
+* Simplify tests (backport `#849 <https://github.com/UniversalRobots/Universal_Robots_ROS2_Driver/issues/849>`_)
+* Reduce number of controller_spawners to 3 (backport `#919 <https://github.com/UniversalRobots/Universal_Robots_ROS2_Driver/issues/919>`_)
+* Update installation instructions for source build (backport `#967 <https://github.com/UniversalRobots/Universal_Robots_ROS2_Driver/issues/967>`_)
+* Fix multi-line strings in DeclareLaunchArgument (backport `#948 <https://github.com/UniversalRobots/Universal_Robots_ROS2_Driver/issues/948>`_)
+* "use_fake_hardware" for UR20 (backport `#950 <https://github.com/UniversalRobots/Universal_Robots_ROS2_Driver/issues/950>`_)
+* Contributors: Christoph Fröhlich, Matthijs van der Burgh, Vincenzo Di Pentima
+
+2.3.6 (2024-04-08)
+------------------
+* Add UR30 support (`#949 <https://github.com/UniversalRobots/Universal_Robots_ROS2_Driver/issues/949>`_)
+* Move communication setup to on_configure instead of on_activate (`#937 <https://github.com/UniversalRobots/Universal_Robots_ROS2_Driver/issues/937>`_)
+* Contributors: Felix Exner, Vincenzo Di Pentima, Robert Wilbrandt
+
+2.3.5 (2023-12-06)
+------------------
+* Move installation instructions to subpage (`#885 <https://github.com/UniversalRobots/Universal_Robots_ROS2_Driver/issues/885>`_)
+  (cherry picked from commit 202a70c5f8f67c9e3ee2723084c0170a5a1050ae)
+  Co-authored-by: Felix Exner (fexner) <exner@fzi.de>
+* Add backward_ros to driver (`#872 <https://github.com/UniversalRobots/Universal_Robots_ROS2_Driver/issues/872>`_) (`#879 <https://github.com/UniversalRobots/Universal_Robots_ROS2_Driver/issues/879>`_)
+  (cherry picked from commit 21b7aa38e27382a206066111833c0a62377aa589)
+  Co-authored-by: Felix Exner (fexner) <exner@fzi.de>
+* Port configuration  (`#835 <https://github.com/UniversalRobots/Universal_Robots_ROS2_Driver/issues/835>`_) (`#848 <https://github.com/UniversalRobots/Universal_Robots_ROS2_Driver/issues/848>`_)
+  (cherry picked from commit f16ae2af7eb63f8d1c74c7e873347d4f32cacf4f)
+  Co-authored-by: Felix Durchdewald <145785497+fdurchdewald@users.noreply.github.com>
+* Update link to MoveIt! documentation (`#846 <https://github.com/UniversalRobots/Universal_Robots_ROS2_Driver/issues/846>`_)
+  (cherry picked from commit 3311cf849578ae38408088555c79397932c03cc4)
+  Co-authored-by: Felix Exner (fexner) <exner@fzi.de>
+* Contributors: mergify[bot]
+
+2.3.4 (2023-09-21)
+------------------
+* Added a test that sjtc correctly aborts on violation of constraints (`#813 <https://github.com/UniversalRobots/Universal_Robots_ROS2_Driver/issues/813>`_)
+* Added support for UR20 (`#806 <https://github.com/UniversalRobots/Universal_Robots_ROS2_Driver/issues/806>`_)
+* Introduced tf_prefix into log handler (`#713 <https://github.com/UniversalRobots/Universal_Robots_ROS2_Driver/issues/713>`_)
+* Contributors: Felix Exner, Lennart Nachtigall
+
+2.3.3 (2023-08-23)
+------------------
+* Run robot driver test also with tf_prefix (`#729 <https://github.com/UniversalRobots/Universal_Robots_ROS2_Driver/issues/729>`_) (`#752 <https://github.com/UniversalRobots/Universal_Robots_ROS2_Driver/issues/752>`_)
+  * Run robot driver test also with tf_prefix
+  * Use tf_prefix substitution in controllers config file
+  * Set default value of tf_prefix in launchfile to empty instead of '""'
+  ---------
+  Co-authored-by: Robert Wilbrandt <wilbrandt@fzi.de>
+  (cherry picked from commit 79bfddc7ac4cd3a69594da26ce6ae8b8024eae73)
+  Co-authored-by: Felix Exner (fexner) <exner@fzi.de>
+* Urscript interface (`#721 <https://github.com/UniversalRobots/Universal_Robots_ROS2_Driver/issues/721>`_)
+  * Add a urscript interface node
+  * Add urscript_interface to standard launchfile
+  * Added documentation for urscript_interface
+  * Add a notice about incorrect script code
+  * Add test for urscript interface
+  * Move tests to one single tests
+  This should avoid that different tests run in parallel
+  * Wait for IO controller before checking IOs
+  * Write an initial textmessage when connecting the urscript_interface
+  * Wait for controller_manager services longer
+  * Make sure we have a clean robot state without any program running once we enter our test
+  similar to how we did it on the robot_driver test
+  * Remove unneeded Destructor definition
+* Use SCHED_FIFO for controller_manager's main thread (`#719 <https://github.com/UniversalRobots/Universal_Robots_ROS2_Driver/issues/719>`_)
+  Previous investigations showed that using FIFO scheduling helps keeping
+  cycle times also non non-RT kernels. This combined with non-blocking read
+  can result in a very stable system.
+  This is, in fact, very close to what the actual controller_manager_node
+  does except that we always use FIFO scheduling independent of the actual
+  kernel in use.
+* Contributors: Felix Exner (fexner), mergify[bot]
+
+2.3.2 (2023-06-02)
+------------------
+* Adds full nonblocking readout support (Multiarm part 4)  - v2 (`#673 <https://github.com/UniversalRobots/Universal_Robots_ROS2_Driver/issues/673>`_)
+* Removed workaround also in export_command_interfaces (`#692 <https://github.com/UniversalRobots/Universal_Robots_ROS2_Driver/issues/692>`_)
+* Calling on_deactivate in dtr (`#679 <https://github.com/UniversalRobots/Universal_Robots_ROS2_Driver/issues/679>`_)
+* Fixed formatting (`#685 <https://github.com/UniversalRobots/Universal_Robots_ROS2_Driver/issues/685>`_)
+* Remove tf_prefix workaround in hw interface
+* Ported controllers to generate_parameters library and added prefix for controllers (Multiarm part 2) (`#594 <https://github.com/UniversalRobots/Universal_Robots_ROS2_Driver/issues/594>`_)
+* Remove ur_bringup package (`#666 <https://github.com/UniversalRobots/Universal_Robots_ROS2_Driver/issues/666>`_)
+* Introduce hand back control service (`#528 <https://github.com/UniversalRobots/Universal_Robots_ROS2_Driver/issues/528>`_)
+* Apply suggestions from code review
+* Update definition of test goals to new version.
+* Wait longer for controllers to load and activate
+* Fix flaky tests (`#641 <https://github.com/UniversalRobots/Universal_Robots_ROS2_Driver/issues/641>`_)
+  * Move robot startup into test's setUp function
+  * Robustify robot startup
+* This commits adds additional configuration parameters needed for multiarm support.
+* Add timeout to execution test
+* Improve logging for robot execution tests
+* Contributors: Denis Štogl, Dr. Denis, Felix Exner, Felix Exner (fexner), Lennart Nachtigall, Robert Wilbrandt, livanov93
+
+2.3.1 (2023-03-16)
+------------------
+* Adjust controller switching to message change
+* Controller spawner timeout (`#608 <https://github.com/UniversalRobots/Universal_Robots_ROS2_Driver/issues/608>`_)
+  * Simplify controller spawner definitions
+  * Ignore flake8 W503 as it clashes with black and goes against PEP8 style
+  * Add argument to set controller spawner timeout
+  * Use longer controller manager timeout in CI
+  The default timeout of 10s is the same as our RTDE retry timeout, which
+  means if RTDE does not immediately connect (which happens regularly in
+  CI runners) controller spawning would fail.
+* Increase timeout for first test service call to driver (`#605 <https://github.com/UniversalRobots/Universal_Robots_ROS2_Driver/issues/605>`_)
+* Contributors: Robert Wilbrandt, RobertWilbrandt
+
+2.3.0 (2023-03-02)
+------------------
+* Fix cmake dependency on controller_manager
+* Correct calibration correction launch file in doc
+* Added services to set tool voltage and zero force torque sensor (`#466 <https://github.com/UniversalRobots/Universal_Robots_ROS2_Driver/issues/466>`_)
+  Added launch arguments for reverse ip and script command interface port.
+* Fix comment in test file
+* Default path to ur_client_library urscript (`#316 <https://github.com/UniversalRobots/Universal_Robots_ROS2_Driver/issues/316>`_)
+  * Change default path for urscript for headless mode.
+  * Replace urscript path also in newer ur_robot_driver launchfile
+  * Remove ros_control.urscript
+  Co-authored-by: Felix Exner <exner@fzi.de>
+* Clean up & improve execution tests (`#512 <https://github.com/UniversalRobots/Universal_Robots_ROS2_Driver/issues/512>`_)
+  * Clean up execution test files
+  * Start ursim as part of the execution tests
+  * Dont use custom dockerursim for humble and rolling execution tests
+  * Clean up test implementations
+  * pep257 fixes
+  * Perform rolling and humble execution tests as part of normal pipelines
+  * Increase admissible timeouts as the CI needs to pull ursim first
+  * Add more debug messages during tests
+  * Wait until robot is in POWER_OFF mode before trying to power it on
+  * Fix error introduced in last commit
+  * Add additional cmake option to enable integration tests
+  * Increase timeout for robot tests
+  * Add CMake comment describing the execution test integration
+  * Run source tests on pull request
+  This is only here for testing the test setup! Remove before merging
+  * call resend_robot_program twice
+  This seems to be necessary, as otherwise the robot hangs after bootup.
+  The first program execution (that gets automatically started at driver
+  startup because of the headless_mode) gets paused, since it is sent while
+  the robotis not yet switched on. To mitigate this, we send the robot program
+  again after switching on the robot, but this seems to stop the robot program.
+  Sending it again seems to set it correctly to a started state.
+  * Increase timeouts for dashboard_client tests
+  Otherwise they can fail, since in parallel we pull and start the docker
+  container.
+  Co-authored-by: Felix Exner <exner@fzi.de>
+* Update and thin down README (`#494 <https://github.com/UniversalRobots/Universal_Robots_ROS2_Driver/issues/494>`_)
+  Avoid duplication between README and package doc.
+  * Updated documentation about fake_hardware and MoveIt!
+  * Remove trailing WS
+  * [documentation] do not suggest -r for rosdep install
+  * Added note about tool0_controller to docs.
+  * Add additional part about calibration to toplevel README.
+  * Added note about sourcing ROS in build instructions
+* ur_robot_driver: Controller_stopper fix deprecation warning
+  Use ``activate_controllers`` instead of ``start_controllers``.
+* Fix tool voltage setup (`#526 <https://github.com/UniversalRobots/Universal_Robots_ROS2_Driver/issues/526>`_)
+  * Move BEGIN_REPLACE inside of header
+  * Change default value of tool_voltage
+  Keeping this at 0 requires users to explicitly set it to non-zero. This way
+  we won't accitentally destroy hardware that cannot handle 24V.
+* Added dependency to socat (`#527 <https://github.com/UniversalRobots/Universal_Robots_ROS2_Driver/issues/527>`_)
+  This is needed for the tool forwarding.
+* Add a note in the tool_comm doc about a URCap conflict (`#524 <https://github.com/UniversalRobots/Universal_Robots_ROS2_Driver/issues/524>`_)
+  * Add a note in the tool_comm doc about a URCap conflict
+  * Update ur_robot_driver/doc/setup_tool_communication.rst
+  Co-authored-by: Mads Holm Peters <79145214+urmahp@users.noreply.github.com>
+  * Fix formatting and one spelling mistake
+  Co-authored-by: Mads Holm Peters <79145214+urmahp@users.noreply.github.com>
+* Contributors: Felix Exner, Felix Exner (fexner), Mads Holm Peters, Robert Wilbrandt, RobertWilbrandt, livanov93
+
 2.2.4 (2022-10-07)
 ------------------
 * Remove the custom ursim docker files (`#478 <https://github.com/UniversalRobots/Universal_Robots_ROS2_Driver/issues/478>`_)
@@ -10,7 +181,7 @@
 * Adapt ros control api (`#448 <https://github.com/UniversalRobots/Universal_Robots_ROS2_Driver/issues/448>`_)
   * scaled jtc: Use get_interface_name instead of get_name
   * Migrate from stopped controllers to inactive controllers
-  stopped controllers has been depreated upstream
+  stopped controllers has been deprecated upstream
 * Contributors: Felix Exner
 
 2.2.2 (2022-07-19)
