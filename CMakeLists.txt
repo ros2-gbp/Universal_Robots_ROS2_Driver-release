@@ -1,6 +1,14 @@
 cmake_minimum_required(VERSION 3.5)
 project(ur_robot_driver)
 
+# Default to off as this only works in environments where a new docker container can be started with the appropriate networking, which
+# might not be possible e.g. inside the buildfarm
+option(
+  UR_ROBOT_DRIVER_BUILD_INTEGRATION_TESTS
+  "Build integration tests using the start_ursim script"
+  OFF
+)
+
 add_compile_options(-Wall)
 add_compile_options(-Wextra)
 add_compile_options(-Wno-unused-parameter)
@@ -11,6 +19,7 @@ if(NOT CMAKE_CONFIGURATION_TYPES AND NOT CMAKE_BUILD_TYPE)
 endif()
 
 find_package(ament_cmake REQUIRED)
+find_package(backward_ros REQUIRED)
 find_package(controller_manager REQUIRED)
 find_package(controller_manager_msgs REQUIRED)
 find_package(geometry_msgs REQUIRED)
@@ -64,6 +73,9 @@ ament_target_dependencies(
 )
 pluginlib_export_plugin_description_file(hardware_interface hardware_interface_plugin.xml)
 
+#
+# dashboard_client
+#
 add_executable(dashboard_client
   src/dashboard_client_ros.cpp
   src/dashboard_client_node.cpp
@@ -72,23 +84,33 @@ add_executable(dashboard_client
 target_link_libraries(dashboard_client ${catkin_LIBRARIES} ur_client_library::urcl)
 ament_target_dependencies(dashboard_client ${${PROJECT_NAME}_EXPORTED_TARGETS} ${THIS_PACKAGE_INCLUDE_DEPENDS})
 
-add_executable(ur_ros2_control_node src/ur_ros2_control_node.cpp)
-target_include_directories(ur_ros2_control_node PUBLIC ${controller_manager_INCLUDE_DIRS})
-target_link_libraries(ur_ros2_control_node ${controller_manager_LIBRARIES})
+#
+# ur_ros2_control_node
+#
+add_executable(ur_ros2_control_node
+  src/ur_ros2_control_node.cpp
+)
 ament_target_dependencies(ur_ros2_control_node
-  controller_interface
-  hardware_interface
+  controller_manager
   rclcpp
 )
 
+#
+# controller_stopper_node
+#
 add_executable(controller_stopper_node
   src/controller_stopper.cpp
   src/controller_stopper_node.cpp
 )
 ament_target_dependencies(controller_stopper_node ${${PROJECT_NAME}_EXPORTED_TARGETS} ${THIS_PACKAGE_INCLUDE_DEPENDS})
 
+add_executable(urscript_interface
+  src/urscript_interface.cpp
+)
+ament_target_dependencies(urscript_interface ${${PROJECT_NAME}_EXPORTED_TARGETS} ${THIS_PACKAGE_INCLUDE_DEPENDS})
+
 install(
-  TARGETS dashboard_client ur_ros2_control_node controller_stopper_node
+  TARGETS dashboard_client ur_ros2_control_node controller_stopper_node urscript_interface
   DESTINATION lib/${PROJECT_NAME}
 )
 
@@ -156,6 +178,19 @@ if(BUILD_TESTING)
   find_package(ur_description REQUIRED)
   find_package(ur_msgs REQUIRED)
   find_package(launch_testing_ament_cmake)
-  add_launch_test(test/integration_test_1.py)
-  add_launch_test(test/integration_test_2.py)
+
+  if(${UR_ROBOT_DRIVER_BUILD_INTEGRATION_TESTS})
+    add_launch_test(test/dashboard_client.py
+      TIMEOUT
+        180
+    )
+    add_launch_test(test/robot_driver.py
+      TIMEOUT
+        800
+    )
+    add_launch_test(test/urscript_interface.py
+      TIMEOUT
+        500
+    )
+  endif()
 endif()
