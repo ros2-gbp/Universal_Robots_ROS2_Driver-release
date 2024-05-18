@@ -90,7 +90,7 @@ def generate_launch_description():
     base_launch = IncludeLaunchDescription(
         PythonLaunchDescriptionSource([ThisLaunchFileDir(), "/ur_control.launch.py"]),
         launch_arguments={
-            "ur_type": "ur10e",
+            "ur_type": "ur30",
             "robot_ip": robot_ip,
             "use_mock_hardware": use_mock_hardware,
             "mock_sensor_commands": mock_sensor_commands,
