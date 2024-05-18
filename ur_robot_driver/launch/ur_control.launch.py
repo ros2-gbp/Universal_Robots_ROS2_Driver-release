@@ -40,7 +40,6 @@ from launch.substitutions import Command, FindExecutable, LaunchConfiguration, P
 
 
 def launch_setup(context, *args, **kwargs):
-
     # Initialize Arguments
     ur_type = LaunchConfiguration("ur_type")
     robot_ip = LaunchConfiguration("robot_ip")
@@ -309,31 +308,31 @@ def launch_setup(context, *args, **kwargs):
     )
 
     # Spawn controllers
-    def controller_spawner(name, active=True):
+    def controller_spawner(controllers, active=True):
         inactive_flags = ["--inactive"] if not active else []
         return Node(
             package="controller_manager",
             executable="spawner",
             arguments=[
-                name,
                 "--controller-manager",
                 "/controller_manager",
                 "--controller-manager-timeout",
                 controller_spawner_timeout,
             ]
-            + inactive_flags,
+            + inactive_flags
+            + controllers,
         )
 
-    controller_spawner_names = [
+    controllers_active = [
         "joint_state_broadcaster",
         "io_and_status_controller",
         "speed_scaling_state_broadcaster",
         "force_torque_sensor_broadcaster",
     ]
-    controller_spawner_inactive_names = ["forward_position_controller"]
+    controllers_inactive = ["forward_position_controller"]
 
-    controller_spawners = [controller_spawner(name) for name in controller_spawner_names] + [
-        controller_spawner(name, active=False) for name in controller_spawner_inactive_names
+    controller_spawners = [controller_spawner(controllers_active)] + [
+        controller_spawner(controllers_inactive, active=False)
     ]
 
     # There may be other controllers of the joints, but this is the initially-started one
@@ -420,8 +419,8 @@ def generate_launch_description():
         DeclareLaunchArgument(
             "runtime_config_package",
             default_value="ur_robot_driver",
-            description='Package with the controller\'s configuration in "config" folder. \
-        Usually the argument is not set, it enables use of a custom setup.',
+            description='Package with the controller\'s configuration in "config" folder. '
+            "Usually the argument is not set, it enables use of a custom setup.",
         )
     )
     declared_arguments.append(
@@ -435,8 +434,8 @@ def generate_launch_description():
         DeclareLaunchArgument(
             "description_package",
             default_value="ur_description",
-            description="Description package with robot URDF/XACRO files. Usually the argument \
-        is not set, it enables use of a custom description.",
+            description="Description package with robot URDF/XACRO files. Usually the argument "
+            "is not set, it enables use of a custom description.",
         )
     )
     declared_arguments.append(
@@ -450,9 +449,9 @@ def generate_launch_description():
         DeclareLaunchArgument(
             "tf_prefix",
             default_value="",
-            description="tf_prefix of the joint names, useful for \
-        multi-robot setup. If changed, also joint names in the controllers' configuration \
-        have to be updated.",
+            description="tf_prefix of the joint names, useful for "
+            "multi-robot setup. If changed, also joint names in the controllers' configuration "
+            "have to be updated.",
         )
     )
     declared_arguments.append(
@@ -466,8 +465,8 @@ def generate_launch_description():
         DeclareLaunchArgument(
             "fake_sensor_commands",
             default_value="false",
-            description="Enable fake command interfaces for sensors used for simple simulations. \
-            Used only if 'use_fake_hardware' parameter is true.",
+            description="Enable fake command interfaces for sensors used for simple simulations. "
+            "Used only if 'use_fake_hardware' parameter is true.",
         )
     )
     declared_arguments.append(
@@ -517,57 +516,57 @@ def generate_launch_description():
         DeclareLaunchArgument(
             "tool_parity",
             default_value="0",
-            description="Parity configuration for serial communication. Only effective, if \
-            use_tool_communication is set to True.",
+            description="Parity configuration for serial communication. Only effective, if "
+            "use_tool_communication is set to True.",
         )
     )
     declared_arguments.append(
         DeclareLaunchArgument(
             "tool_baud_rate",
             default_value="115200",
-            description="Baud rate configuration for serial communication. Only effective, if \
-            use_tool_communication is set to True.",
+            description="Baud rate configuration for serial communication. Only effective, if "
+            "use_tool_communication is set to True.",
         )
     )
     declared_arguments.append(
         DeclareLaunchArgument(
             "tool_stop_bits",
             default_value="1",
-            description="Stop bits configuration for serial communication. Only effective, if \
-            use_tool_communication is set to True.",
+            description="Stop bits configuration for serial communication. Only effective, if "
+            "use_tool_communication is set to True.",
         )
     )
     declared_arguments.append(
         DeclareLaunchArgument(
             "tool_rx_idle_chars",
             default_value="1.5",
-            description="RX idle chars configuration for serial communication. Only effective, \
-            if use_tool_communication is set to True.",
+            description="RX idle chars configuration for serial communication. Only effective, "
+            "if use_tool_communication is set to True.",
         )
     )
     declared_arguments.append(
         DeclareLaunchArgument(
             "tool_tx_idle_chars",
             default_value="3.5",
-            description="TX idle chars configuration for serial communication. Only effective, \
-            if use_tool_communication is set to True.",
+            description="TX idle chars configuration for serial communication. Only effective, "
+            "if use_tool_communication is set to True.",
         )
     )
     declared_arguments.append(
         DeclareLaunchArgument(
             "tool_device_name",
             default_value="/tmp/ttyUR",
-            description="File descriptor that will be generated for the tool communication device. \
-            The user has be be allowed to write to this location. \
-            Only effective, if use_tool_communication is set to True.",
+            description="File descriptor that will be generated for the tool communication device. "
+            "The user has be be allowed to write to this location. "
+            "Only effective, if use_tool_communication is set to True.",
         )
     )
     declared_arguments.append(
         DeclareLaunchArgument(
             "tool_tcp_port",
             default_value="54321",
-            description="Remote port that will be used for bridging the tool's serial device. \
-            Only effective, if use_tool_communication is set to True.",
+            description="Remote port that will be used for bridging the tool's serial device. "
+            "Only effective, if use_tool_communication is set to True.",
         )
     )
     declared_arguments.append(
