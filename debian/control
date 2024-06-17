@@ -1,0 +1,12 @@
+Source: ros-iron-ur-calibration
+Section: misc
+Priority: optional
+Maintainer: Felix Exner <exner@fzi.de>
+Build-Depends: debhelper (>= 9.0.0), libeigen3-dev, libyaml-cpp-dev, ros-iron-ament-cmake, ros-iron-ament-cmake-gmock <!nocheck>, ros-iron-ament-cmake-gtest <!nocheck>, ros-iron-ament-lint-auto <!nocheck>, ros-iron-ament-lint-common <!nocheck>, ros-iron-rclcpp, ros-iron-ur-client-library, ros-iron-ur-robot-driver, ros-iron-ros-workspace
+Homepage: 
+Standards-Version: 3.9.2
+
+Package: ros-iron-ur-calibration
+Architecture: any
+Depends: ${shlibs:Depends}, ${misc:Depends}, libeigen3-dev, libyaml-cpp-dev, ros-iron-rclcpp, ros-iron-ur-client-library, ros-iron-ur-robot-driver, ros-iron-ros-workspace
+Description: Package for extracting the factory calibration from a UR robot and change it such that it can be used by ur_description to gain a correct URDF
