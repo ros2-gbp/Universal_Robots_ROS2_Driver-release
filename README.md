@@ -76,22 +76,14 @@ A more [detailed build status](ci_status.md) shows the state of all CI workflows
 Please note that the detailed view is intended for developers, while the one here should give end
 users an overview of the current released state.
 
-
 ## Packages in the Repository:
 
   - `ur` - Meta-package that provides a single point of installation for the released packages.
-  - `ur_bringup` - launch file and run-time configurations, e.g. controllers (DEPRECATED).
   - `ur_calibration` - tool for extracting calibration information from a real robot.
   - `ur_controllers` - implementations of controllers specific for UR robots.
   - `ur_dashboard_msgs` - package defining messages used by dashboard node.
   - `ur_moveit_config` - example MoveIt configuration for UR robots.
   - `ur_robot_driver` - driver / hardware interface for communication with UR robots.
-
-Deprecation: The `ur_bringup` package is deprecated and will be removed from Iron Irwini on.
-
-## System Requirements
-
-Please see the [requirements for the Universal_Robots_Client_Library](https://github.com/UniversalRobots/Universal_Robots_Client_Library#requirements), as this driver is build on top of Universal_Robots_Client_Library.
 
 ## Getting Started
 
@@ -99,25 +91,26 @@ For getting started, you'll basically need three steps:
 
 1. **Install the driver**
    ```bash
-   sudo apt-get install ros-humble-ur
+   sudo apt-get install ros-rolling-ur
    ```
-   See the [installation instructions](https://docs.ros.org/en/ros2_packages/humble/api/ur_robot_driver/installation/installation.html) for more details and source-build instructions.
+   See the [installation instructions](https://docs.ros.org/en/ros2_packages/rolling/api/ur_robot_driver/installation/installation.html) for more details and source-build instructions.
 
 2. **Start & Setup the robot**. Once you've installed the driver, [setup the
-   robot](https://docs.ros.org/en/ros2_packages/humble/api/ur_robot_driver/installation/robot_setup.html)
+   robot](https://docs.ros.org/en/ros2_packages/rolling/api/ur_robot_driver/installation/robot_setup.html)
    and [create a program for external
-   control](https://docs.ros.org/en/ros2_packages/humble/api/ur_robot_driver/installation/install_urcap_e_series.html).
+   control](https://docs.ros.org/en/ros2_packages/rolling/api/ur_robot_driver/installation/install_urcap_e_series.html).
 
    Please do this step carefully and extract the calibration as explained
-   [here](https://docs.ros.org/en/ros2_packages/humble/api/ur_robot_driver/installation/robot_setup.html#extract-calibration-information).
+   [here](https://docs.ros.org/en/ros2_packages/rolling/api/ur_robot_driver/installation/robot_setup.html#extract-calibration-information).
    Otherwise the TCP's pose will not be correct inside the ROS ecosystem.
 
    If no real robot is required, you can [use a simulated
-   robot](https://docs.ros.org/en/ros2_packages/humble/api/ur_robot_driver/usage.html#usage-with-official-ur-simulator)
+   robot](https://docs.ros.org/en/ros2_packages/rolling/api/ur_robot_driver/usage.html#usage-with-official-ur-simulator)
    that will behave almost exactly like the real robot.
 
+
 3. **Start the driver**. See the [usage
-   documentation](https://docs.ros.org/en/ros2_packages/humble/api/ur_robot_driver/usage.html) for
+   documentation](https://docs.ros.org/en/ros2_packages/rolling/api/ur_robot_driver/usage.html) for
    details.
 
    ```bash
@@ -126,7 +119,7 @@ For getting started, you'll basically need three steps:
    ros2 launch ur_robot_driver ur_control.launch.py ur_type:=ur5e robot_ip:=192.168.56.101
    ```
 
-4. Unless started in [headless mode](https://docs.ros.org/en/ros2_packages/humble/api/ur_robot_driver/ROS_INTERFACE.html#headless-mode): Run the external_control program by **pressing `play` on the teach pendant**.
+4. Unless started in [headless mode](https://docs.ros.org/en/ros2_packages/rolling/api/ur_robot_driver/ROS_INTERFACE.html#headless-mode): Run the external_control program by **pressing `play` on the teach pendant**.
 
 
 ## MoveIt! support
@@ -139,16 +132,20 @@ Watch MoveIt in action with the Universal Robots ROS2 driver:
   *The video shows free-space trajectory planning around a modeled collision scene object using the MoveIt2 MotionPlanning widget for Rviz2.*
 
 See the [MoveIt!
-section](https://docs.ros.org/en/ros2_packages/humble/api/ur_robot_driver/usage.html#using-moveit)
-of the [Usage guide](https://docs.ros.org/en/ros2_packages/humble/api/ur_robot_driver/usage.html)
-for details.
+section](https://docs.ros.org/en/ros2_packages/rolling/api/ur_robot_driver/usage.html#using-moveit)
+of the [Usage
+guide](https://docs.ros.org/en/ros2_packages/rolling/api/ur_robot_driver/usage.html) for details.
 
+## Expected Changes in the Near Future
+
+- Trajectory control currently only supports position commands. In the future, velocity control will be added.
 
 
 ## Contributor Guidelines
-pre-commit is used to run a couple of checks before committing. To install it, run:
+Code is auto-formatted with clang-format 14 whenever a git commit is made. Please ensure these dependencies are installed:
   ```
   pip3 install pre-commit
+  sudo apt install clang-format-14
   ```
 
 Prepare the pre-commit formatting to run like this:
