@@ -435,7 +435,7 @@ URPositionHardwareInterface::on_configure(const rclcpp_lifecycle::State& previou
     return hardware_interface::CallbackReturn::ERROR;
   }
   // Timeout before the reverse interface will be dropped by the robot
-  receive_timeout_ = urcl::RobotReceiveTimeout::millisec(std::stoi(info_.hardware_parameters["keep_alive_count"]) * 20);
+  receive_timeout_ = urcl::RobotReceiveTimeout::sec(std::stof(info_.hardware_parameters["robot_receive_timeout"]));
 
   RCLCPP_INFO(rclcpp::get_logger("URPositionHardwareInterface"), "Calibration checksum: '%s'.",
               calibration_checksum.c_str());
