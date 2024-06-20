@@ -2,6 +2,9 @@
 Changelog for package ur_controllers
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+2.4.7 (2024-06-19)
+------------------
+
 2.4.6 (2024-06-17)
 ------------------
 * this simple fix should fix the goal time violated issue (`#882 <https://github.com/UniversalRobots/Universal_Robots_ROS2_Driver/issues/882>`_)
