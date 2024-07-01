@@ -2,50 +2,37 @@
 Changelog for package ur_moveit_config
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-2.4.8 (2024-07-01)
-------------------
-* moveit_congig: Also install srdf folder (`#1033 <https://github.com/UniversalRobots/Universal_Robots_ROS2_Driver/issues/1033>`_)
-* Contributors: Felix Exner (fexner)
-
-2.4.7 (2024-06-19)
+2.3.9 (2024-07-01)
 ------------------
 
-2.4.6 (2024-06-17)
+2.3.8 (2024-06-17)
 ------------------
-* Make moveit_config compatible to moveit_configs_builder (`#998 <https://github.com/UniversalRobots/Universal_Robots_ROS2_Driver/issues/998>`_)
-* Contributors: Felix Exner (fexner), Vincenzo Di Pentima, Ruddick Lawrence
+* Add servo node config to disable advertising /get_planning_scene (`#990 <https://github.com/UniversalRobots/Universal_Robots_ROS2_Driver/issues/990>`_)
+* Contributors: Ruddick Lawrence
 
-2.4.5 (2024-05-16)
+2.3.7 (2024-05-16)
 ------------------
-* Fix multi-line strings in DeclareLaunchArgument (`#948 <https://github.com/UniversalRobots/Universal_Robots_ROS2_Driver/issues/948>`_)
+* Fix multi-line strings in DeclareLaunchArgument (`#948 <https://github.com/UniversalRobots/Universal_Robots_ROS2_Driver/issues/948>`_) (`#969 <https://github.com/UniversalRobots/Universal_Robots_ROS2_Driver/issues/969>`_)
+  Co-authored-by: Matthijs van der Burgh <matthijs.vander.burgh@live.nl>
 * Contributors: Matthijs van der Burgh
 
-2.4.4 (2024-04-04)
+2.3.6 (2024-04-08)
 ------------------
+* Add UR30 support (`#949 <https://github.com/UniversalRobots/Universal_Robots_ROS2_Driver/issues/949>`_)
+* Contributors: Felix Exner, Vincenzo Di Pentima
 
-2.4.3 (2024-02-02)
+2.3.5 (2023-12-06)
 ------------------
-* fix move_group_node crash during initialization (`#906 <https://github.com/UniversalRobots/Universal_Robots_ROS2_Driver/issues/906>`_)
-* Add UR30 support (`#899 <https://github.com/UniversalRobots/Universal_Robots_ROS2_Driver/issues/899>`_)
-* Contributors: Chen Chen, Felix Exner (fexner)
+* moveit_servo package executable name has changed (`#886 <https://github.com/UniversalRobots/Universal_Robots_ROS2_Driver/issues/886>`_)
+* Contributors: Felix Durchdewald, mergify[bot]
 
-2.4.2 (2023-11-23)
+2.3.4 (2023-09-21)
 ------------------
-* moveit_servo package executable name has changed (`#854 <https://github.com/UniversalRobots/Universal_Robots_ROS2_Driver/issues/854>`_)
-* Contributors: Felix Durchdewald
-
-2.4.1 (2023-09-21)
-------------------
-* Added support for UR20 (`#797 <https://github.com/UniversalRobots/Universal_Robots_ROS2_Driver/issues/797>`_)
+* Added support for UR20 (`#806 <https://github.com/UniversalRobots/Universal_Robots_ROS2_Driver/issues/806>`_)
 * Contributors: Felix Exner
 
-2.4.0 (2023-08-28)
+2.3.3 (2023-08-23)
 ------------------
-* Use mock_hardware and mock_sensor_commands instead of fake (`#739 <https://github.com/UniversalRobots/Universal_Robots_ROS2_Driver/issues/739>`_)
-  * Use mock_hardware and mock_sensor_commands instead of fake
-  This has been deprecated a while back and was never adapted.
-  * Update documentation to mock_hardware
-* Contributors: Felix Exner (fexner)
 
 2.3.2 (2023-06-02)
 ------------------
