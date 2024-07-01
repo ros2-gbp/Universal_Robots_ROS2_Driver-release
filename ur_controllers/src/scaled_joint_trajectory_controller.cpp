@@ -86,8 +86,13 @@ controller_interface::return_type ScaledJointTrajectoryController::update(const 
   if (get_state().id() == lifecycle_msgs::msg::State::PRIMARY_STATE_INACTIVE) {
     return controller_interface::return_type::OK;
   }
+  // update dynamic parameters
+  if (param_listener_->is_old(params_)) {
+    params_ = param_listener_->get_params();
+    default_tolerances_ = get_segment_tolerances(params_);
+  }
 
-  auto compute_error_for_joint = [&](JointTrajectoryPoint& error, size_t index, const JointTrajectoryPoint& current,
+  auto compute_error_for_joint = [&](JointTrajectoryPoint& error, int index, const JointTrajectoryPoint& current,
                                      const JointTrajectoryPoint& desired) {
     // error defined as the difference between current and desired
     if (joints_angle_wraparound_[index]) {
@@ -133,7 +138,6 @@ controller_interface::return_type ScaledJointTrajectoryController::update(const 
 
   // currently carrying out a trajectory
   if (has_active_trajectory()) {
-    // Main Speed scaling difference...
     // Adjust time with scaling factor
     TimeData time_data;
     time_data.time = time;
@@ -141,7 +145,8 @@ controller_interface::return_type ScaledJointTrajectoryController::update(const 
     time_data.period = rclcpp::Duration::from_nanoseconds(scaling_factor_ * t_period);
     time_data.uptime = time_data_.readFromRT()->uptime + time_data.period;
     rclcpp::Time traj_time = time_data_.readFromRT()->uptime + rclcpp::Duration::from_nanoseconds(t_period);
-    time_data_.writeFromNonRT(time_data);
+    time_data_.reset();
+    time_data_.initRT(time_data);
 
     bool first_sample = false;
     // if sampling the first time, set the point before you sample
@@ -268,7 +273,7 @@ controller_interface::return_type ScaledJointTrajectoryController::update(const 
 
           traj_msg_external_point_ptr_.reset();
           traj_msg_external_point_ptr_.initRT(set_hold_position());
-        } else if (!before_last_point) {  // check goal tolerance
+        } else if (!before_last_point) {
           if (!outside_goal_tolerance) {
             auto res = std::make_shared<FollowJTrajAction::Result>();
             res->set__error_code(FollowJTrajAction::Result::SUCCESSFUL);
@@ -281,7 +286,7 @@ controller_interface::return_type ScaledJointTrajectoryController::update(const 
             RCLCPP_INFO(get_node()->get_logger(), "Goal reached, success!");
 
             traj_msg_external_point_ptr_.reset();
-            traj_msg_external_point_ptr_.initRT(set_hold_position());
+            traj_msg_external_point_ptr_.initRT(set_success_trajectory_point());
           } else if (!within_goal_time) {
             auto result = std::make_shared<FollowJTrajAction::Result>();
             result->set__error_code(FollowJTrajAction::Result::GOAL_TOLERANCE_VIOLATED);
@@ -316,7 +321,7 @@ controller_interface::return_type ScaledJointTrajectoryController::update(const 
     }
   }
 
-  publish_state(time, state_desired_, state_current_, state_error_);
+  publish_state(state_desired_, state_current_, state_error_);
   return controller_interface::return_type::OK;
 }
 
