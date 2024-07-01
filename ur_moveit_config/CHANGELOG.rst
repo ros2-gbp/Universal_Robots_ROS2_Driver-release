@@ -2,6 +2,11 @@
 Changelog for package ur_moveit_config
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+2.4.8 (2024-07-01)
+------------------
+* moveit_congig: Also install srdf folder (`#1033 <https://github.com/UniversalRobots/Universal_Robots_ROS2_Driver/issues/1033>`_)
+* Contributors: Felix Exner (fexner)
+
 2.4.7 (2024-06-19)
 ------------------
 
