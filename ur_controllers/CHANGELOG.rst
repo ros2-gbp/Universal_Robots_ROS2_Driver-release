@@ -2,72 +2,54 @@
 Changelog for package ur_controllers
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-2.4.13 (2024-10-28)
+2.3.11 (2024-10-28)
 -------------------
-* [SJTC] Make scaling interface optional (`#1145 <https://github.com/UniversalRobots/Universal_Robots_ROS2_Driver/issues/1145>`_)
-* Contributors: Felix Exner (fexner)
+* Allow setting the analog output domain when setting an analog output (backport of `#1123 <https://github.com/UniversalRobots/Universal_Robots_ROS2_Driver/issues/1123>`_)
+* Service to get software version of robot (`#964 <https://github.com/UniversalRobots/Universal_Robots_ROS2_Driver/issues/964>`_) (`#1128 <https://github.com/UniversalRobots/Universal_Robots_ROS2_Driver/issues/1128>`_)
+* Contributors: mergify[bot], Jacob Larsen, Felix Exner
 
-2.4.12 (2024-10-14)
+2.3.10 (2024-08-09)
 -------------------
 
-2.4.11 (2024-10-10)
--------------------
-* Allow setting the analog output domain when setting an analog IO (`#1123 <https://github.com/UniversalRobots/Universal_Robots_ROS2_Driver/issues/1123>`_)
-* Service to get software version of robot (`#964 <https://github.com/UniversalRobots/Universal_Robots_ROS2_Driver/issues/964>`_)
-* Improve usage documentation (`#1110 <https://github.com/UniversalRobots/Universal_Robots_ROS2_Driver/issues/1110>`_)
-* Contributors: Felix Exner (fexner), URJala, Rune Søe-Knudsen
-
-2.4.10 (2024-09-11)
--------------------
-* Updated get_state to get_lifecycle_state (`#1087 <https://github.com/UniversalRobots/Universal_Robots_ROS2_Driver/issues/1087>`_)
-* Update maintainers team (`#1088 <https://github.com/UniversalRobots/Universal_Robots_ROS2_Driver/issues/1088>`_)
-* Contributors: Vincenzo Di Pentima
-
-2.4.9 (2024-08-09)
+2.3.9 (2024-07-01)
 ------------------
 
-2.4.8 (2024-07-01)
+2.3.8 (2024-06-17)
 ------------------
+* this simple fix should fix the goal time violated issue (`#1000 <https://github.com/UniversalRobots/Universal_Robots_ROS2_Driver/issues/1000>`_)
+* Contributors: Lennart Nachtigall
 
-2.4.7 (2024-06-19)
+2.3.7 (2024-05-16)
 ------------------
-
-2.4.6 (2024-06-17)
-------------------
-* this simple fix should fix the goal time violated issue (`#882 <https://github.com/UniversalRobots/Universal_Robots_ROS2_Driver/issues/882>`_)
-* Restructure documentation for full stack documentation (`#984 <https://github.com/UniversalRobots/Universal_Robots_ROS2_Driver/issues/984>`_)
-* Contributors: Felix Exner (fexner), Lennart Nachtigall, Vincenzo Di Pentima
-
-2.4.5 (2024-05-16)
-------------------
-* Use latched publishing for robot_mode and safety_mode
+* Use latched publishing for robot_mode and safety_mode (`#992 <https://github.com/UniversalRobots/Universal_Robots_ROS2_Driver/issues/992>`_)
+  Co-authored-by: Felix Exner <exner@fzi.de>
 * Contributors: Felix Exner
 
-2.4.4 (2024-04-04)
+2.3.6 (2024-04-08)
 ------------------
 
-2.4.3 (2024-02-02)
-------------------
-
-2.4.2 (2023-11-23)
+2.3.5 (2023-12-06)
 ------------------
 * Update read_state_from_hardware
-* Renamed normalize_joint_error to joints_angle_wraparound
-* Remove noisy controller log message
-* Contributors: Felix Exner, Robert Wilbrandt
+  (cherry picked from commit d77db8355ce1e2c5ecacb94a9616777789d26e38)
+* Renamed normalize_joint_error\_ to joints_angle_wraparound\_
+  (cherry picked from commit 6b1c5a02344c1b531ed875e4cd70b3a38355b965)
+* Remove noisy controller log message (`#859 <https://github.com/UniversalRobots/Universal_Robots_ROS2_Driver/issues/859>`_)
+* Contributors: Felix Exner, mergify[bot]
 
-2.4.1 (2023-09-21)
+2.3.4 (2023-09-21)
 ------------------
-* Update sjtc to newest upstream API (`#810 <https://github.com/UniversalRobots/Universal_Robots_ROS2_Driver/pull/810>`_)
+* Update sjtc to newest upstream API (`#813 <https://github.com/UniversalRobots/Universal_Robots_ROS2_Driver/issues/813>`_)
 * Contributors: Felix Exner
 
-2.4.0 (2023-08-28)
+2.3.3 (2023-08-23)
 ------------------
 * Handle api changes related to traj_external_point_ptr\_ (`#779 <https://github.com/UniversalRobots/Universal_Robots_ROS2_Driver/issues/779>`_)
   * Handle api changes related to traj_external_point_ptr\_
   * Fix formatting
   ---------
   Co-authored-by: Robert Wilbrandt <wilbrandt@fzi.de>
+  (cherry picked from commit e2b22b15ca627cfb375c3d58e585e1d3dee5f484)
 * Contributors: Yadu
 
 2.3.2 (2023-06-02)
