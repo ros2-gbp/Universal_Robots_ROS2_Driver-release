@@ -1,0 +1,12 @@
+Source: ros-humble-ur-dashboard-msgs
+Section: misc
+Priority: optional
+Maintainer: Felix Exner <exner@fzi.de>
+Build-Depends: debhelper (>= 9.0.0), ros-humble-action-msgs, ros-humble-ament-cmake, ros-humble-rosidl-default-generators, ros-humble-ros-workspace, ros-humble-rosidl-typesupport-fastrtps-c, ros-humble-rosidl-typesupport-fastrtps-cpp
+Homepage: 
+Standards-Version: 3.9.2
+
+Package: ros-humble-ur-dashboard-msgs
+Architecture: any
+Depends: ${shlibs:Depends}, ${misc:Depends}, ros-humble-action-msgs, ros-humble-rosidl-default-runtime, ros-humble-ros-workspace
+Description: Messages around the UR Dashboard server.
