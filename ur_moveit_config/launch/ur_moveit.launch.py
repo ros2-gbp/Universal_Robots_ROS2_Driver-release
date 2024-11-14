@@ -48,7 +48,6 @@ from launch.substitutions import (
 
 
 def launch_setup(context, *args, **kwargs):
-
     # Initialize Arguments
     ur_type = LaunchConfiguration("ur_type")
     use_fake_hardware = LaunchConfiguration("use_fake_hardware")
@@ -58,7 +57,6 @@ def launch_setup(context, *args, **kwargs):
     # General arguments
     description_package = LaunchConfiguration("description_package")
     description_file = LaunchConfiguration("description_file")
-    _publish_robot_description_semantic = LaunchConfiguration("publish_robot_description_semantic")
     moveit_config_package = LaunchConfiguration("moveit_config_package")
     moveit_joint_limits_file = LaunchConfiguration("moveit_joint_limits_file")
     moveit_config_file = LaunchConfiguration("moveit_config_file")
@@ -150,10 +148,6 @@ def launch_setup(context, *args, **kwargs):
     )
     robot_description_semantic = {"robot_description_semantic": robot_description_semantic_content}
 
-    publish_robot_description_semantic = {
-        "publish_robot_description_semantic": _publish_robot_description_semantic
-    }
-
     robot_description_kinematics = PathJoinSubstitution(
         [FindPackageShare(moveit_config_package), "config", "kinematics.yaml"]
     )
@@ -196,7 +190,7 @@ def launch_setup(context, *args, **kwargs):
         "trajectory_execution.allowed_execution_duration_scaling": 1.2,
         "trajectory_execution.allowed_goal_duration_margin": 0.5,
         "trajectory_execution.allowed_start_tolerance": 0.01,
-        # Execution time monitoring can be incompatible with the scaled JTC
+        # Execution time monitoring doesn't make sense with the scaled JTC
         "trajectory_execution.execution_duration_monitoring": False,
     }
 
@@ -220,7 +214,6 @@ def launch_setup(context, *args, **kwargs):
         parameters=[
             robot_description,
             robot_description_semantic,
-            publish_robot_description_semantic,
             robot_description_kinematics,
             robot_description_planning,
             ompl_planning_pipeline_config,
@@ -262,7 +255,7 @@ def launch_setup(context, *args, **kwargs):
     servo_node = Node(
         package="moveit_servo",
         condition=IfCondition(launch_servo),
-        executable="servo_node_main",
+        executable="servo_node",
         parameters=[
             servo_params,
             robot_description,
@@ -277,7 +270,6 @@ def launch_setup(context, *args, **kwargs):
 
 
 def generate_launch_description():
-
     declared_arguments = []
     # UR specific arguments
     declared_arguments.append(
@@ -329,13 +321,6 @@ def generate_launch_description():
             "description_file",
             default_value="ur.urdf.xacro",
             description="URDF/XACRO description file with the robot.",
-        )
-    )
-    declared_arguments.append(
-        DeclareLaunchArgument(
-            "publish_robot_description_semantic",
-            default_value="True",
-            description="Whether to publish the SRDF description on topic /robot_description_semantic.",
         )
     )
     declared_arguments.append(

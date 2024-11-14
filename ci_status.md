@@ -1,4 +1,4 @@
-# Build Status
+## Build Status
 
 This page gives a detailed overview of the build status of this repository. Please note that due to
 upstream changes some pipelines might turn red temporarily which can be expected behavior. For each
@@ -123,6 +123,7 @@ red pipeline there should be a corresponding issue labeled with [ci-failure](htt
   </tr>
 </table>
 
+
 **NOTE**: There are two build stages checking current and future compatibility of the driver.
 
 1. Binary builds - against released packages (main and testing) in ROS distributions. Shows that
@@ -136,7 +137,6 @@ red pipeline there should be a corresponding issue labeled with [ci-failure](htt
    Uses repos file: `src/Universal_Robots_ROS2_Driver/Universal_Robots_ROS2_Driver.repos`
 
 Each of these stages also performs integration tests using ursim. In order to execute these tests locally, they have to be enabled:
-
   ```
   colcon build --packages-select ur_robot_driver --cmake-args -DUR_ROBOT_DRIVER_BUILD_INTEGRATION_TESTS=On
   ```
