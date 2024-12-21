@@ -44,7 +44,6 @@
 
 #include <controller_interface/controller_interface.hpp>
 #include <rclcpp/logging.hpp>
-#include <rclcpp/version.h>
 #include <builtin_interfaces/msg/duration.hpp>
 #include <lifecycle_msgs/msg/state.hpp>
 
@@ -328,12 +327,8 @@ controller_interface::return_type PassthroughTrajectoryController::update(const 
         scaling_factor_ = scaling_state_interface_->get().get_value();
       }
 
-#if RCLCPP_VERSION_MAJOR >= 17
-      active_trajectory_elapsed_time_ += period * scaling_factor_;
-#else
-      // This is kept for Humble compatibility
-      active_trajectory_elapsed_time_ = active_trajectory_elapsed_time_ + period * scaling_factor_;
-#endif
+      active_trajectory_elapsed_time_ = active_trajectory_elapsed_time_ + (period * scaling_factor_);
+
       // RCLCPP_INFO(get_node()->get_logger(), "Elapsed trajectory time: %f. Scaling factor: %f, period: %f",
       // active_trajectory_elapsed_time_.seconds(), scaling_factor_, period.seconds());
 
@@ -361,7 +356,7 @@ rclcpp_action::GoalResponse PassthroughTrajectoryController::goal_received_callb
 {
   RCLCPP_INFO(get_node()->get_logger(), "Received new trajectory.");
   // Precondition: Running controller
-  if (get_lifecycle_state().id() == lifecycle_msgs::msg::State::PRIMARY_STATE_INACTIVE) {
+  if (get_state().id() == lifecycle_msgs::msg::State::PRIMARY_STATE_INACTIVE) {
     RCLCPP_ERROR(get_node()->get_logger(), "Can't accept new trajectories. Controller is not running.");
     return rclcpp_action::GoalResponse::REJECT;
   }
