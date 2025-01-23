@@ -1,4 +1,3 @@
-.. _robot_setup:
 
 Setting up a UR robot for ur_robot_driver
 =========================================
@@ -23,38 +22,7 @@ There are many possible ways to connect a UR robot. This section describes a goo
    Preferred DNS server: 192.168.1.1
    Alternative DNS server: 0.0.0.0
 
-* Enable remote control (Not applicable on PolyScope X versions)
-   #. Go to the hamburger menu -> settings.
-   #. Go to System -> Remote control.
-   #. Unlock the menu using the admin password, and enable Remote Control.
-   #. Press exit.
-   #. The robot can now be toggled between local and remote control in the upper right hand corner.
 
-.. image:: initial_setup_images/remote_control.png
-   :width: 600
-   :alt: Screenshot showing remote control toggle.
-
-* **If using PolyScope 5.10 or greater:**
-   #. Go to the hamburger menu -> settings.
-   #. Go to Security -> Services.
-   #. Unlock the menu using the admin password.
-   #. Enable the Dashboard Server (Not applicable on PolyScope X versions), Primary Client Interface, Secondary Client Interface and Real-Time Data Exchange (RTDE) interfaces.
-   #. Lock the menu and press exit.
-
-* PolyScope 5 screen:
-
-.. image:: initial_setup_images/services_polyscope5.png
-      :width: 600
-      :alt: Screenshot from PolyScope 5.xx services menu.
-
-* PolyScope X screen:
-
-.. image:: initial_setup_images/services_polyscopex.jpg
-   :width: 600
-   :alt: Screenshot from PolyScope X screen.
-
-Remote PC Setup
-~~~~~~~~~~~~~~~
 #.
    On the remote PC, turn off all network devices except the "wired connection", e.g. turn off wifi.
 
@@ -84,7 +52,7 @@ This section describes installation and launching of the URCap program from the 
 For using the *ur_robot_driver* with a real robot you need to install the
 **externalcontrol urcap**. The latest release can be downloaded from `its own repository <https://github.com/UniversalRobots/Universal_Robots_ExternalControl_URCap/releases>`_.
 
-**Note**: For installing this URCap a minimal PolyScope version of 3.14.3 or 5.9.4 (in case of e-Series) is
+**Note**: For installing this URCap a minimal PolyScope version of 3.7 or 5.1 (in case of e-Series) is
 necessary.
 
 For installing the necessary URCap and creating a program, please see the individual tutorials on
@@ -99,8 +67,6 @@ Prepare the ROS PC
 
 For using the driver make sure it is installed (either by the debian package or built from source
 inside a colcon workspace).
-
-.. _calibration_extraction:
 
 Extract calibration information
 -------------------------------
@@ -118,11 +84,5 @@ For this, there exists a helper script:
    $ ros2 launch ur_calibration calibration_correction.launch.py \
    robot_ip:=<robot_ip> target_filename:="${HOME}/my_robot_calibration.yaml"
 
-.. note::
-   The robot must be powered on (can be idle) before executing this script.
-
-
 For the parameter ``robot_ip`` insert the IP address on which the ROS pc can reach the robot. As
 ``target_filename`` provide an absolute path where the result will be saved to.
-
-See :ref:`ur_robot_driver_startup` for instructions on using the extracted calibration information.

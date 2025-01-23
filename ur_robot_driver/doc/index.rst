@@ -3,8 +3,8 @@
    You can adapt this file completely to your liking, but it should at least
    contain the root ``toctree`` directive.
 
-ur_robot_driver
-===============
+Welcome to ur_robot_driver's documentation!
+===========================================
 
 .. toctree::
    :maxdepth: 2
@@ -12,8 +12,14 @@ ur_robot_driver
 
    overview
    installation/toc
-   usage/toc
-   operation_modes
+   usage
    setup_tool_communication
-   hardware_interface_parameters
-   dashboard_client
+   ROS_INTERFACE
+   generated/index
+
+
+
+Indices and tables
+==================
+
+* :ref:`genindex`
