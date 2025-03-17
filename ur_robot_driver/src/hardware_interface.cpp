@@ -536,7 +536,7 @@ URPositionHardwareInterface::on_configure(const rclcpp_lifecycle::State& previou
     return hardware_interface::CallbackReturn::ERROR;
   }
   // Timeout before the reverse interface will be dropped by the robot
-  receive_timeout_ = urcl::RobotReceiveTimeout::sec(std::stof(info_.hardware_parameters["robot_receive_timeout"]));
+  receive_timeout_ = urcl::RobotReceiveTimeout::millisec(std::stoi(info_.hardware_parameters["keep_alive_count"]) * 20);
 
   RCLCPP_INFO(rclcpp::get_logger("URPositionHardwareInterface"), "Calibration checksum: '%s'.",
               calibration_checksum.c_str());
@@ -889,7 +889,7 @@ void URPositionHardwareInterface::checkAsyncIO()
   }
 
   if (!std::isnan(freedrive_mode_enable_) && ur_driver_ != nullptr) {
-    RCLCPP_INFO(get_logger(), "Starting freedrive mode.");
+    RCLCPP_INFO(rclcpp::get_logger("URPosistionHardwareInterface"), "Starting freedrive mode.");
     freedrive_mode_async_success_ =
         ur_driver_->writeFreedriveControlMessage(urcl::control::FreedriveControlMessage::FREEDRIVE_START);
     freedrive_mode_enable_ = NO_NEW_CMD_;
@@ -898,7 +898,7 @@ void URPositionHardwareInterface::checkAsyncIO()
 
   if (!std::isnan(freedrive_mode_abort_) && freedrive_mode_abort_ == 1.0 && freedrive_activated_ &&
       ur_driver_ != nullptr) {
-    RCLCPP_INFO(get_logger(), "Stopping freedrive mode.");
+    RCLCPP_INFO(rclcpp::get_logger("URPosistionHardwareInterface"), "Stopping freedrive mode.");
     freedrive_mode_async_success_ =
         ur_driver_->writeFreedriveControlMessage(urcl::control::FreedriveControlMessage::FREEDRIVE_STOP);
     freedrive_activated_ = false;
@@ -1017,7 +1017,7 @@ hardware_interface::return_type URPositionHardwareInterface::prepare_command_mod
 
   if (!std::all_of(start_modes_.begin() + 1, start_modes_.end(),
                    [&](const std::vector<std::string>& other) { return other == start_modes_[0]; })) {
-    RCLCPP_ERROR(get_logger(), "Start modes of all joints have to be the same.");
+    RCLCPP_ERROR(rclcpp::get_logger("URPositionHardwareInterface"), "Start modes of all joints have to be the same.");
     return hardware_interface::return_type::ERROR;
   }
 
@@ -1028,15 +1028,17 @@ hardware_interface::return_type URPositionHardwareInterface::prepare_command_mod
     for (auto i = 0u; i < info_.joints.size(); i++) {
       if (key == info_.joints[i].name + "/" + hardware_interface::HW_IF_POSITION) {
         if (!start_modes_[i].empty()) {
-          RCLCPP_ERROR(get_logger(), "Attempting to start position control while there is another control mode already "
-                                     "requested.");
+          RCLCPP_ERROR(rclcpp::get_logger("URPositionHardwareInterface"), "Attempting to start position control while "
+                                                                          "there is another control mode already "
+                                                                          "requested.");
           return hardware_interface::return_type::ERROR;
         }
         start_modes_[i] = { hardware_interface::HW_IF_POSITION };
       } else if (key == info_.joints[i].name + "/" + hardware_interface::HW_IF_VELOCITY) {
         if (!start_modes_[i].empty()) {
-          RCLCPP_ERROR(get_logger(), "Attempting to start velocity control while there is another control mode already "
-                                     "requested.");
+          RCLCPP_ERROR(rclcpp::get_logger("URPositionHardwareInterface"), "Attempting to start velocity control while "
+                                                                          "there is another control mode already "
+                                                                          "requested.");
           return hardware_interface::return_type::ERROR;
         }
         start_modes_[i] = { hardware_interface::HW_IF_VELOCITY };
@@ -1044,8 +1046,10 @@ hardware_interface::return_type URPositionHardwareInterface::prepare_command_mod
         if (std::any_of(start_modes_[i].begin(), start_modes_[i].end(), [&](const std::string& item) {
               return item == hardware_interface::HW_IF_POSITION || item == hardware_interface::HW_IF_VELOCITY;
             })) {
-          RCLCPP_ERROR(get_logger(), "Attempting to start force_mode control while there is either position or "
-                                     "velocity mode already requested by another controller.");
+          RCLCPP_ERROR(rclcpp::get_logger("URPositionHardwareInterface"), "Attempting to start force_mode control "
+                                                                          "while there is either position or "
+                                                                          "velocity mode already requested by another "
+                                                                          "controller.");
           return hardware_interface::return_type::ERROR;
         }
         start_modes_[i].push_back(FORCE_MODE_GPIO);
@@ -1053,8 +1057,10 @@ hardware_interface::return_type URPositionHardwareInterface::prepare_command_mod
         if (std::any_of(start_modes_[i].begin(), start_modes_[i].end(), [&](const std::string& item) {
               return item == hardware_interface::HW_IF_POSITION || item == hardware_interface::HW_IF_VELOCITY;
             })) {
-          RCLCPP_ERROR(get_logger(), "Attempting to start trajectory passthrough control while there is either "
-                                     "position or velocity mode already requested by another controller.");
+          RCLCPP_ERROR(rclcpp::get_logger("URPositionHardwareInterface"), "Attempting to start trajectory passthrough "
+                                                                          "control while there is either "
+                                                                          "position or velocity mode already requested "
+                                                                          "by another controller.");
           return hardware_interface::return_type::ERROR;
         }
         start_modes_[i].push_back(PASSTHROUGH_GPIO);
@@ -1122,8 +1128,9 @@ hardware_interface::return_type URPositionHardwareInterface::prepare_command_mod
          return (item == hardware_interface::HW_IF_VELOCITY || item == hardware_interface::HW_IF_POSITION ||
                  item == FREEDRIVE_MODE_GPIO);
        }))) {
-    RCLCPP_ERROR(get_logger(), "Attempting to start passthrough_trajectory control while there is either position or "
-                               "velocity or freedrive mode running.");
+    RCLCPP_ERROR(rclcpp::get_logger("URPosistionHardwareInterface"), "Attempting to start passthrough_trajectory "
+                                                                     "control while there is either position or "
+                                                                     "velocity or freedrive mode running.");
     ret_val = hardware_interface::return_type::ERROR;
   }
 
@@ -1139,8 +1146,9 @@ hardware_interface::return_type URPositionHardwareInterface::prepare_command_mod
          return (item == hardware_interface::HW_IF_VELOCITY || item == hardware_interface::HW_IF_POSITION ||
                  item == FORCE_MODE_GPIO || item == FREEDRIVE_MODE_GPIO);
        }))) {
-    RCLCPP_ERROR(get_logger(), "Attempting to start force mode control while there is either position or "
-                               "velocity mode running.");
+    RCLCPP_ERROR(rclcpp::get_logger("URPosistionHardwareInterface"), "Attempting to start force mode control while "
+                                                                     "there is either position or "
+                                                                     "velocity mode running.");
     ret_val = hardware_interface::return_type::ERROR;
   }
 
@@ -1156,8 +1164,9 @@ hardware_interface::return_type URPositionHardwareInterface::prepare_command_mod
          return (item == hardware_interface::HW_IF_VELOCITY || item == hardware_interface::HW_IF_POSITION ||
                  item == PASSTHROUGH_GPIO || item == FORCE_MODE_GPIO);
        }))) {
-    RCLCPP_ERROR(get_logger(), "Attempting to start force mode control while there is either position or "
-                               "velocity mode running.");
+    RCLCPP_ERROR(rclcpp::get_logger("URPosistionHardwareInterface"), "Attempting to start force mode control while "
+                                                                     "there is either position or "
+                                                                     "velocity mode running.");
     ret_val = hardware_interface::return_type::ERROR;
   }
 
@@ -1173,8 +1182,10 @@ hardware_interface::return_type URPositionHardwareInterface::prepare_command_mod
          return (item == hardware_interface::HW_IF_VELOCITY || item == hardware_interface::HW_IF_POSITION ||
                  item == PASSTHROUGH_GPIO || item == FORCE_MODE_GPIO || item == FREEDRIVE_MODE_GPIO);
        }))) {
-    RCLCPP_ERROR(get_logger(), "Attempting to start position control while there is either trajectory passthrough or "
-                               "velocity mode or force_mode or freedrive mode running.");
+    RCLCPP_ERROR(rclcpp::get_logger("URPosistionHardwareInterface"), "Attempting to start position control while there "
+                                                                     "is either trajectory passthrough or "
+                                                                     "velocity mode or force_mode or freedrive mode "
+                                                                     "running.");
     ret_val = hardware_interface::return_type::ERROR;
   }
 
@@ -1190,8 +1201,10 @@ hardware_interface::return_type URPositionHardwareInterface::prepare_command_mod
          return (item == hardware_interface::HW_IF_VELOCITY || item == hardware_interface::HW_IF_POSITION ||
                  item == PASSTHROUGH_GPIO || item == FORCE_MODE_GPIO || item == FREEDRIVE_MODE_GPIO);
        }))) {
-    RCLCPP_ERROR(get_logger(), "Attempting to start velosity control while there is either trajectory passthrough or "
-                               "position mode or force_mode or freedrive mode running.");
+    RCLCPP_ERROR(rclcpp::get_logger("URPosistionHardwareInterface"), "Attempting to start velocity control while there "
+                                                                     "is either trajectory passthrough or "
+                                                                     "position mode or force_mode or freedrive mode "
+                                                                     "running.");
     ret_val = hardware_interface::return_type::ERROR;
   }
 
