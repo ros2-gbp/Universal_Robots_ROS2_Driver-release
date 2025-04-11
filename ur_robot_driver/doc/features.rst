@@ -1,3 +1,5 @@
+:github_url: https://github.com/UniversalRobots/Universal_Robots_ROS2_Driver/blob/main/ur_robot_driver/doc/features.rst
+
 .. role:: raw-html-m2r(raw)
    :format: html
 
@@ -15,13 +17,13 @@ Feature list and roadmap
    * - scaled joint-position-based control
      - yes
    * - joint-velocity-based control
-     - yes\ :raw-html-m2r:`<sup>1</sup>`
+     - yes
    * - Cartesian position-based control
      - no
    * - Cartesian twist-based control
      - no
    * - Trajectory forwarding for execution on robot
-     - no
+     - yes
    * - reporting of tcp wrench
      - yes
    * - pausing of programs
@@ -49,9 +51,6 @@ Feature list and roadmap
    * - extract calibration from robot
      - yes
    * - send custom script commands to robot
-     - no
+     - yes
    * - Reconnect on a disconnected robot
      - yes
-
-
-:raw-html-m2r:`<sup>1</sup>` Velocity-based joint control is implemented in the driver, but the current version of ros2_control do not yet support Velocity-based joint trajectory control
