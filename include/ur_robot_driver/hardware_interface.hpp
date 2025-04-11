@@ -80,6 +80,7 @@ enum StoppingInterface
   STOP_PASSTHROUGH,
   STOP_FORCE_MODE,
   STOP_FREEDRIVE,
+  STOP_TOOL_CONTACT,
 };
 
 // We define our own quaternion to use it as a buffer, since we need to pass pointers to the state
@@ -167,8 +168,9 @@ protected:
   void stop_force_mode();
   void check_passthrough_trajectory_controller();
   void trajectory_done_callback(urcl::control::TrajectoryResult result);
-  bool has_accelerations(std::vector<std::array<double, 6>> accelerations);
-  bool has_velocities(std::vector<std::array<double, 6>> velocities);
+  bool is_valid_joint_information(std::vector<std::array<double, 6>> data);
+  void tool_contact_callback(urcl::control::ToolContactResult);
+  void check_tool_contact_controller();
 
   urcl::vector6d_t urcl_position_commands_;
   urcl::vector6d_t urcl_position_commands_old_;
@@ -230,6 +232,12 @@ protected:
   double get_robot_software_version_bugfix_;
   double get_robot_software_version_build_;
 
+  // Tool contact controller interface values
+  double tool_contact_set_state_;
+  double tool_contact_state_;
+  double tool_contact_result_;
+  bool tool_contact_controller_running_;
+
   // Freedrive mode controller interface values
   bool freedrive_activated_;
   bool freedrive_mode_controller_running_;
@@ -240,6 +248,7 @@ protected:
   // Passthrough trajectory controller interface values
   double passthrough_trajectory_transfer_state_;
   double passthrough_trajectory_abort_;
+  double passthrough_trajectory_size_;
   bool passthrough_trajectory_controller_running_;
   urcl::vector6d_t passthrough_trajectory_positions_;
   urcl::vector6d_t passthrough_trajectory_velocities_;
@@ -306,6 +315,7 @@ protected:
   const std::string PASSTHROUGH_GPIO = "trajectory_passthrough";
   const std::string FORCE_MODE_GPIO = "force_mode";
   const std::string FREEDRIVE_MODE_GPIO = "freedrive_mode";
+  const std::string TOOL_CONTACT_GPIO = "tool_contact";
 };
 }  // namespace ur_robot_driver
 
