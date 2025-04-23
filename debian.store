@@ -1,1 +1,1 @@
-{"base": "27d2da50", "parent": "debian/rolling/ur_moveit_config", "previous": "b17b8f80", "trim": "", "trimbase": ""}
+{"base": "d8b8f7c5f1b4", "parent": "debian/kilted/ur_moveit_config", "previous": "c28cf12ad9d8", "trim": "", "trimbase": ""}
