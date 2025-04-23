@@ -1,0 +1,193 @@
+ros-kilted-ur (3.2.1-2noble) noble; urgency=high
+
+
+
+ -- Felix Exner <feex@universal-robots.com>  Fri, 11 Apr 2025 05:00:00 -0000
+
+ros-kilted-ur (3.2.0-2noble) noble; urgency=high
+
+
+
+ -- Felix Exner <feex@universal-robots.com>  Thu, 10 Apr 2025 05:00:00 -0000
+
+ros-kilted-ur (3.1.1-2noble) noble; urgency=high
+
+
+
+ -- Felix Exner <feex@universal-robots.com>  Mon, 17 Mar 2025 05:00:00 -0000
+
+ros-kilted-ur (3.1.0-2noble) noble; urgency=high
+
+
+
+ -- Felix Exner <feex@universal-robots.com>  Wed, 05 Mar 2025 06:00:00 -0000
+
+ros-kilted-ur (3.0.2-2noble) noble; urgency=high
+
+
+
+ -- Felix Exner <feex@universal-robots.com>  Tue, 21 Jan 2025 06:00:00 -0000
+
+ros-kilted-ur (3.0.1-2noble) noble; urgency=high
+
+
+
+ -- Felix Exner <feex@universal-robots.com>  Mon, 30 Dec 2024 06:00:00 -0000
+
+ros-kilted-ur (3.0.0-2noble) noble; urgency=high
+
+  * Update package maintainers (#1203 <https://github.com/UniversalRobots/Universal_Robots_ROS2_Driver/issues/1203>)
+  * Contributors: Felix Exner
+
+ -- Felix Exner <feex@universal-robots.com>  Wed, 18 Dec 2024 06:00:00 -0000
+
+ros-kilted-ur (2.4.13-2noble) noble; urgency=high
+
+
+
+ -- Felix Exner <exner@fzi.de>  Mon, 28 Oct 2024 05:00:00 -0000
+
+ros-kilted-ur (2.4.12-2noble) noble; urgency=high
+
+
+
+ -- Felix Exner <exner@fzi.de>  Mon, 14 Oct 2024 05:00:00 -0000
+
+ros-kilted-ur (2.4.11-2noble) noble; urgency=high
+
+
+
+ -- Felix Exner <exner@fzi.de>  Thu, 10 Oct 2024 05:00:00 -0000
+
+ros-kilted-ur (2.4.10-2noble) noble; urgency=high
+
+  * Update maintainers team (#1088 <https://github.com/UniversalRobots/Universal_Robots_ROS2_Driver/issues/1088>)
+  * Contributors: Vincenzo Di Pentima
+
+ -- Felix Exner <exner@fzi.de>  Wed, 11 Sep 2024 05:00:00 -0000
+
+ros-kilted-ur (2.4.9-2noble) noble; urgency=high
+
+
+
+ -- Felix Exner <exner@fzi.de>  Fri, 09 Aug 2024 05:00:00 -0000
+
+ros-kilted-ur (2.4.8-2noble) noble; urgency=high
+
+
+
+ -- Felix Exner <exner@fzi.de>  Mon, 01 Jul 2024 05:00:00 -0000
+
+ros-kilted-ur (2.4.7-2noble) noble; urgency=high
+
+
+
+ -- Felix Exner <exner@fzi.de>  Wed, 19 Jun 2024 05:00:00 -0000
+
+ros-kilted-ur (2.4.6-2noble) noble; urgency=high
+
+
+
+ -- Felix Exner <exner@fzi.de>  Mon, 17 Jun 2024 05:00:00 -0000
+
+ros-kilted-ur (2.4.5-2noble) noble; urgency=high
+
+
+
+ -- Felix Exner <exner@fzi.de>  Thu, 16 May 2024 05:00:00 -0000
+
+ros-kilted-ur (2.4.4-2noble) noble; urgency=high
+
+
+
+ -- Felix Exner <exner@fzi.de>  Thu, 04 Apr 2024 05:00:00 -0000
+
+ros-kilted-ur (2.4.3-2noble) noble; urgency=high
+
+
+
+ -- Felix Exner <exner@fzi.de>  Fri, 02 Feb 2024 06:00:00 -0000
+
+ros-kilted-ur (2.4.2-2noble) noble; urgency=high
+
+
+
+ -- Felix Exner <exner@fzi.de>  Thu, 23 Nov 2023 06:00:00 -0000
+
+ros-kilted-ur (2.4.1-2noble) noble; urgency=high
+
+
+
+ -- Felix Exner <exner@fzi.de>  Thu, 21 Sep 2023 05:00:00 -0000
+
+ros-kilted-ur (2.4.0-2noble) noble; urgency=high
+
+
+
+ -- Felix Exner <exner@fzi.de>  Mon, 28 Aug 2023 05:00:00 -0000
+
+ros-kilted-ur (2.3.2-2noble) noble; urgency=high
+
+
+
+ -- Felix Exner <exner@fzi.de>  Fri, 02 Jun 2023 05:00:00 -0000
+
+ros-kilted-ur (2.3.1-2noble) noble; urgency=high
+
+
+
+ -- Felix Exner <exner@fzi.de>  Thu, 16 Mar 2023 05:00:00 -0000
+
+ros-kilted-ur (2.3.0-2noble) noble; urgency=high
+
+
+
+ -- Felix Exner <exner@fzi.de>  Thu, 02 Mar 2023 06:00:00 -0000
+
+ros-kilted-ur (2.2.4-2noble) noble; urgency=high
+
+
+
+ -- Felix Exner <exner@fzi.de>  Fri, 07 Oct 2022 05:00:00 -0000
+
+ros-kilted-ur (2.2.3-2noble) noble; urgency=high
+
+
+
+ -- Felix Exner <exner@fzi.de>  Wed, 27 Jul 2022 05:00:00 -0000
+
+ros-kilted-ur (2.2.2-2noble) noble; urgency=high
+
+
+
+ -- Felix Exner <exner@fzi.de>  Tue, 19 Jul 2022 05:00:00 -0000
+
+ros-kilted-ur (2.2.1-2noble) noble; urgency=high
+
+
+
+ -- Felix Exner <exner@fzi.de>  Mon, 27 Jun 2022 05:00:00 -0000
+
+ros-kilted-ur (2.2.0-2noble) noble; urgency=high
+
+  * wip
+  * Rework bringup (#403 <https://github.com/UniversalRobots/Universal_Robots_ROS2_Driver/issues/403>)
+    * Copy all bringup files to ur_robot_driver
+    * Update documentation to use launchfiles from ur_robot_driver
+    * Add deprecation warnings for ur_bringup
+    * Add ``ur`` metapackage
+    * Added deprecation warning to toplevel README
+    * Added meta package to CI checks
+  * Contributors: Felix Exner
+  * Rework bringup (#403 <https://github.com/UniversalRobots/Universal_Robots_ROS2_Driver/issues/403>)
+  * Contributors: Felix Exner
+
+ -- Felix Exner <exner@fzi.de>  Mon, 20 Jun 2022 05:00:00 -0000
+
+ros-kilted-ur (0.0.3-2noble) noble; urgency=high
+
+
+
+ -- Felix Exner <exner@fzi.de>  Thu, 29 Oct 2020 05:00:00 -0000
+
+
