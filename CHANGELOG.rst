@@ -2,6 +2,14 @@
 Changelog for package ur_controllers
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+3.3.0 (2025-05-20)
+------------------
+* SJTC: Update to latest upstream JTC API (`#1351 <https://github.com/UniversalRobots/Universal_Robots_ROS2_Driver/issues/1351>`_)
+* Contributors: Felix Exner
+
+3.2.1 (2025-04-11)
+------------------
+
 3.2.0 (2025-04-10)
 ------------------
 * Added controller to enable and disable tool contact (`#940 <https://github.com/UniversalRobots/Universal_Robots_ROS2_Driver/issues/940>`_)
