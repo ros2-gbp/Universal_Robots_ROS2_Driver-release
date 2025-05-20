@@ -1,3 +1,18 @@
+3.3.0 (2025-05-20)
+------------------
+* Add support for UR15 (`#1358 <https://github.com/UniversalRobots/Universal_Robots_ROS2_Driver/issues/1358>`_)
+* [CI] Check links using lychee instead of a custom script (`#1355 <https://github.com/UniversalRobots/Universal_Robots_ROS2_Driver/issues/1355>`_)
+* Make check_starting_point of test_move launch files configurable (`#1354 <https://github.com/UniversalRobots/Universal_Robots_ROS2_Driver/issues/1354>`_)
+* Add troubleshooting section about handling ABI breaks (`#1350 <https://github.com/UniversalRobots/Universal_Robots_ROS2_Driver/issues/1350>`_)
+* Only append to start_modes in prepare_switch (`#1344 <https://github.com/UniversalRobots/Universal_Robots_ROS2_Driver/issues/1344>`_)
+* tool_contact_test: Check result status directly (`#1345 <https://github.com/UniversalRobots/Universal_Robots_ROS2_Driver/issues/1345>`_)
+* Contributors: Felix Exner
+
+3.2.1 (2025-04-11)
+------------------
+* Disable enforcing command limits (`#1342 <https://github.com/UniversalRobots/Universal_Robots_ROS2_Driver/issues/1342>`_)
+* Contributors: Felix Exner
+
 3.2.0 (2025-04-10)
 ------------------
 * Added controller to enable and disable tool contact (`#940 <https://github.com/UniversalRobots/Universal_Robots_ROS2_Driver/issues/940>`_)
