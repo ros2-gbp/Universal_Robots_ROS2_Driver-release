@@ -38,8 +38,6 @@
  */
 //----------------------------------------------------------------------
 
-#include <rclcpp/version.h>
-
 #include <algorithm>
 #include <cmath>
 #include <sstream>
@@ -223,10 +221,7 @@ controller_interface::CallbackReturn PassthroughTrajectoryController::on_activat
 
 controller_interface::CallbackReturn PassthroughTrajectoryController::on_deactivate(const rclcpp_lifecycle::State&)
 {
-  if (!abort_command_interface_->get().set_value(1.0)) {
-    RCLCPP_ERROR(get_node()->get_logger(), "Could not write to abort command interface.");
-    return controller_interface::CallbackReturn::ERROR;
-  }
+  abort_command_interface_->get().set_value(1.0);
   if (trajectory_active_) {
     const auto active_goal = *rt_active_goal_.readFromRT();
     std::shared_ptr<control_msgs::action::FollowJointTrajectory::Result> result =
@@ -244,15 +239,13 @@ controller_interface::return_type PassthroughTrajectoryController::update(const 
 {
   const auto active_goal = *rt_active_goal_.readFromRT();
 
-  const auto current_transfer_state = transfer_command_interface_->get().get_optional().value_or(TRANSFER_STATE_IDLE);
+  const auto current_transfer_state = transfer_command_interface_->get().get_value();
 
-  bool write_success = true;
   if (active_goal && trajectory_active_) {
     if (current_transfer_state != TRANSFER_STATE_IDLE) {
       // Check if the trajectory has been aborted from the hardware interface. E.g. the robot was stopped on the teach
       // pendant.
-      if (abort_command_interface_->get().get_optional().has_value() &&
-          abort_command_interface_->get().get_optional().value() == 1.0 && current_index_ > 0) {
+      if (abort_command_interface_->get().get_value() == 1.0 && current_index_ > 0) {
         RCLCPP_INFO(get_node()->get_logger(), "Trajectory aborted by hardware, aborting action.");
         std::shared_ptr<control_msgs::action::FollowJointTrajectory::Result> result =
             std::make_shared<control_msgs::action::FollowJointTrajectory::Result>();
@@ -268,9 +261,8 @@ controller_interface::return_type PassthroughTrajectoryController::update(const 
       active_trajectory_elapsed_time_ = rclcpp::Duration(0, 0);
       max_trajectory_time_ =
           rclcpp::Duration::from_seconds(duration_to_double(active_joint_traj_.points.back().time_from_start));
-      write_success &= transfer_command_interface_->get().set_value(TRANSFER_STATE_NEW_TRAJECTORY);
-      write_success &=
-          trajectory_size_command_interface_->get().set_value(static_cast<double>(active_joint_traj_.points.size()));
+      transfer_command_interface_->get().set_value(TRANSFER_STATE_NEW_TRAJECTORY);
+      trajectory_size_command_interface_->get().set_value(static_cast<double>(active_joint_traj_.points.size()));
     }
     auto active_goal_time_tol = goal_time_tolerance_.readFromRT();
     auto joint_mapping = joint_trajectory_mapping_.readFromRT();
@@ -279,7 +271,7 @@ controller_interface::return_type PassthroughTrajectoryController::update(const 
     if (current_transfer_state == TRANSFER_STATE_WAITING_FOR_POINT) {
       if (current_index_ < active_joint_traj_.points.size()) {
         //  Write the time_from_start parameter.
-        write_success &= time_from_start_command_interface_->get().set_value(
+        time_from_start_command_interface_->get().set_value(
             duration_to_double(active_joint_traj_.points[current_index_].time_from_start));
 
         // Write the positions for each joint of the robot
@@ -287,30 +279,30 @@ controller_interface::return_type PassthroughTrajectoryController::update(const 
         // We've added the joint interfaces matching the order of the joint names so we can safely access
         // them by the index.
         for (size_t i = 0; i < number_of_joints_; i++) {
-          write_success &= command_interfaces_[i * 3].set_value(
+          command_interfaces_[i * 3].set_value(
               active_joint_traj_.points[current_index_].positions[joint_mapping->at(joint_names_internal->at(i))]);
           // Optionally, also write velocities and accelerations for each joint.
           if (active_joint_traj_.points[current_index_].velocities.size() > 0) {
-            write_success &= command_interfaces_[i * 3 + 1].set_value(
+            command_interfaces_[i * 3 + 1].set_value(
                 active_joint_traj_.points[current_index_].velocities[joint_mapping->at(joint_names_internal->at(i))]);
             if (active_joint_traj_.points[current_index_].accelerations.size() > 0) {
-              write_success &= command_interfaces_[i * 3 + 2].set_value(
+              command_interfaces_[i * 3 + 2].set_value(
                   active_joint_traj_.points[current_index_]
                       .accelerations[joint_mapping->at(joint_names_internal->at(i))]);
             } else {
-              write_success &= command_interfaces_[i * 3 + 2].set_value(NO_VAL);
+              command_interfaces_[i * 3 + 2].set_value(NO_VAL);
             }
           } else {
-            write_success &= command_interfaces_[i * 3 + 1].set_value(NO_VAL);
-            write_success &= command_interfaces_[i * 3 + 2].set_value(NO_VAL);
+            command_interfaces_[i * 3 + 1].set_value(NO_VAL);
+            command_interfaces_[i * 3 + 2].set_value(NO_VAL);
           }
         }
         // Tell hardware interface that this point is ready to be read.
-        write_success &= transfer_command_interface_->get().set_value(TRANSFER_STATE_TRANSFERRING);
+        transfer_command_interface_->get().set_value(TRANSFER_STATE_TRANSFERRING);
         current_index_++;
         // Check if all points have been written to the hardware interface.
       } else if (current_index_ == active_joint_traj_.points.size()) {
-        write_success &= transfer_command_interface_->get().set_value(TRANSFER_STATE_TRANSFER_DONE);
+        transfer_command_interface_->get().set_value(TRANSFER_STATE_TRANSFER_DONE);
       } else {
         RCLCPP_ERROR(get_node()->get_logger(), "Hardware waiting for trajectory point while none is present!");
       }
@@ -347,15 +339,11 @@ controller_interface::return_type PassthroughTrajectoryController::update(const 
     } else if (current_transfer_state == TRANSFER_STATE_IN_MOTION) {
       // Keep track of how long the trajectory has been executing, if it takes too long, send a warning.
       if (scaling_state_interface_.has_value()) {
-        scaling_factor_ = scaling_state_interface_->get().get_optional().value_or(1.0);
+        scaling_factor_ = scaling_state_interface_->get().get_value();
       }
 
-#if RCLCPP_VERSION_MAJOR >= 17
-      active_trajectory_elapsed_time_ += period * scaling_factor_;
-#else
-      // This is kept for Humble compatibility
-      active_trajectory_elapsed_time_ = active_trajectory_elapsed_time_ + period * scaling_factor_;
-#endif
+      active_trajectory_elapsed_time_ = active_trajectory_elapsed_time_ + (period * scaling_factor_);
+
       // RCLCPP_INFO(get_node()->get_logger(), "Elapsed trajectory time: %f. Scaling factor: %f, period: %f",
       // active_trajectory_elapsed_time_.seconds(), scaling_factor_, period.seconds());
 
@@ -366,16 +354,12 @@ controller_interface::return_type PassthroughTrajectoryController::update(const 
     }
   } else if (current_transfer_state != TRANSFER_STATE_IDLE && current_transfer_state != TRANSFER_STATE_DONE) {
     // No goal is active, but we are not in IDLE, either. We have been canceled.
-    write_success &= abort_command_interface_->get().set_value(1.0);
+    abort_command_interface_->get().set_value(1.0);
 
   } else if (current_transfer_state == TRANSFER_STATE_DONE) {
     // We have been informed about the finished trajectory. Let's reset things.
-    write_success &= transfer_command_interface_->get().set_value(TRANSFER_STATE_IDLE);
-    write_success &= abort_command_interface_->get().set_value(0.0);
-  }
-  if (!write_success) {
-    RCLCPP_ERROR(get_node()->get_logger(), "Could not write to a command interfaces.");
-    return controller_interface::return_type::ERROR;
+    transfer_command_interface_->get().set_value(TRANSFER_STATE_IDLE);
+    abort_command_interface_->get().set_value(0.0);
   }
 
   return controller_interface::return_type::OK;
@@ -387,7 +371,7 @@ rclcpp_action::GoalResponse PassthroughTrajectoryController::goal_received_callb
 {
   RCLCPP_INFO(get_node()->get_logger(), "Received new trajectory.");
   // Precondition: Running controller
-  if (get_lifecycle_state().id() == lifecycle_msgs::msg::State::PRIMARY_STATE_INACTIVE) {
+  if (get_state().id() == lifecycle_msgs::msg::State::PRIMARY_STATE_INACTIVE) {
     RCLCPP_ERROR(get_node()->get_logger(), "Can't accept new trajectories. Controller is not running.");
     return rclcpp_action::GoalResponse::REJECT;
   }
@@ -602,11 +586,8 @@ bool PassthroughTrajectoryController::check_goal_tolerance()
     const std::string joint_name = joint_names_internal->at(i);
     const auto& joint_tol = goal_tolerance->at(i);
     const auto& setpoint = active_joint_traj_.points.back().positions[joint_mapping->at(joint_name)];
-    const auto joint_pos = joint_position_state_interface_[i].get().get_optional();
-    if (!joint_pos.has_value()) {
-      return false;
-    }
-    if (std::abs(joint_pos.value() - setpoint) > joint_tol.position) {
+    const double joint_pos = joint_position_state_interface_[i].get().get_value();
+    if (std::abs(joint_pos - setpoint) > joint_tol.position) {
       // RCLCPP_ERROR(
       // get_node()->get_logger(), "Joint %s should be at position %f, but is at position %f, where tolerance is %f",
       // joint_position_state_interface_[i].get().get_name().c_str(), setpoint, joint_pos, joint_tol.position);
@@ -614,22 +595,16 @@ bool PassthroughTrajectoryController::check_goal_tolerance()
     }
 
     if (!active_joint_traj_.points.back().velocities.empty() && !joint_velocity_state_interface_.empty()) {
-      const auto joint_vel = joint_velocity_state_interface_[i].get().get_optional();
-      if (!joint_vel.has_value()) {
-        return false;
-      }
+      const double joint_vel = joint_velocity_state_interface_[i].get().get_value();
       const auto& expected_vel = active_joint_traj_.points.back().velocities[joint_mapping->at(joint_name)];
-      if (std::abs(joint_vel.value() - expected_vel) > joint_tol.velocity) {
+      if (std::abs(joint_vel - expected_vel) > joint_tol.velocity) {
         return false;
       }
     }
     if (!active_joint_traj_.points.back().accelerations.empty() && !joint_acceleration_state_interface_.empty()) {
-      const auto joint_acc = joint_acceleration_state_interface_[i].get().get_optional();
-      if (!joint_acc.has_value()) {
-        return false;
-      }
+      const double joint_acc = joint_acceleration_state_interface_[i].get().get_value();
       const auto& expected_acc = active_joint_traj_.points.back().accelerations[joint_mapping->at(joint_name)];
-      if (std::abs(joint_acc.value() - expected_acc) > joint_tol.acceleration) {
+      if (std::abs(joint_acc - expected_acc) > joint_tol.acceleration) {
         return false;
       }
     }
@@ -641,9 +616,7 @@ bool PassthroughTrajectoryController::check_goal_tolerance()
 void PassthroughTrajectoryController::end_goal()
 {
   trajectory_active_ = false;
-  if (!transfer_command_interface_->get().set_value(TRANSFER_STATE_IDLE)) {
-    RCLCPP_ERROR(get_node()->get_logger(), "Could not write to transfer command interface.");
-  }
+  transfer_command_interface_->get().set_value(TRANSFER_STATE_IDLE);
 }
 
 std::unordered_map<std::string, size_t>

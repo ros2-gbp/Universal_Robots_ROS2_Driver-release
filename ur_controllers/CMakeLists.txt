@@ -119,7 +119,7 @@ ament_target_dependencies(${PROJECT_NAME}
   ${THIS_PACKAGE_INCLUDE_DEPENDS}
 )
 
-target_compile_options(${PROJECT_NAME} PRIVATE -Wpedantic -Werror)
+target_compile_options(${PROJECT_NAME} PRIVATE -Wpedantic -Werror=return-type)
 
 # prevent pluginlib from using boost
 target_compile_definitions(${PROJECT_NAME} PUBLIC "PLUGINLIB__DISABLE_BOOST_FUNCTIONS")
