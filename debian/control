@@ -1,0 +1,12 @@
+Source: ros-kilted-ur-robot-driver
+Section: misc
+Priority: optional
+Maintainer: Felix Exner <feex@universal-robots.com>
+Build-Depends: debhelper (>= 9.0.0), ros-kilted-ament-cmake, ros-kilted-ament-cmake-python, ros-kilted-backward-ros, ros-kilted-controller-manager, ros-kilted-controller-manager-msgs, ros-kilted-geometry-msgs, ros-kilted-hardware-interface, ros-kilted-launch-testing-ament-cmake <!nocheck>, ros-kilted-pluginlib, ros-kilted-rclcpp, ros-kilted-rclcpp-lifecycle, ros-kilted-rclpy, ros-kilted-std-msgs, ros-kilted-std-srvs, ros-kilted-tf2-geometry-msgs, ros-kilted-ur-client-library, ros-kilted-ur-controllers, ros-kilted-ur-dashboard-msgs, ros-kilted-ur-description, ros-kilted-ur-msgs, ros-kilted-ros-workspace
+Homepage: 
+Standards-Version: 3.9.2
+
+Package: ros-kilted-ur-robot-driver
+Architecture: any
+Depends: ${shlibs:Depends}, ${misc:Depends}, ros-kilted-backward-ros, ros-kilted-controller-manager, ros-kilted-controller-manager-msgs, ros-kilted-force-torque-sensor-broadcaster, ros-kilted-geometry-msgs, ros-kilted-hardware-interface, ros-kilted-joint-state-broadcaster, ros-kilted-joint-state-publisher, ros-kilted-joint-trajectory-controller, ros-kilted-launch, ros-kilted-launch-ros, ros-kilted-pluginlib, ros-kilted-pose-broadcaster, ros-kilted-position-controllers, ros-kilted-rclcpp, ros-kilted-rclcpp-lifecycle, ros-kilted-rclpy, ros-kilted-robot-state-publisher, ros-kilted-ros2-controllers-test-nodes, ros-kilted-rviz2, ros-kilted-std-msgs, ros-kilted-std-srvs, ros-kilted-tf2-geometry-msgs, ros-kilted-ur-client-library, ros-kilted-ur-controllers, ros-kilted-ur-dashboard-msgs, ros-kilted-ur-description, ros-kilted-ur-msgs, ros-kilted-urdf, ros-kilted-velocity-controllers, ros-kilted-xacro, socat, ros-kilted-ros-workspace
+Description: The new driver for Universal Robots UR3, UR5 and UR10 robots with CB3 controllers and the e-series.
