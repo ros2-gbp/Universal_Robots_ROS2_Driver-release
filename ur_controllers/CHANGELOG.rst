@@ -2,15 +2,13 @@
 Changelog for package ur_controllers
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-4.0.1 (2025-05-28)
+3.3.1 (2025-05-28)
 ------------------
-* [force mode controller] Fix the task frame orientation (`#1379 <https://github.com/UniversalRobots/Universal_Robots_ROS2_Driver/issues/1379>`_)
-* Replace ament_target_dependencies calls (`#1373 <https://github.com/UniversalRobots/Universal_Robots_ROS2_Driver/issues/1373>`_)
-* Contributors: Felix Exner
+* [force mode controller] Fix the task frame orientation (backport of `#1379 <https://github.com/UniversalRobots/Universal_Robots_ROS2_Driver/issues/1379>`_) (`#1381 <https://github.com/UniversalRobots/Universal_Robots_ROS2_Driver/issues/1381>`_)
+* Contributors: mergify[bot]
 
-4.0.0 (2025-05-20)
+3.3.0 (2025-05-20)
 ------------------
-* Remove deprecated code from sjtc (`#1362 <https://github.com/UniversalRobots/Universal_Robots_ROS2_Driver/issues/1362>`_)
 * SJTC: Update to latest upstream JTC API (`#1351 <https://github.com/UniversalRobots/Universal_Robots_ROS2_Driver/issues/1351>`_)
 * Contributors: Felix Exner
 

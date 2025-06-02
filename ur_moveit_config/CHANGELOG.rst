@@ -2,10 +2,10 @@
 Changelog for package ur_moveit_config
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-4.0.1 (2025-05-28)
+3.3.1 (2025-05-28)
 ------------------
 
-4.0.0 (2025-05-20)
+3.3.0 (2025-05-20)
 ------------------
 * Add support for UR15 (`#1358 <https://github.com/UniversalRobots/Universal_Robots_ROS2_Driver/issues/1358>`_)
 * Contributors: Felix Exner
