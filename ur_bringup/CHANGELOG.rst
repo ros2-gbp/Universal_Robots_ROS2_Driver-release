@@ -2,6 +2,9 @@
 Changelog for package ur_bringup
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+2.8.1 (2025-06-11)
+------------------
+
 2.8.0 (2025-05-20)
 ------------------
 * Add support for launching a UR15 robot (`#1359 <https://github.com/UniversalRobots/Universal_Robots_ROS2_Driver/issues/1359>`_)
