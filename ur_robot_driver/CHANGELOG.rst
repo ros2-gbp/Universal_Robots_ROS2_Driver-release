@@ -1,3 +1,8 @@
+4.0.2 (2025-06-13)
+------------------
+* Remove unnecessary arguments. (`#1389 <https://github.com/UniversalRobots/Universal_Robots_ROS2_Driver/issues/1389>`_)
+* Contributors: Dr. Denis
+
 4.0.1 (2025-05-28)
 ------------------
 * [force mode controller] Fix the task frame orientation (`#1379 <https://github.com/UniversalRobots/Universal_Robots_ROS2_Driver/issues/1379>`_)
