@@ -1,0 +1,12 @@
+Source: ros-kilted-ur-moveit-config
+Section: misc
+Priority: optional
+Maintainer: Felix Exner <feex@universal-robots.com>
+Build-Depends: debhelper (>= 9.0.0), ros-kilted-ament-cmake, ros-kilted-ros-workspace
+Homepage: 
+Standards-Version: 3.9.2
+
+Package: ros-kilted-ur-moveit-config
+Architecture: any
+Depends: ${shlibs:Depends}, ${misc:Depends}, ros-kilted-moveit-configs-utils, ros-kilted-moveit-kinematics, ros-kilted-moveit-planners, ros-kilted-moveit-planners-chomp, ros-kilted-moveit-ros-move-group, ros-kilted-moveit-ros-visualization, ros-kilted-moveit-servo, ros-kilted-moveit-simple-controller-manager, ros-kilted-ur-description, ros-kilted-warehouse-ros-sqlite, ros-kilted-xacro, ros-kilted-ros-workspace
+Description: An example package with MoveIt2 configurations for UR robots.
