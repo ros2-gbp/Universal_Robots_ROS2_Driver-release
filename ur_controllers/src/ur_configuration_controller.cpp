@@ -95,10 +95,10 @@ controller_interface::CallbackReturn
 URConfigurationController::on_activate(const rclcpp_lifecycle::State& /* previous_state */)
 {
   robot_software_version_.set([this](const std::shared_ptr<VersionInformation> ptr) {
-    ptr->major = state_interfaces_[StateInterfaces::ROBOT_VERSION_MAJOR].get_value();
-    ptr->minor = state_interfaces_[StateInterfaces::ROBOT_VERSION_MINOR].get_value();
-    ptr->build = state_interfaces_[StateInterfaces::ROBOT_VERSION_BUILD].get_value();
-    ptr->bugfix = state_interfaces_[StateInterfaces::ROBOT_VERSION_BUGFIX].get_value();
+    ptr->major = state_interfaces_[StateInterfaces::ROBOT_VERSION_MAJOR].get_optional().value_or(0.0);
+    ptr->minor = state_interfaces_[StateInterfaces::ROBOT_VERSION_MINOR].get_optional().value_or(0.0);
+    ptr->build = state_interfaces_[StateInterfaces::ROBOT_VERSION_BUILD].get_optional().value_or(0.0);
+    ptr->bugfix = state_interfaces_[StateInterfaces::ROBOT_VERSION_BUGFIX].get_optional().value_or(0.0);
   });
   return controller_interface::CallbackReturn::SUCCESS;
 }
@@ -114,7 +114,7 @@ bool URConfigurationController::getRobotSoftwareVersion(
     ur_msgs::srv::GetRobotSoftwareVersion::Response::SharedPtr resp)
 {
   std::shared_ptr<VersionInformation> temp;
-  return robot_software_version_.tryGet([resp](const std::shared_ptr<VersionInformation> ptr) {
+  return robot_software_version_.try_get([resp](const std::shared_ptr<VersionInformation> ptr) {
     resp->major = ptr->major;
     resp->minor = ptr->minor;
     resp->build = ptr->build;
