@@ -1,3 +1,32 @@
+## ur_robot_driver (rolling) - 4.0.3-1
+
+The packages in the `ur_robot_driver` repository were released into the `rolling` distro by running `/usr/bin/bloom-release ur_robot_driver --rosdistro rolling` on `Mon, 16 Jun 2025 08:40:53 -0000`
+
+These packages were released:
+- `ur`
+- `ur_calibration`
+- `ur_controllers`
+- `ur_dashboard_msgs`
+- `ur_moveit_config`
+- `ur_robot_driver`
+
+Version of package(s) in repository `ur_robot_driver`:
+
+- upstream repository: https://github.com/UniversalRobots/Universal_Robots_ROS2_Driver.git
+- release repository: https://github.com/ros2-gbp/Universal_Robots_ROS2_Driver-release.git
+- rosdistro version: `4.0.2-1`
+- old version: `4.0.2-1`
+- new version: `4.0.3-1`
+
+Versions of tools used:
+
+- bloom version: `0.12.0`
+- catkin_pkg version: `1.0.0`
+- rosdep version: `0.25.1`
+- rosdistro version: `1.0.1`
+- vcstools version: `0.1.42`
+
+
 ## ur_robot_driver (kilted) - 4.0.3-1
 
 The packages in the `ur_robot_driver` repository were released into the `kilted` distro by running `/usr/bin/bloom-release ur_robot_driver --rosdistro kilted` on `Mon, 16 Jun 2025 07:36:45 -0000`
