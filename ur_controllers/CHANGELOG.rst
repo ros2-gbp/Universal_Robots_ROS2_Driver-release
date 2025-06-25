@@ -2,26 +2,27 @@
 Changelog for package ur_controllers
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-4.0.3 (2025-06-16)
+3.3.3 (2025-06-24)
 ------------------
-* Ignore RT-Tools deprecation warning about trylock
-* Contributors: Felix Exner
+* Use new API of PID class (backport of `#1410 <https://github.com/UniversalRobots/Universal_Robots_ROS2_Driver/issues/1410>`_) (`#1418 <https://github.com/UniversalRobots/Universal_Robots_ROS2_Driver/issues/1418>`_)
+  Co-authored-by: Christoph Fröhlich <christophfroehlich@users.noreply.github.com>
+* ur_controllers: Fix compilation on Windows (backport of `#1402 <https://github.com/UniversalRobots/Universal_Robots_ROS2_Driver/issues/1402>`_) (`#1413 <https://github.com/UniversalRobots/Universal_Robots_ROS2_Driver/issues/1413>`_)
+  Co-authored-by: Silvio Traversaro <silvio@traversaro.it>
+* Ignore deprecation warning for set_gains for now (backport of `#1392 <https://github.com/UniversalRobots/Universal_Robots_ROS2_Driver/issues/1392>`_) (`#1396 <https://github.com/UniversalRobots/Universal_Robots_ROS2_Driver/issues/1396>`_)
+* Contributors: mergify[bot]
 
-4.0.2 (2025-06-13)
+3.3.2 (2025-06-10)
 ------------------
-* Ignore deprecation warning for set_gains for now (`#1392 <https://github.com/UniversalRobots/Universal_Robots_ROS2_Driver/issues/1392>`_)
-* Use std_atomic<bool> in SJTC (`#1385 <https://github.com/UniversalRobots/Universal_Robots_ROS2_Driver/issues/1385>`_)
-* Contributors: Felix Exner
+* Use std_atomic<bool> in SJTC (backport of `#1385 <https://github.com/UniversalRobots/Universal_Robots_ROS2_Driver/issues/1385>`_) (`#1387 <https://github.com/UniversalRobots/Universal_Robots_ROS2_Driver/issues/1387>`_)
+* Contributors: mergify[bot]
 
-4.0.1 (2025-05-28)
+3.3.1 (2025-05-28)
 ------------------
-* [force mode controller] Fix the task frame orientation (`#1379 <https://github.com/UniversalRobots/Universal_Robots_ROS2_Driver/issues/1379>`_)
-* Replace ament_target_dependencies calls (`#1373 <https://github.com/UniversalRobots/Universal_Robots_ROS2_Driver/issues/1373>`_)
-* Contributors: Felix Exner
+* [force mode controller] Fix the task frame orientation (backport of `#1379 <https://github.com/UniversalRobots/Universal_Robots_ROS2_Driver/issues/1379>`_) (`#1381 <https://github.com/UniversalRobots/Universal_Robots_ROS2_Driver/issues/1381>`_)
+* Contributors: mergify[bot]
 
-4.0.0 (2025-05-20)
+3.3.0 (2025-05-20)
 ------------------
-* Remove deprecated code from sjtc (`#1362 <https://github.com/UniversalRobots/Universal_Robots_ROS2_Driver/issues/1362>`_)
 * SJTC: Update to latest upstream JTC API (`#1351 <https://github.com/UniversalRobots/Universal_Robots_ROS2_Driver/issues/1351>`_)
 * Contributors: Felix Exner
 

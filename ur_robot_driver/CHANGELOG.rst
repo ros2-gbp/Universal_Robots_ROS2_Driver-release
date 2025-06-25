@@ -1,19 +1,20 @@
-4.0.3 (2025-06-16)
+3.3.3 (2025-06-24)
 ------------------
+* Refactor prepare_switch method (backport of `#1417 <https://github.com/UniversalRobots/Universal_Robots_ROS2_Driver/issues/1417>`_) (`#1428 <https://github.com/UniversalRobots/Universal_Robots_ROS2_Driver/issues/1428>`_)
+* Update simulation page to also explicitly mention PolyScope X (backport of `#1415 <https://github.com/UniversalRobots/Universal_Robots_ROS2_Driver/issues/1415>`_) (`#1426 <https://github.com/UniversalRobots/Universal_Robots_ROS2_Driver/issues/1426>`_)
+* Contributors: mergify[bot]
 
-4.0.2 (2025-06-13)
+3.3.2 (2025-06-10)
 ------------------
-* Remove unnecessary arguments. (`#1389 <https://github.com/UniversalRobots/Universal_Robots_ROS2_Driver/issues/1389>`_)
-* Contributors: Dr. Denis
+* Remove unnecessary arguments. (backport of `#1389 <https://github.com/UniversalRobots/Universal_Robots_ROS2_Driver/issues/1389>`_) (`#1390 <https://github.com/UniversalRobots/Universal_Robots_ROS2_Driver/issues/1390>`_)
+* Contributors: mergify[bot]
 
-4.0.1 (2025-05-28)
+3.3.1 (2025-05-28)
 ------------------
-* [force mode controller] Fix the task frame orientation (`#1379 <https://github.com/UniversalRobots/Universal_Robots_ROS2_Driver/issues/1379>`_)
-* Replace ament_target_dependencies calls (`#1373 <https://github.com/UniversalRobots/Universal_Robots_ROS2_Driver/issues/1373>`_)
-* Update feature list (`#1372 <https://github.com/UniversalRobots/Universal_Robots_ROS2_Driver/issues/1372>`_)
-* Contributors: Felix Exner
+* [force mode controller] Fix the task frame orientation (backport of `#1379 <https://github.com/UniversalRobots/Universal_Robots_ROS2_Driver/issues/1379>`_) (`#1381 <https://github.com/UniversalRobots/Universal_Robots_ROS2_Driver/issues/1381>`_)
+* Contributors: mergify[bot]
 
-4.0.0 (2025-05-20)
+3.3.0 (2025-05-20)
 ------------------
 * Add support for UR15 (`#1358 <https://github.com/UniversalRobots/Universal_Robots_ROS2_Driver/issues/1358>`_)
 * [CI] Check links using lychee instead of a custom script (`#1355 <https://github.com/UniversalRobots/Universal_Robots_ROS2_Driver/issues/1355>`_)

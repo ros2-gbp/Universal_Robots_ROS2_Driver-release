@@ -133,7 +133,7 @@ controller_interface::return_type ScaledJointTrajectoryController::update(const 
     // if sampling the first time, set the point before you sample
     if (!current_trajectory_->is_sampled_already()) {
       first_sample = true;
-      if (params_.interpolate_from_desired_state) {
+      if (params_.interpolate_from_desired_state || params_.open_loop_control) {
         if (std::abs(last_commanded_time_.seconds()) < std::numeric_limits<float>::epsilon()) {
           last_commanded_time_ = time;
         }
@@ -336,14 +336,10 @@ controller_interface::return_type ScaledJointTrajectoryController::update(const 
   }
 
   // TODO(fmauch): Remove once merged upstream
-
-#pragma GCC diagnostic push
-#pragma GCC diagnostic ignored "-Wdeprecated-declarations"
   if (state_publisher_->trylock()) {
     state_publisher_->msg_.speed_scaling_factor = scaling_factor_;
     state_publisher_->unlock();
   }
-#pragma GCC diagnostic pop
   // end remove once merged upstream
 
   publish_state(time, state_desired_, state_current_, state_error_);
@@ -356,15 +352,19 @@ void ScaledJointTrajectoryController::update_pids()
 {
   for (size_t i = 0; i < num_cmd_joints_; ++i) {
     const auto& gains = params_.gains.joints_map.at(params_.joints.at(map_cmd_to_joints_[i]));
+    control_toolbox::AntiWindupStrategy antiwindup_strat;
+    antiwindup_strat.set_type(gains.antiwindup_strategy);
+    antiwindup_strat.i_max = gains.i_clamp;
+    antiwindup_strat.i_min = -gains.i_clamp;
+    antiwindup_strat.error_deadband = gains.error_deadband;
+    antiwindup_strat.tracking_time_constant = gains.tracking_time_constant;
     if (pids_[i]) {
       // update PIDs with gains from ROS parameters
-#pragma GCC diagnostic push
-#pragma GCC diagnostic ignored "-Wdeprecated-declarations"
-      pids_[i]->set_gains(gains.p, gains.i, gains.d, gains.i_clamp, -gains.i_clamp);
-#pragma GCC diagnostic pop
+      pids_[i]->set_gains(gains.p, gains.i, gains.d, gains.u_clamp_max, gains.u_clamp_min, antiwindup_strat);
     } else {
       // Init PIDs with gains from ROS parameters
-      pids_[i] = std::make_shared<control_toolbox::Pid>(gains.p, gains.i, gains.d, gains.i_clamp, -gains.i_clamp);
+      pids_[i] = std::make_shared<control_toolbox::Pid>(gains.p, gains.i, gains.d, gains.u_clamp_max, gains.u_clamp_min,
+                                                        antiwindup_strat);
     }
     ff_velocity_scale_[i] = gains.ff_velocity_scale;
   }
