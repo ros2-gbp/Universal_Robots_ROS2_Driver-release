@@ -2,18 +2,25 @@
 Changelog for package ur_calibration
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-3.3.3 (2025-06-24)
+4.1.0 (2025-07-29)
 ------------------
-* Fix ur_calibration compilation on Windows (backport of `#1400 <https://github.com/UniversalRobots/Universal_Robots_ROS2_Driver/issues/1400>`_) (`#1409 <https://github.com/UniversalRobots/Universal_Robots_ROS2_Driver/issues/1409>`_)
-* Contributors: mergify[bot]
+* Use hpp headers from geometry2 (`#1467 <https://github.com/UniversalRobots/Universal_Robots_ROS2_Driver/issues/1467>`_)
+* Fix ur_calibration compilation on Windows (`#1400 <https://github.com/UniversalRobots/Universal_Robots_ROS2_Driver/issues/1400>`_)
+* Contributors: Felix Exner, Silvio Traversaro
 
-3.3.2 (2025-06-10)
-------------------
-
-3.3.1 (2025-05-28)
+4.0.3 (2025-06-16)
 ------------------
 
-3.3.0 (2025-05-20)
+4.0.2 (2025-06-13)
+------------------
+
+4.0.1 (2025-05-28)
+------------------
+* Replace ament_target_dependencies calls (`#1373 <https://github.com/UniversalRobots/Universal_Robots_ROS2_Driver/issues/1373>`_)
+* Update feature list (`#1372 <https://github.com/UniversalRobots/Universal_Robots_ROS2_Driver/issues/1372>`_)
+* Contributors: Felix Exner
+
+4.0.0 (2025-05-20)
 ------------------
 
 3.2.1 (2025-04-11)

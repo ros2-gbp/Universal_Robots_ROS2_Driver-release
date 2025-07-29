@@ -118,7 +118,7 @@ public:
   URPositionHardwareInterface();
   virtual ~URPositionHardwareInterface();
 
-  hardware_interface::CallbackReturn on_init(const hardware_interface::HardwareInfo& system_info) final;
+  hardware_interface::CallbackReturn on_init(const hardware_interface::HardwareComponentInterfaceParams& params) final;
 
   std::vector<hardware_interface::StateInterface> export_state_interfaces() final;
 
@@ -301,7 +301,7 @@ protected:
   double pausing_ramp_up_increment_;
 
   // resources switching aux vars
-  std::vector<std::vector<uint>> stop_modes_;
+  std::vector<std::vector<uint32_t>> stop_modes_;
   std::vector<std::vector<std::string>> start_modes_;
   bool position_controller_running_;
   bool velocity_controller_running_;

@@ -133,7 +133,7 @@ controller_interface::return_type ScaledJointTrajectoryController::update(const 
     // if sampling the first time, set the point before you sample
     if (!current_trajectory_->is_sampled_already()) {
       first_sample = true;
-      if (params_.interpolate_from_desired_state || params_.open_loop_control) {
+      if (params_.interpolate_from_desired_state) {
         if (std::abs(last_commanded_time_.seconds()) < std::numeric_limits<float>::epsilon()) {
           last_commanded_time_ = time;
         }
@@ -336,10 +336,14 @@ controller_interface::return_type ScaledJointTrajectoryController::update(const 
   }
 
   // TODO(fmauch): Remove once merged upstream
+
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wdeprecated-declarations"
   if (state_publisher_->trylock()) {
     state_publisher_->msg_.speed_scaling_factor = scaling_factor_;
     state_publisher_->unlock();
   }
+#pragma GCC diagnostic pop
   // end remove once merged upstream
 
   publish_state(time, state_desired_, state_current_, state_error_);
