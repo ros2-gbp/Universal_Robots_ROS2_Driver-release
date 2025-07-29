@@ -51,7 +51,7 @@ repos:
       args: ["--ignore=D100,D101,D102,D103,D104,D105,D106,D107,D203,D212,D401,D404"]
 
   - repo: https://github.com/pycqa/flake8
-    rev: 7.2.0
+    rev: 7.3.0
     hooks:
     - id: flake8
       args: ["--ignore=E501,W503"]
@@ -87,7 +87,7 @@ repos:
         args: ["--linelength=120"]
 
   - repo: https://github.com/pre-commit/mirrors-clang-format
-    rev: 'v20.1.5'
+    rev: 'v20.1.8'
     hooks:
       - id: clang-format
 
@@ -115,7 +115,7 @@ repos:
 
   # Docs - RestructuredText hooks
   - repo: https://github.com/PyCQA/doc8
-    rev: v1.1.2
+    rev: v2.0.0
     hooks:
       - id: doc8
         args: ['--max-line-length=100', '--ignore=D001']
