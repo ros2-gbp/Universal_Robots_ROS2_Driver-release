@@ -256,14 +256,19 @@ class ControllerManagerInterface(
     },
     services={"list_controllers": ListControllers},
 ):
-    def wait_for_controller(self, controller_name, target_state="active"):
-        while True:
+    def wait_for_controller(self, controller_name, target_state=None, timeout=TIMEOUT_WAIT_SERVICE):
+        start_time = time.time()
+        while time.time() - start_time < timeout:
             controllers = self.list_controllers().controller
             for controller in controllers:
-                if (controller.name == controller_name) and (controller.state == target_state):
-                    return
-
+                if controller.name == controller_name:
+                    if (target_state is None) or (controller.state == target_state):
+                        return
             time.sleep(1)
+        raise Exception(
+            "Controller '%s' not found or not in state '%s' within %fs"
+            % (controller_name, target_state, timeout)
+        )
 
 
 class IoStatusInterface(
@@ -305,14 +310,15 @@ def _declare_launch_arguments():
             description="Type/series of used UR robot.",
             choices=[
                 "ur3",
-                "ur3e",
                 "ur5",
+                "ur10",
+                "ur3e",
                 "ur5e",
                 "ur7e",
-                "ur10",
                 "ur10e",
                 "ur12e",
                 "ur16e",
+                "ur8long",
                 "ur15",
                 "ur20",
                 "ur30",
