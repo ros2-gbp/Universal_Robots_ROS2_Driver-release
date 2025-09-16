@@ -118,7 +118,7 @@ public:
   URPositionHardwareInterface();
   virtual ~URPositionHardwareInterface();
 
-  hardware_interface::CallbackReturn on_init(const hardware_interface::HardwareComponentInterfaceParams& params) final;
+  hardware_interface::CallbackReturn on_init(const hardware_interface::HardwareInfo& system_info) final;
 
   std::vector<hardware_interface::StateInterface> export_state_interfaces() final;
 

@@ -35,6 +35,8 @@
 //----------------------------------------------------------------------
 
 #pragma once
+#include <tf2_ros/buffer.h>
+#include <tf2_ros/transform_listener.h>
 #include <array>
 #include <memory>
 
@@ -43,13 +45,6 @@
 #include <rclcpp/rclcpp.hpp>
 #include <realtime_tools/realtime_thread_safe_box.hpp>
 #include <std_srvs/srv/trigger.hpp>
-#if __has_include(<tf2_ros/buffer.hpp>)
-#include <tf2_ros/buffer.hpp>
-#include <tf2_ros/transform_listener.hpp>
-#else
-#include <tf2_ros/buffer.h>
-#include <tf2_ros/transform_listener.h>
-#endif
 #include <ur_msgs/srv/set_force_mode.hpp>
 
 #include "ur_controllers/force_mode_controller_parameters.hpp"

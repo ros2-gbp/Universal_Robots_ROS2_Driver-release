@@ -101,13 +101,13 @@ URPositionHardwareInterface::~URPositionHardwareInterface()
 }
 
 hardware_interface::CallbackReturn
-URPositionHardwareInterface::on_init(const hardware_interface::HardwareComponentInterfaceParams& params)
+URPositionHardwareInterface::on_init(const hardware_interface::HardwareInfo& system_info)
 {
-  if (hardware_interface::SystemInterface::on_init(params) != hardware_interface::CallbackReturn::SUCCESS) {
+  if (hardware_interface::SystemInterface::on_init(system_info) != hardware_interface::CallbackReturn::SUCCESS) {
     return hardware_interface::CallbackReturn::ERROR;
   }
 
-  info_ = params.hardware_info;
+  info_ = system_info;
 
   // initialize
   urcl_joint_positions_ = { { 0.0, 0.0, 0.0, 0.0, 0.0, 0.0 } };
