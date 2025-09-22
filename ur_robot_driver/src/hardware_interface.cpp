@@ -597,9 +597,6 @@ URPositionHardwareInterface::on_configure(const rclcpp_lifecycle::State& previou
     driver_config.handle_program_state =
         std::bind(&URPositionHardwareInterface::handleRobotProgramState, this, std::placeholders::_1);
     ur_driver_ = std::make_unique<urcl::UrDriver>(driver_config);
-    if (ur_driver_->getControlFrequency() != info_.rw_rate) {
-      ur_driver_->resetRTDEClient(output_recipe_filename, input_recipe_filename, info_.rw_rate);
-    }
   } catch (urcl::ToolCommNotAvailable& e) {
     RCLCPP_FATAL_STREAM(rclcpp::get_logger("URPositionHardwareInterface"), "See parameter use_tool_communication");
 
@@ -609,7 +606,7 @@ URPositionHardwareInterface::on_configure(const rclcpp_lifecycle::State& previou
     return hardware_interface::CallbackReturn::ERROR;
   }
   // Timeout before the reverse interface will be dropped by the robot
-  receive_timeout_ = urcl::RobotReceiveTimeout::sec(std::stof(info_.hardware_parameters["robot_receive_timeout"]));
+  receive_timeout_ = urcl::RobotReceiveTimeout::millisec(std::stoi(info_.hardware_parameters["keep_alive_count"]) * 20);
 
   RCLCPP_INFO(rclcpp::get_logger("URPositionHardwareInterface"), "Calibration checksum: '%s'.",
               calibration_checksum.c_str());
@@ -849,9 +846,7 @@ hardware_interface::return_type URPositionHardwareInterface::write(const rclcpp:
       ur_driver_->writeFreedriveControlMessage(urcl::control::FreedriveControlMessage::FREEDRIVE_NOOP);
 
     } else if (passthrough_trajectory_controller_running_) {
-      ur_driver_->writeTrajectoryControlMessage(
-          urcl::control::TrajectoryControlMessage::TRAJECTORY_NOOP, 0,
-          urcl::RobotReceiveTimeout::millisec(1000 * 5.0 / static_cast<double>(info_.rw_rate)));
+      ur_driver_->writeTrajectoryControlMessage(urcl::control::TrajectoryControlMessage::TRAJECTORY_NOOP);
       check_passthrough_trajectory_controller();
     } else {
       ur_driver_->writeKeepalive();
@@ -971,7 +966,7 @@ void URPositionHardwareInterface::checkAsyncIO()
   }
 
   if (!std::isnan(freedrive_mode_enable_) && ur_driver_ != nullptr) {
-    RCLCPP_INFO(get_logger(), "Starting freedrive mode.");
+    RCLCPP_INFO(rclcpp::get_logger("URPositionHardwareInterface"), "Starting freedrive mode.");
     freedrive_mode_async_success_ =
         ur_driver_->writeFreedriveControlMessage(urcl::control::FreedriveControlMessage::FREEDRIVE_START);
     freedrive_mode_enable_ = NO_NEW_CMD_;
@@ -980,7 +975,7 @@ void URPositionHardwareInterface::checkAsyncIO()
 
   if (!std::isnan(freedrive_mode_abort_) && freedrive_mode_abort_ == 1.0 && freedrive_activated_ &&
       ur_driver_ != nullptr) {
-    RCLCPP_INFO(get_logger(), "Stopping freedrive mode.");
+    RCLCPP_INFO(rclcpp::get_logger("URPositionHardwareInterface"), "Stopping freedrive mode.");
     freedrive_mode_async_success_ =
         ur_driver_->writeFreedriveControlMessage(urcl::control::FreedriveControlMessage::FREEDRIVE_STOP);
     freedrive_activated_ = false;
@@ -1144,7 +1139,8 @@ hardware_interface::return_type URPositionHardwareInterface::prepare_command_mod
         continue;
 
       if (mode_compatibility_[mode][other] == false) {
-        RCLCPP_ERROR(get_logger(), "Starting %s together with %s is not allowed. ", mode.c_str(), other.c_str());
+        RCLCPP_ERROR(rclcpp::get_logger("URPositionHardwareInterface"), "Starting %s together with %s is not allowed. ",
+                     mode.c_str(), other.c_str());
         return false;
       }
     }
@@ -1179,7 +1175,7 @@ hardware_interface::return_type URPositionHardwareInterface::prepare_command_mod
 
   if (!std::all_of(start_modes_.begin() + 1, start_modes_.end(),
                    [&](const std::vector<std::string>& other) { return other == start_modes_[0]; })) {
-    RCLCPP_ERROR(get_logger(), "Start modes of all joints have to be the same.");
+    RCLCPP_ERROR(rclcpp::get_logger("URPositionHardwareInterface"), "Start modes of all joints have to be the same.");
     return hardware_interface::return_type::ERROR;
   }
 
@@ -1244,7 +1240,7 @@ hardware_interface::return_type URPositionHardwareInterface::perform_command_mod
   }
   if (stop_modes_[0].size() != 0 && std::find(stop_modes_[0].begin(), stop_modes_[0].end(),
                                               StoppingInterface::STOP_PASSTHROUGH) != stop_modes_[0].end()) {
-    RCLCPP_WARN(get_logger(), "Stopping passthrough trajectory controller.");
+    RCLCPP_WARN(rclcpp::get_logger("URPositionHardwareInterface"), "Stopping passthrough trajectory controller.");
     passthrough_trajectory_controller_running_ = false;
     passthrough_trajectory_abort_ = 1.0;
     trajectory_joint_positions_.clear();
@@ -1359,7 +1355,7 @@ void URPositionHardwareInterface::check_passthrough_trajectory_controller()
     ur_driver_->writeTrajectoryControlMessage(urcl::control::TrajectoryControlMessage::TRAJECTORY_CANCEL);
   } else if (passthrough_trajectory_transfer_state_ == 6.0) {
     if (passthrough_trajectory_size_ != trajectory_joint_positions_.size()) {
-      RCLCPP_INFO(get_logger(), "Got a new trajectory with %lu points.",
+      RCLCPP_INFO(rclcpp::get_logger("URPositionHardwareInterface"), "Got a new trajectory with %lu points.",
                   static_cast<size_t>(passthrough_trajectory_size_));
       trajectory_joint_positions_.resize(passthrough_trajectory_size_);
       trajectory_joint_velocities_.resize(passthrough_trajectory_size_);
@@ -1385,7 +1381,7 @@ void URPositionHardwareInterface::check_passthrough_trajectory_controller()
     passthrough_trajectory_transfer_state_ = 1.0;
 
     // Once we received enough points so we can move for at least 5 cycles, we start executing
-    if ((passthrough_trajectory_time_from_start_ > 5.0 / static_cast<double>(info_.rw_rate) ||
+    if ((passthrough_trajectory_time_from_start_ > 5.0 / static_cast<double>(ur_driver_->getControlFrequency()) ||
          point_index_received == passthrough_trajectory_size_ - 1) &&
         !trajectory_started) {
       ur_driver_->writeTrajectoryControlMessage(urcl::control::TrajectoryControlMessage::TRAJECTORY_START,
@@ -1423,8 +1419,9 @@ void URPositionHardwareInterface::check_passthrough_trajectory_controller()
                                                  trajectory_times_[i]);
         } else if (!is_valid_joint_information(trajectory_joint_velocities_) &&
                    is_valid_joint_information(trajectory_joint_accelerations_)) {
-          RCLCPP_ERROR(get_logger(), "Accelerations but no velocities given. If you want to specify accelerations with "
-                                     "a 0 velocity, please do that explicitly.");
+          RCLCPP_ERROR(rclcpp::get_logger("URPositionHardwareInterface"), "Accelerations but no velocities given. If "
+                                                                          "you want to specify accelerations with "
+                                                                          "a 0 velocity, please do that explicitly.");
           error = true;
           break;
 
@@ -1434,7 +1431,8 @@ void URPositionHardwareInterface::check_passthrough_trajectory_controller()
                                                  trajectory_joint_accelerations_[i], trajectory_times_[i]);
         }
       } else {
-        RCLCPP_ERROR(get_logger(), "Trajectory points without position information are not supported.");
+        RCLCPP_ERROR(rclcpp::get_logger("URPositionHardwareInterface"), "Trajectory points without position "
+                                                                        "information are not supported.");
         error = true;
         break;
       }
