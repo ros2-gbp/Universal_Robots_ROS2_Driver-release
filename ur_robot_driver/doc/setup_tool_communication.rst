@@ -1,3 +1,5 @@
+:github_url: https://github.com/UniversalRobots/Universal_Robots_ROS2_Driver/blob/main/ur_robot_driver/doc/setup_tool_communication.rst
+
 .. _setup-tool-communication:
 
 Setting up the tool communication on an e-Series robot
@@ -26,7 +28,7 @@ Robot setup
 -----------
 
 For setting up the robot, please install the **rs485-1.0.urcap** found in the **resources** folder.
-Installing a URCap is explained in the :ref:`setup guide <install-urcap-e-series>` for the **external-control** URCap.
+Installing a URCap is explained in the :ref:`setup guide <install_urcap>` for the **external-control** URCap.
 
 After installing the URCap the robot will expose its tool communication device to the network.
 
@@ -38,7 +40,7 @@ launch files:
 
 .. code-block:: bash
 
-   $ ros2 launch ur_robot_driver ur_control.launch.py ur_type:=ur5e robot_ip:=yyy.yyy.yyy.yyy use_tool_communication:=true use_fake_hardware:=false launch_rviz:=false
+   $ ros2 launch ur_robot_driver ur_control.launch.py ur_type:=ur5e robot_ip:=yyy.yyy.yyy.yyy use_tool_communication:=true use_mock_hardware:=false launch_rviz:=false
      # remember that your user needs to have the rights to write that file handle to /tmp/ttyUR
 
 Following parameters can be set `ur.ros2_control.xacro <https://github.com/UniversalRobots/Universal_Robots_ROS2_Description/blob/ros2/urdf/ur.ros2_control.xacro>`_\ :

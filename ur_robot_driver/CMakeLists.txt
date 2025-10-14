@@ -29,6 +29,7 @@ find_package(geometry_msgs REQUIRED)
 find_package(hardware_interface REQUIRED)
 find_package(pluginlib REQUIRED)
 find_package(rclcpp REQUIRED)
+find_package(rclcpp_action REQUIRED)
 find_package(rclcpp_lifecycle REQUIRED)
 find_package(rclpy REQUIRED)
 find_package(std_msgs REQUIRED)
@@ -40,31 +41,25 @@ find_package(ur_msgs REQUIRED)
 
 include_directories(include)
 
-set(THIS_PACKAGE_INCLUDE_DEPENDS
-  controller_manager
-  controller_manager_msgs
-  geometry_msgs
-  hardware_interface
-  pluginlib
-  rclcpp
-  rclcpp_lifecycle
-  std_msgs
-  std_srvs
-  tf2_geometry_msgs
-  ur_client_library
-  ur_dashboard_msgs
-  ur_msgs
-)
-
 add_library(ur_robot_driver_plugin
   SHARED
   src/dashboard_client_ros.cpp
   src/hardware_interface.cpp
   src/urcl_log_handler.cpp
-  src/robot_state_helper.cpp
 )
-target_link_libraries(
-  ur_robot_driver_plugin
+target_link_libraries(ur_robot_driver_plugin PUBLIC
+  ${controller_manager_msgs_TARGETS}
+  ${geometry_msgs_TARGETS}
+  ${std_msgs_TARGETS}
+  ${std_srvs_TARGETS}
+  ${tf2_geometry_msgs_TARGETS}
+  ${ur_dashboard_msgs_TARGETS}
+  ${ur_msgs_TARGETS}
+  controller_manager::controller_manager
+  hardware_interface::hardware_interface
+  pluginlib::pluginlib
+  rclcpp::rclcpp
+  rclcpp_lifecycle::rclcpp_lifecycle
   ur_client_library::urcl
 )
 target_include_directories(
@@ -72,12 +67,20 @@ target_include_directories(
   PRIVATE
   include
 )
-ament_target_dependencies(
-  ur_robot_driver_plugin
-  ${${PROJECT_NAME}_EXPORTED_TARGETS}
-  ${THIS_PACKAGE_INCLUDE_DEPENDS}
-)
 pluginlib_export_plugin_description_file(hardware_interface hardware_interface_plugin.xml)
+
+add_library(ur_robot_driver_log_handler
+  SHARED
+  src/urcl_log_handler.cpp
+)
+target_include_directories(ur_robot_driver_log_handler
+  PUBLIC
+  "$<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>"
+  "$<INSTALL_INTERFACE:include/${PROJECT_NAME}>")
+target_link_libraries(ur_robot_driver_log_handler PUBLIC
+  rclcpp::rclcpp
+  ur_client_library::urcl
+)
 
 #
 # dashboard_client
@@ -87,18 +90,11 @@ add_executable(dashboard_client
   src/dashboard_client_node.cpp
   src/urcl_log_handler.cpp
 )
-target_link_libraries(dashboard_client ur_client_library::urcl)
-ament_target_dependencies(dashboard_client ${${PROJECT_NAME}_EXPORTED_TARGETS} ${THIS_PACKAGE_INCLUDE_DEPENDS})
-
-#
-# ur_ros2_control_node
-#
-add_executable(ur_ros2_control_node
-  src/ur_ros2_control_node.cpp
-)
-ament_target_dependencies(ur_ros2_control_node
-  controller_manager
-  rclcpp
+target_link_libraries(dashboard_client PRIVATE
+  ${std_srvs_TARGETS}
+  ${ur_dashboard_msgs_TARGETS}
+  rclcpp::rclcpp
+  ur_client_library::urcl
 )
 
 #
@@ -108,7 +104,12 @@ add_executable(controller_stopper_node
   src/controller_stopper.cpp
   src/controller_stopper_node.cpp
 )
-ament_target_dependencies(controller_stopper_node ${${PROJECT_NAME}_EXPORTED_TARGETS} ${THIS_PACKAGE_INCLUDE_DEPENDS})
+target_link_libraries(controller_stopper_node PRIVATE
+  ${std_msgs_TARGETS}
+  ${controller_manager_msgs_TARGETS}
+  rclcpp::rclcpp
+  ur_client_library::urcl
+)
 
 #
 # robot_state_helper
@@ -118,27 +119,58 @@ add_executable(robot_state_helper
   src/robot_state_helper_node.cpp
   src/urcl_log_handler.cpp
 )
-target_link_libraries(robot_state_helper ur_client_library::urcl)
-ament_target_dependencies(robot_state_helper ${${PROJECT_NAME}_EXPORTED_TARGETS} ${THIS_PACKAGE_INCLUDE_DEPENDS})
+target_link_libraries(robot_state_helper PUBLIC
+  ${std_msgs_TARGETS}
+  ${std_srvs_TARGETS}
+  ${ur_dashboard_msgs_TARGETS}
+  rclcpp::rclcpp
+  rclcpp_action::rclcpp_action
+  ur_client_library::urcl
+)
 
 add_executable(urscript_interface
   src/urscript_interface.cpp
 )
-ament_target_dependencies(urscript_interface ${${PROJECT_NAME}_EXPORTED_TARGETS} ${THIS_PACKAGE_INCLUDE_DEPENDS})
+target_link_libraries(urscript_interface PUBLIC
+  rclcpp::rclcpp
+  ${std_msgs_TARGETS}
+  ur_client_library::urcl
+)
+
+#
+# trajectory_until_node
+#
+add_executable(trajectory_until_node
+  src/trajectory_until_node.cpp
+)
+target_link_libraries(trajectory_until_node PUBLIC
+  rclcpp::rclcpp
+  ${std_msgs_TARGETS}
+  rclcpp_action::rclcpp_action
+  ${ur_msgs_TARGETS}
+)
 
 install(
-  TARGETS dashboard_client ur_ros2_control_node controller_stopper_node urscript_interface robot_state_helper
+  TARGETS
+    dashboard_client
+    controller_stopper_node
+    urscript_interface
+    robot_state_helper
+    trajectory_until_node
   DESTINATION lib/${PROJECT_NAME}
 )
 
 # INSTALL
 install(
-  TARGETS ur_robot_driver_plugin
+  TARGETS
+    ur_robot_driver_log_handler
+    ur_robot_driver_plugin
+  EXPORT export_${PROJECT_NAME}
   DESTINATION lib
 )
 install(
   DIRECTORY include/
-  DESTINATION include
+  DESTINATION include/${PROJECT_NAME}
 )
 
 ## EXPORTS
@@ -146,8 +178,11 @@ ament_export_include_directories(
   include
 )
 ament_export_libraries(
+  ur_robot_driver_log_handler
   ur_robot_driver_plugin
 )
+# Export modern CMake targets
+ament_export_targets(export_${PROJECT_NAME})
 
 install(DIRECTORY resources
   DESTINATION share/${PROJECT_NAME}
@@ -164,19 +199,33 @@ ament_export_dependencies(
   pluginlib
   rclcpp
   rclcpp_lifecycle
-  ${THIS_PACKAGE_INCLUDE_DEPENDS}
+  controller_manager
+  controller_manager_msgs
+  geometry_msgs
+  hardware_interface
+  pluginlib
+  rclcpp
+  rclcpp_lifecycle
+  std_msgs
+  std_srvs
+  tf2_geometry_msgs
+  ur_client_library
+  ur_dashboard_msgs
+  ur_msgs
 )
 
 # Install Python execs
 ament_python_install_package(${PROJECT_NAME})
 
-# Install Python executables
+# Install executables
 install(PROGRAMS
   scripts/tool_communication.py
+  scripts/wait_for_robot_description
   scripts/example_move.py
   scripts/start_ursim.sh
   examples/examples.py
   examples/force_mode.py
+  examples/move_until_example.py
   DESTINATION lib/${PROJECT_NAME}
 )
 
@@ -184,11 +233,7 @@ install(PROGRAMS scripts/wait_dashboard_server.sh
   DESTINATION bin
 )
 
-install(PROGRAMS scripts/start_ursim.sh
-  DESTINATION lib/${PROJECT_NAME}
-)
-
-install(DIRECTORY config launch
+install(DIRECTORY config launch urdf
   DESTINATION share/${PROJECT_NAME}
 )
 
@@ -200,6 +245,11 @@ if(BUILD_TESTING)
   find_package(ur_msgs REQUIRED)
   find_package(launch_testing_ament_cmake)
 
+  add_launch_test(test/test_mock_hardware.py
+    TIMEOUT
+      800
+  )
+
   if(${UR_ROBOT_DRIVER_BUILD_INTEGRATION_TESTS})
     add_launch_test(test/launch_args.py
       TIMEOUT
@@ -209,7 +259,11 @@ if(BUILD_TESTING)
       TIMEOUT
         180
     )
-    add_launch_test(test/robot_driver.py
+    add_launch_test(test/example_move.py
+      TIMEOUT
+        180
+    )
+    add_launch_test(test/integration_test_scaled_joint_controller.py
       TIMEOUT
         800
     )
@@ -225,7 +279,23 @@ if(BUILD_TESTING)
       TIMEOUT
         500
     )
+    add_launch_test(test/integration_test_config_controller.py
+      TIMEOUT
+        800
+    )
+    add_launch_test(test/integration_test_passthrough_controller.py
+      TIMEOUT
+        800
+    )
+    add_launch_test(test/integration_test_io_controller.py
+      TIMEOUT
+        800
+    )
     add_launch_test(test/integration_test_tool_contact.py
+      TIMEOUT
+        800
+    )
+    add_launch_test(test/integration_test_trajectory_until.py
       TIMEOUT
         800
     )
