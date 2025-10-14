@@ -1,0 +1,12 @@
+Source: ros-kilted-ur-controllers
+Section: misc
+Priority: optional
+Maintainer: Felix Exner <feex@universal-robots.com>
+Build-Depends: debhelper (>= 9.0.0), ros-kilted-action-msgs, ros-kilted-ament-cmake, ros-kilted-angles, ros-kilted-control-msgs, ros-kilted-controller-interface, ros-kilted-controller-manager <!nocheck>, ros-kilted-generate-parameter-library, ros-kilted-geometry-msgs, ros-kilted-hardware-interface, ros-kilted-hardware-interface-testing <!nocheck>, ros-kilted-joint-trajectory-controller, ros-kilted-lifecycle-msgs, ros-kilted-pluginlib, ros-kilted-rclcpp-lifecycle, ros-kilted-rcutils, ros-kilted-realtime-tools, ros-kilted-ros2-control-test-assets <!nocheck>, ros-kilted-std-msgs, ros-kilted-std-srvs, ros-kilted-tf2-geometry-msgs, ros-kilted-tf2-ros, ros-kilted-trajectory-msgs, ros-kilted-ur-dashboard-msgs, ros-kilted-ur-msgs, ros-kilted-ros-workspace
+Homepage: 
+Standards-Version: 3.9.2
+
+Package: ros-kilted-ur-controllers
+Architecture: any
+Depends: ${shlibs:Depends}, ${misc:Depends}, ros-kilted-action-msgs, ros-kilted-angles, ros-kilted-control-msgs, ros-kilted-controller-interface, ros-kilted-generate-parameter-library, ros-kilted-geometry-msgs, ros-kilted-hardware-interface, ros-kilted-joint-trajectory-controller, ros-kilted-lifecycle-msgs, ros-kilted-pluginlib, ros-kilted-rclcpp-lifecycle, ros-kilted-rcutils, ros-kilted-realtime-tools, ros-kilted-std-msgs, ros-kilted-std-srvs, ros-kilted-tf2-geometry-msgs, ros-kilted-tf2-ros, ros-kilted-trajectory-msgs, ros-kilted-ur-dashboard-msgs, ros-kilted-ur-msgs, ros-kilted-ros-workspace
+Description: Provides controllers that use the speed scaling interface of Universal Robots.
