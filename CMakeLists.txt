@@ -126,8 +126,27 @@ add_executable(urscript_interface
 )
 ament_target_dependencies(urscript_interface ${${PROJECT_NAME}_EXPORTED_TARGETS} ${THIS_PACKAGE_INCLUDE_DEPENDS})
 
+#
+# trajectory_until_node
+#
+add_executable(trajectory_until_node
+  src/trajectory_until_node.cpp
+)
+target_link_libraries(trajectory_until_node PUBLIC
+  rclcpp::rclcpp
+  ${std_msgs_TARGETS}
+  rclcpp_action::rclcpp_action
+  ${ur_msgs_TARGETS}
+)
+
 install(
-  TARGETS dashboard_client ur_ros2_control_node controller_stopper_node urscript_interface robot_state_helper
+  TARGETS
+    controller_stopper_node
+    dashboard_client
+    robot_state_helper
+    trajectory_until_node
+    ur_ros2_control_node
+    urscript_interface
   DESTINATION lib/${PROJECT_NAME}
 )
 
@@ -177,6 +196,7 @@ install(PROGRAMS
   scripts/start_ursim.sh
   examples/examples.py
   examples/force_mode.py
+  examples/move_until_example.py
   DESTINATION lib/${PROJECT_NAME}
 )
 
@@ -200,6 +220,11 @@ if(BUILD_TESTING)
   find_package(ur_msgs REQUIRED)
   find_package(launch_testing_ament_cmake)
 
+  add_launch_test(test/test_mock_hardware.py
+    TIMEOUT
+      800
+  )
+
   if(${UR_ROBOT_DRIVER_BUILD_INTEGRATION_TESTS})
     add_launch_test(test/launch_args.py
       TIMEOUT
@@ -209,7 +234,7 @@ if(BUILD_TESTING)
       TIMEOUT
         180
     )
-    add_launch_test(test/robot_driver.py
+    add_launch_test(test/integration_test_scaled_joint_controller.py
       TIMEOUT
         800
     )
@@ -225,7 +250,23 @@ if(BUILD_TESTING)
       TIMEOUT
         500
     )
+    add_launch_test(test/integration_test_config_controller.py
+      TIMEOUT
+        800
+    )
+    add_launch_test(test/integration_test_passthrough_controller.py
+      TIMEOUT
+        800
+    )
+    add_launch_test(test/integration_test_io_controller.py
+      TIMEOUT
+        800
+    )
     add_launch_test(test/integration_test_tool_contact.py
+      TIMEOUT
+        800
+    )
+    add_launch_test(test/integration_test_trajectory_until.py
       TIMEOUT
         800
     )
