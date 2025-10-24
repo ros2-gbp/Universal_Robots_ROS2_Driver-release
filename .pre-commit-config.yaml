@@ -33,13 +33,13 @@ repos:
 
   # Python hooks
   - repo: https://github.com/asottile/pyupgrade
-    rev: v3.20.0
+    rev: v3.21.0
     hooks:
     -   id: pyupgrade
         args: [--py36-plus]
 
   - repo: https://github.com/psf/black
-    rev: 25.1.0
+    rev: 25.9.0
     hooks:
       - id: black
         args: ["--line-length=100"]
@@ -87,7 +87,7 @@ repos:
         args: ["--linelength=120"]
 
   - repo: https://github.com/pre-commit/mirrors-clang-format
-    rev: 'v21.1.0'
+    rev: 'v21.1.2'
     hooks:
       - id: clang-format
 
