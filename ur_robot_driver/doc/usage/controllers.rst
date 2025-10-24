@@ -1,7 +1,3 @@
-:github_url: https://github.com/UniversalRobots/Universal_Robots_ROS2_Driver/blob/main/ur_robot_driver/doc/usage/controllers.rst
-
-.. _ur_controllers:
-
 Controllers
 ===========
 
@@ -100,7 +96,7 @@ Allows setting I/O ports, controlling some UR-specific functionality and publish
 forward_velocity_controller
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-Type: `velocity_controllers/JointGroupVelocityController <https://control.ros.org/rolling/doc/ros2_controllers/velocity_controllers/doc/userdoc.html#velocity-controllers-jointgroupvelocitycontroller>`_
+Type: `velocity_controllers/JointGroupVelocityController <https://control.ros.org/rolling/doc/ros2_controllers/position_controllers/doc/userdoc.html#position-controllers-jointgrouppositioncontroller>`_
 
 Allows setting target joint positions directly. The robot tries to reach the target position as
 fast as possible. The user is therefore responsible for sending commands that are achievable. This
@@ -109,7 +105,7 @@ controller is particularly useful when doing servoing such as ``moveit_servo``.
 forward_position_controller
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-Type: `position_controllers/JointGroupPositionController <https://control.ros.org/rolling/doc/ros2_controllers/position_controllers/doc/userdoc.html#position-controllers-jointgrouppositioncontroller>`_
+Type: `position_controllers/JointGroupPositionController <https://control.ros.org/rolling/doc/ros2_controllers/velocity_controllers/doc/userdoc.html#velocity-controllers-jointgroupvelocitycontroller>`_
 
 Allows setting target joint velocities directly. The user is responsible for sending commands that
 are achievable. This controller is particularly useful when doing servoing such as
