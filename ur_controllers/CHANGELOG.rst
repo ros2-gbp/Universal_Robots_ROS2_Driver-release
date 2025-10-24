@@ -2,6 +2,9 @@
 Changelog for package ur_controllers
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+2.10.0 (2025-10-23)
+-------------------
+
 2.9.0 (2025-09-16)
 ------------------
 * ur_controllers: Fix compilation on Windows (backport `#1402 <https://github.com/UniversalRobots/Universal_Robots_ROS2_Driver/issues/1402>`_) (`#1412 <https://github.com/UniversalRobots/Universal_Robots_ROS2_Driver/issues/1412>`_)
