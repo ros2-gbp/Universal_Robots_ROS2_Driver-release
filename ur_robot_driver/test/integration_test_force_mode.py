@@ -88,12 +88,12 @@ def generate_test_description(tf_prefix):
     return generate_driver_test_description(tf_prefix=tf_prefix)
 
 
-class RobotDriverTest(unittest.TestCase):
+class ForceModeTest(unittest.TestCase):
     @classmethod
     def setUpClass(cls):
         # Initialize the ROS context
         rclpy.init()
-        cls.node = Node("robot_driver_test")
+        cls.node = Node("force_mode_test")
         time.sleep(1)
         cls.init_robot(cls)
 
@@ -113,6 +113,10 @@ class RobotDriverTest(unittest.TestCase):
             "/passthrough_trajectory_controller/follow_joint_trajectory",
             FollowJointTrajectory,
         )
+
+        self._controller_manager_interface.wait_for_controller("force_mode_controller")
+        self._controller_manager_interface.wait_for_controller("scaled_joint_trajectory_controller")
+        self._controller_manager_interface.wait_for_controller("joint_trajectory_controller")
 
     def setUp(self):
         self._dashboard_interface.start_robot()
