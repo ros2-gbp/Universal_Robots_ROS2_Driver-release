@@ -2,46 +2,55 @@
 Changelog for package ur_controllers
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-3.7.0 (2026-01-13)
+4.5.0 (2026-01-13)
 ------------------
-* Ensure latched qos is reliable (backport `#1594 <https://github.com/UniversalRobots/Universal_Robots_ROS2_Driver/issues/1594>`_) (`#1633 <https://github.com/UniversalRobots/Universal_Robots_ROS2_Driver/issues/1633>`_)
-* Contributors: mergify[bot]
+* Ensure latched qos is reliable (`#1594 <https://github.com/UniversalRobots/Universal_Robots_ROS2_Driver/issues/1594>`_)
+* Contributors: Rahat Dhande
 
-3.6.0 (2025-11-13)
+4.4.0 (2025-11-13)
 ------------------
-* Explicitly state PolyScope X compatibility (backport `#1563 <https://github.com/UniversalRobots/Universal_Robots_ROS2_Driver/issues/1563>`_) (`#1568 <https://github.com/UniversalRobots/Universal_Robots_ROS2_Driver/issues/1568>`_)
-* Contributors: mergify[bot]
+* Explicitly state PolyScope X compatibility (`#1563 <https://github.com/UniversalRobots/Universal_Robots_ROS2_Driver/issues/1563>`_)
+* Add migration notes to individual packages (`#1545 <https://github.com/UniversalRobots/Universal_Robots_ROS2_Driver/issues/1545>`_)
+* Contributors: Felix Exner, URJala
 
-3.5.0 (2025-10-23)
+4.3.0 (2025-10-14)
 ------------------
 
-3.4.0 (2025-09-16)
+4.2.0 (2025-09-16)
 ------------------
-* Use RealtimeThreadSafeBox instead of RealTimeBuffer (backport `#1474 <https://github.com/UniversalRobots/Universal_Robots_ROS2_Driver/issues/1474>`_) (`#1501 <https://github.com/UniversalRobots/Universal_Robots_ROS2_Driver/issues/1501>`_)
-* ur_configuration_controller: use try_set on RTBox (backport of `#1470 <https://github.com/UniversalRobots/Universal_Robots_ROS2_Driver/issues/1470>`_) (`#1472 <https://github.com/UniversalRobots/Universal_Robots_ROS2_Driver/issues/1472>`_)
-* Contributors: mergify[bot]
+* Realtime tools migration (`#1474 <https://github.com/UniversalRobots/Universal_Robots_ROS2_Driver/issues/1474>`_)
+  Use RealtimeThreadSafeBox instead of RealTimeBuffer.
+* Replace SJTC implementation with upstream (`#1485 <https://github.com/UniversalRobots/Universal_Robots_ROS2_Driver/issues/1485>`_)
+* Contributors: Felix Exner, URJala
 
-3.3.3 (2025-06-24)
+4.1.0 (2025-07-29)
 ------------------
-* Use new API of PID class (backport of `#1410 <https://github.com/UniversalRobots/Universal_Robots_ROS2_Driver/issues/1410>`_) (`#1418 <https://github.com/UniversalRobots/Universal_Robots_ROS2_Driver/issues/1418>`_)
-  Co-authored-by: Christoph Fröhlich <christophfroehlich@users.noreply.github.com>
-* ur_controllers: Fix compilation on Windows (backport of `#1402 <https://github.com/UniversalRobots/Universal_Robots_ROS2_Driver/issues/1402>`_) (`#1413 <https://github.com/UniversalRobots/Universal_Robots_ROS2_Driver/issues/1413>`_)
-  Co-authored-by: Silvio Traversaro <silvio@traversaro.it>
-* Ignore deprecation warning for set_gains for now (backport of `#1392 <https://github.com/UniversalRobots/Universal_Robots_ROS2_Driver/issues/1392>`_) (`#1396 <https://github.com/UniversalRobots/Universal_Robots_ROS2_Driver/issues/1396>`_)
-* Contributors: mergify[bot]
+* ur_configuration_controller: use try_set on RTBox (`#1470 <https://github.com/UniversalRobots/Universal_Robots_ROS2_Driver/issues/1470>`_)
+* Use hpp headers from geometry2 (`#1467 <https://github.com/UniversalRobots/Universal_Robots_ROS2_Driver/issues/1467>`_)
+* Use new API of PID class (`#1410 <https://github.com/UniversalRobots/Universal_Robots_ROS2_Driver/issues/1410>`_)
+* ur_controllers: Fix compilation on Windows (`#1402 <https://github.com/UniversalRobots/Universal_Robots_ROS2_Driver/issues/1402>`_)
+* Contributors: Christoph Fröhlich, Felix Exner, Silvio Traversaro
 
-3.3.2 (2025-06-10)
+4.0.3 (2025-06-16)
 ------------------
-* Use std_atomic<bool> in SJTC (backport of `#1385 <https://github.com/UniversalRobots/Universal_Robots_ROS2_Driver/issues/1385>`_) (`#1387 <https://github.com/UniversalRobots/Universal_Robots_ROS2_Driver/issues/1387>`_)
-* Contributors: mergify[bot]
+* Ignore RT-Tools deprecation warning about trylock
+* Contributors: Felix Exner
 
-3.3.1 (2025-05-28)
+4.0.2 (2025-06-13)
 ------------------
-* [force mode controller] Fix the task frame orientation (backport of `#1379 <https://github.com/UniversalRobots/Universal_Robots_ROS2_Driver/issues/1379>`_) (`#1381 <https://github.com/UniversalRobots/Universal_Robots_ROS2_Driver/issues/1381>`_)
-* Contributors: mergify[bot]
+* Ignore deprecation warning for set_gains for now (`#1392 <https://github.com/UniversalRobots/Universal_Robots_ROS2_Driver/issues/1392>`_)
+* Use std_atomic<bool> in SJTC (`#1385 <https://github.com/UniversalRobots/Universal_Robots_ROS2_Driver/issues/1385>`_)
+* Contributors: Felix Exner
 
-3.3.0 (2025-05-20)
+4.0.1 (2025-05-28)
 ------------------
+* [force mode controller] Fix the task frame orientation (`#1379 <https://github.com/UniversalRobots/Universal_Robots_ROS2_Driver/issues/1379>`_)
+* Replace ament_target_dependencies calls (`#1373 <https://github.com/UniversalRobots/Universal_Robots_ROS2_Driver/issues/1373>`_)
+* Contributors: Felix Exner
+
+4.0.0 (2025-05-20)
+------------------
+* Remove deprecated code from sjtc (`#1362 <https://github.com/UniversalRobots/Universal_Robots_ROS2_Driver/issues/1362>`_)
 * SJTC: Update to latest upstream JTC API (`#1351 <https://github.com/UniversalRobots/Universal_Robots_ROS2_Driver/issues/1351>`_)
 * Contributors: Felix Exner
 
