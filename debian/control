@@ -1,0 +1,12 @@
+Source: ros-humble-ur-controllers
+Section: misc
+Priority: optional
+Maintainer: Felix Exner <feex@universal-robots.com>
+Build-Depends: debhelper (>= 9.0.0), ros-humble-action-msgs, ros-humble-ament-cmake, ros-humble-angles, ros-humble-control-msgs, ros-humble-controller-interface, ros-humble-controller-manager <!nocheck>, ros-humble-generate-parameter-library, ros-humble-geometry-msgs, ros-humble-hardware-interface, ros-humble-hardware-interface-testing <!nocheck>, ros-humble-joint-trajectory-controller, ros-humble-lifecycle-msgs, ros-humble-pluginlib, ros-humble-rclcpp-lifecycle, ros-humble-rcutils, ros-humble-realtime-tools, ros-humble-ros2-control-test-assets <!nocheck>, ros-humble-std-msgs, ros-humble-std-srvs, ros-humble-tf2-geometry-msgs, ros-humble-tf2-ros, ros-humble-trajectory-msgs, ros-humble-ur-dashboard-msgs, ros-humble-ur-msgs, ros-humble-ros-workspace
+Homepage: 
+Standards-Version: 3.9.2
+
+Package: ros-humble-ur-controllers
+Architecture: any
+Depends: ${shlibs:Depends}, ${misc:Depends}, ros-humble-action-msgs, ros-humble-angles, ros-humble-control-msgs, ros-humble-controller-interface, ros-humble-generate-parameter-library, ros-humble-geometry-msgs, ros-humble-hardware-interface, ros-humble-joint-trajectory-controller, ros-humble-lifecycle-msgs, ros-humble-pluginlib, ros-humble-rclcpp-lifecycle, ros-humble-rcutils, ros-humble-realtime-tools, ros-humble-std-msgs, ros-humble-std-srvs, ros-humble-tf2-geometry-msgs, ros-humble-tf2-ros, ros-humble-trajectory-msgs, ros-humble-ur-dashboard-msgs, ros-humble-ur-msgs, ros-humble-ros-workspace
+Description: Provides controllers that use the speed scaling interface of Universal Robots.
