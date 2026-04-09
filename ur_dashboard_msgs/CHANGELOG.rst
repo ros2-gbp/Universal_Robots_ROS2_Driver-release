@@ -2,12 +2,12 @@
 Changelog for package ur_dashboard_msgs
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-5.0.0 (2026-04-09)
+4.6.0 (2026-04-09)
 ------------------
-* Use integer representation of SafetyStatus.msg (`#1734 <https://github.com/UniversalRobots/Universal_Robots_ROS2_Driver/issues/1734>`_)
-* Services to support various dashboard calls (`#1674 <https://github.com/UniversalRobots/Universal_Robots_ROS2_Driver/issues/1674>`_)
-* Dashboard client new x commands (`#1679 <https://github.com/UniversalRobots/Universal_Robots_ROS2_Driver/issues/1679>`_)
-* Contributors: Felix Exner, URJala
+* Use integer representation of SafetyStatus.msg (backport `#1734 <https://github.com/UniversalRobots/Universal_Robots_ROS2_Driver/issues/1734>`_) (`#1743 <https://github.com/UniversalRobots/Universal_Robots_ROS2_Driver/issues/1743>`_)
+* Services to support various dashboard calls (backport `#1674 <https://github.com/UniversalRobots/Universal_Robots_ROS2_Driver/issues/1674>`_) (`#1710 <https://github.com/UniversalRobots/Universal_Robots_ROS2_Driver/issues/1710>`_)
+* Dashboard client new x commands (backport `#1679 <https://github.com/UniversalRobots/Universal_Robots_ROS2_Driver/issues/1679>`_) (`#1696 <https://github.com/UniversalRobots/Universal_Robots_ROS2_Driver/issues/1696>`_)
+* Contributors: mergify[bot]
 
 4.5.0 (2026-01-13)
 ------------------
