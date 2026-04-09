@@ -2,54 +2,37 @@
 Changelog for package ur_calibration
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-4.6.0 (2026-04-09)
+3.8.0 (2026-04-09)
 ------------------
-* Ensure calibration library in ur_calibration is always built as static (backport of `#1667 <https://github.com/UniversalRobots/Universal_Robots_ROS2_Driver/issues/1667>`_) (`#1670 <https://github.com/UniversalRobots/Universal_Robots_ROS2_Driver/issues/1670>`_)
+* Ensure calibration library in ur_calibration is always built as static (backport `#1667 <https://github.com/UniversalRobots/Universal_Robots_ROS2_Driver/issues/1667>`_) (`#1669 <https://github.com/UniversalRobots/Universal_Robots_ROS2_Driver/issues/1669>`_)
 * Contributors: mergify[bot]
 
-4.5.0 (2026-01-13)
+3.7.0 (2026-01-13)
 ------------------
 
-4.4.0 (2025-11-13)
+3.6.0 (2025-11-13)
 ------------------
-* Explicitly state PolyScope X compatibility (`#1563 <https://github.com/UniversalRobots/Universal_Robots_ROS2_Driver/issues/1563>`_)
-* Implement motion_primitive interface in hardware interface (`#1341 <https://github.com/UniversalRobots/Universal_Robots_ROS2_Driver/issues/1341>`_)
-  With this it is possible to use motion_primitives to command the robot's motion.
-* Add migration notes to individual packages (`#1545 <https://github.com/UniversalRobots/Universal_Robots_ROS2_Driver/issues/1545>`_)
-  * Add migration notes to packages.
-  Also added a GitHub action to build the Sphinx documentation.
-  * Add conf.py to moveit_config package
-  * Suppress reference warnings when building package docs individually
-  * Apply suggestions from code review
-  ---------
-  Co-authored-by: Felix Exner <feex@universal-robots.com>
-* Contributors: Felix Exner, Mathias Fuhrer, URJala
+* Explicitly state PolyScope X compatibility (backport `#1563 <https://github.com/UniversalRobots/Universal_Robots_ROS2_Driver/issues/1563>`_) (`#1568 <https://github.com/UniversalRobots/Universal_Robots_ROS2_Driver/issues/1568>`_)
+* Contributors: mergify[bot]
 
-4.3.0 (2025-10-14)
+3.5.0 (2025-10-23)
 ------------------
 
-4.2.0 (2025-09-16)
+3.4.0 (2025-09-16)
 ------------------
 
-4.1.0 (2025-07-29)
+3.3.3 (2025-06-24)
 ------------------
-* Use hpp headers from geometry2 (`#1467 <https://github.com/UniversalRobots/Universal_Robots_ROS2_Driver/issues/1467>`_)
-* Fix ur_calibration compilation on Windows (`#1400 <https://github.com/UniversalRobots/Universal_Robots_ROS2_Driver/issues/1400>`_)
-* Contributors: Felix Exner, Silvio Traversaro
+* Fix ur_calibration compilation on Windows (backport of `#1400 <https://github.com/UniversalRobots/Universal_Robots_ROS2_Driver/issues/1400>`_) (`#1409 <https://github.com/UniversalRobots/Universal_Robots_ROS2_Driver/issues/1409>`_)
+* Contributors: mergify[bot]
 
-4.0.3 (2025-06-16)
-------------------
-
-4.0.2 (2025-06-13)
+3.3.2 (2025-06-10)
 ------------------
 
-4.0.1 (2025-05-28)
+3.3.1 (2025-05-28)
 ------------------
-* Replace ament_target_dependencies calls (`#1373 <https://github.com/UniversalRobots/Universal_Robots_ROS2_Driver/issues/1373>`_)
-* Update feature list (`#1372 <https://github.com/UniversalRobots/Universal_Robots_ROS2_Driver/issues/1372>`_)
-* Contributors: Felix Exner
 
-4.0.0 (2025-05-20)
+3.3.0 (2025-05-20)
 ------------------
 
 3.2.1 (2025-04-11)
