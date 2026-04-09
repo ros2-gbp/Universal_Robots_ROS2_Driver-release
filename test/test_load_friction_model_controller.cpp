@@ -1,4 +1,4 @@
-// Copyright 2019, FZI Forschungszentrum Informatik
+// Copyright 2026, Universal Robots A/S
 //
 // Redistribution and use in source and binary forms, with or without
 // modification, are permitted provided that the following conditions are met:
@@ -26,40 +26,44 @@
 // ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 // POSSIBILITY OF SUCH DAMAGE.
 
-//----------------------------------------------------------------------
+// ----------------------------------------------------------------------
 /*!\file
  *
- * \author  Marvin Große Besselmann grosse@fzi.de
- * \date    2021-02-18
+ * \author  Rune Søe-Knudsen rsk@universal-robots.com
+ * \date    2026-03-02
  *
  */
 //----------------------------------------------------------------------
 
-#include <memory>
+#include <gmock/gmock.h>
+#include "controller_manager/controller_manager.hpp"
+#include "rclcpp/executor.hpp"
+#include "rclcpp/executors/single_threaded_executor.hpp"
+#include "rclcpp/utilities.hpp"
+#include "ros2_control_test_assets/descriptions.hpp"
 
-#include "ur_controllers/scaled_joint_trajectory_controller.hpp"
-
-namespace ur_controllers
+TEST(TestLoadFrictionModelController, load_controller)
 {
+  std::shared_ptr<rclcpp::Executor> executor = std::make_shared<rclcpp::executors::SingleThreadedExecutor>();
 
-controller_interface::CallbackReturn ScaledJointTrajectoryController::on_init()
-{
-  // Translate speed scaling state interface parameter
-  scaled_param_listener_ = std::make_shared<scaled_joint_trajectory_controller::ParamListener>(get_node());
-  scaled_params_ = scaled_param_listener_->get_params();
-  if (!scaled_params_.speed_scaling_interface_name.empty()) {
-    get_node()->declare_parameter("speed_scaling.state_interface", scaled_params_.speed_scaling_interface_name);
-    get_node()->set_parameter(
-        rclcpp::Parameter("speed_scaling.state_interface", scaled_params_.speed_scaling_interface_name));
-  }
+  controller_manager::ControllerManager cm{ executor, ros2_control_test_assets::minimal_robot_urdf, true,
+                                            "test_controller_manager" };
 
-  RCLCPP_WARN(get_node()->get_logger(), "DEPRECATION WARNING: Using the scaled joint trajectory controller is "
-                                        "considered deprecated. It will get removed with ROS Lyrical Luth. Please "
-                                        "use the joint_trajectory_controller that supports the same features.");
-  return JointTrajectoryController::on_init();
+  const std::string test_file_path = std::string{ TEST_FILES_DIRECTORY } + "/friction_model_controller_params.yaml";
+  cm.set_parameter({ "test_friction_model_controller.params_file", test_file_path });
+
+  cm.set_parameter({ "test_friction_model_controller.type", "ur_controllers/FrictionModelController" });
+
+  ASSERT_NE(cm.load_controller("test_friction_model_controller"), nullptr);
 }
 
-}  // namespace ur_controllers
+int main(int argc, char* argv[])
+{
+  ::testing::InitGoogleMock(&argc, argv);
+  rclcpp::init(argc, argv);
 
-#include "pluginlib/class_list_macros.hpp"
-PLUGINLIB_EXPORT_CLASS(ur_controllers::ScaledJointTrajectoryController, controller_interface::ControllerInterface)
+  int result = RUN_ALL_TESTS();
+  rclcpp::shutdown();
+
+  return result;
+}
