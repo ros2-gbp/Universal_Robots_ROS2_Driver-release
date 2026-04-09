@@ -215,6 +215,10 @@ if(BUILD_TESTING)
       TIMEOUT
         180
     )
+    add_launch_test(test/integration_test_component_lifecycle.py
+      TIMEOUT
+        180
+    )
     add_launch_test(test/dashboard_client.py
       TIMEOUT
         180
@@ -232,6 +236,10 @@ if(BUILD_TESTING)
         800
     )
     add_launch_test(test/integration_test_force_mode.py
+      TIMEOUT
+        800
+    )
+    add_launch_test(test/integration_test_friction_model.py
       TIMEOUT
         800
     )
