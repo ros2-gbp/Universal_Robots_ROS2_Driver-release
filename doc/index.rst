@@ -50,6 +50,11 @@ down by the controller).
 ur_controlers/ScaledJointTrajectoryController
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+.. note::
+   The upstream joint_trajectory_controller has been updated to support the scaling feature
+   explained below. Hence, we have decided to deprecate the scaled joint trajectory controller.
+   It will get removed in ROS Lyrical Luth.
+
 These controllers work similar to the well-known
 `joint_trajectory_controller <https://control.ros.org/master/doc/ros2_controllers/joint_trajectory_controller/doc/userdoc.html>`_.
 
@@ -343,6 +348,38 @@ damping_factor
 gain_scaling
    Force mode gain scaling factor. Scales the gain in force mode. scaling parameter is in range [0;2], default is 0.5.
    A value larger than 1 can make force mode unstable, e.g. in case of collisions or pushing against hard surfaces.
+
+.. _friction_model_controller:
+
+ur_controllers/FrictionModelController
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+This controller allows setting per-joint viscous and Coulomb friction scale factors for direct
+torque control. The friction model scales control how much internal friction compensation the robot
+applies during direct torque control mode.
+
+Parameters
+""""""""""
+
++------------------------------------+--------+---------------+----------------------------------------------------------------------+
+| Parameter name                     | Type   | Default value | Description                                                          |
+|                                    |        |               |                                                                      |
++------------------------------------+--------+---------------+----------------------------------------------------------------------+
+| ``tf_prefix``                      | string | <empty>       | Urdf prefix of the corresponding arm                                 |
++------------------------------------+--------+---------------+----------------------------------------------------------------------+
+| ``check_io_successful_retries``    | int    | 10            | Amount of retries for checking if setting friction scales was        |
+|                                    |        |               | successful                                                           |
++------------------------------------+--------+---------------+----------------------------------------------------------------------+
+
+Service interface / usage
+"""""""""""""""""""""""""
+
+The controller provides a service for setting friction scale factors. To use this service, the
+controller has to be in ``active`` state.
+
+* ``~/set_friction_model_parameters [ur_msgs/srv/SetFrictionModelParameters]``: Set per-joint viscous and Coulomb
+  friction scale factors for direct torque control. Each array must contain exactly one value for each joint in
+  range [0-1] where 0 means no compensation and 1 means full compensation.
 
 .. _freedrive_mode_controller:
 
