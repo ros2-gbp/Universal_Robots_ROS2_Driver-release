@@ -2,7 +2,7 @@
 <?xml-model href="http://download.ros.org/schema/package_format3.xsd" schematypens="http://www.w3.org/2001/XMLSchema"?>
 <package format="3">
   <name>ur_controllers</name>
-  <version>4.5.0</version>
+  <version>5.0.0</version>
   <description>Provides controllers that use the speed scaling interface of Universal Robots.</description>
 
   <maintainer email="feex@universal-robots.com">Felix Exner</maintainer>
@@ -47,7 +47,6 @@
 
   <test_depend>controller_manager</test_depend>
   <test_depend>ros2_control_test_assets</test_depend>
-  <test_depend>hardware_interface_testing</test_depend>
 
   <export>
     <build_type>ament_cmake</build_type>
