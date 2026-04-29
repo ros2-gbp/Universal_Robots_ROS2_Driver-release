@@ -1,0 +1,12 @@
+Source: ros-lyrical-ur-moveit-config
+Section: misc
+Priority: optional
+Maintainer: Felix Exner <feex@universal-robots.com>
+Build-Depends: debhelper (>= 9.0.0), ros-lyrical-ament-cmake, ros-lyrical-ros-workspace
+Homepage: https://docs.universal-robots.com/Universal_Robots_ROS_Documentation/
+Standards-Version: 3.9.2
+
+Package: ros-lyrical-ur-moveit-config
+Architecture: any
+Depends: ${shlibs:Depends}, ${misc:Depends}, ros-lyrical-moveit-configs-utils, ros-lyrical-moveit-kinematics, ros-lyrical-moveit-planners, ros-lyrical-moveit-planners-chomp, ros-lyrical-moveit-ros-move-group, ros-lyrical-moveit-ros-visualization, ros-lyrical-moveit-servo, ros-lyrical-moveit-simple-controller-manager, ros-lyrical-ur-description, ros-lyrical-warehouse-ros-sqlite, ros-lyrical-xacro, ros-lyrical-ros-workspace
+Description: An example package with MoveIt2 configurations for UR robots.
