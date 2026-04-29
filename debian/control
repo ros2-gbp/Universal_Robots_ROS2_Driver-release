@@ -1,0 +1,12 @@
+Source: ros-lyrical-ur-controllers
+Section: misc
+Priority: optional
+Maintainer: Felix Exner <feex@universal-robots.com>
+Build-Depends: debhelper (>= 9.0.0), ros-lyrical-action-msgs, ros-lyrical-ament-cmake, ros-lyrical-angles, ros-lyrical-control-msgs, ros-lyrical-controller-interface, ros-lyrical-controller-manager <!nocheck>, ros-lyrical-generate-parameter-library, ros-lyrical-geometry-msgs, ros-lyrical-hardware-interface, ros-lyrical-joint-trajectory-controller, ros-lyrical-lifecycle-msgs, ros-lyrical-pluginlib, ros-lyrical-rclcpp-lifecycle, ros-lyrical-rcutils, ros-lyrical-realtime-tools, ros-lyrical-ros2-control-test-assets <!nocheck>, ros-lyrical-std-msgs, ros-lyrical-std-srvs, ros-lyrical-tf2-geometry-msgs, ros-lyrical-tf2-ros, ros-lyrical-trajectory-msgs, ros-lyrical-ur-dashboard-msgs, ros-lyrical-ur-msgs, ros-lyrical-ros-workspace
+Homepage: https://docs.universal-robots.com/Universal_Robots_ROS_Documentation/
+Standards-Version: 3.9.2
+
+Package: ros-lyrical-ur-controllers
+Architecture: any
+Depends: ${shlibs:Depends}, ${misc:Depends}, ros-lyrical-action-msgs, ros-lyrical-angles, ros-lyrical-control-msgs, ros-lyrical-controller-interface, ros-lyrical-generate-parameter-library, ros-lyrical-geometry-msgs, ros-lyrical-hardware-interface, ros-lyrical-joint-trajectory-controller, ros-lyrical-lifecycle-msgs, ros-lyrical-pluginlib, ros-lyrical-rclcpp-lifecycle, ros-lyrical-rcutils, ros-lyrical-realtime-tools, ros-lyrical-std-msgs, ros-lyrical-std-srvs, ros-lyrical-tf2-geometry-msgs, ros-lyrical-tf2-ros, ros-lyrical-trajectory-msgs, ros-lyrical-ur-dashboard-msgs, ros-lyrical-ur-msgs, ros-lyrical-ros-workspace
+Description: Provides controllers that use the speed scaling interface of Universal Robots.
