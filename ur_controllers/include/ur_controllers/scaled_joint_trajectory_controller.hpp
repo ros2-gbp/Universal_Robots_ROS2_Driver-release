@@ -37,14 +37,8 @@
 #ifndef UR_CONTROLLERS__SCALED_JOINT_TRAJECTORY_CONTROLLER_HPP_
 #define UR_CONTROLLERS__SCALED_JOINT_TRAJECTORY_CONTROLLER_HPP_
 
-#include <optional>
 #include <memory>
-#include "angles/angles.h"
 #include "joint_trajectory_controller/joint_trajectory_controller.hpp"
-#include "joint_trajectory_controller/trajectory.hpp"
-#include "rclcpp_lifecycle/node_interfaces/lifecycle_node_interface.hpp"
-#include "rclcpp/time.hpp"
-#include "rclcpp/duration.hpp"
 #include "ur_controllers/scaled_joint_trajectory_controller_parameters.hpp"
 
 namespace ur_controllers
@@ -55,29 +49,9 @@ public:
   ScaledJointTrajectoryController() = default;
   ~ScaledJointTrajectoryController() override = default;
 
-  controller_interface::InterfaceConfiguration state_interface_configuration() const override;
-
-  controller_interface::CallbackReturn on_configure(const rclcpp_lifecycle::State& state) override;
-
-  controller_interface::CallbackReturn on_activate(const rclcpp_lifecycle::State& state) override;
-
-  controller_interface::return_type update(const rclcpp::Time& time, const rclcpp::Duration& period) override;
-
   CallbackReturn on_init() override;
 
 private:
-  double scaling_factor_{ 1.0 };
-  void update_pids();
-  rclcpp::Duration update_period_{ 0, 0 };
-
-  trajectory_msgs::msg::JointTrajectoryPoint command_next_;
-
-  rclcpp::Time last_commanded_time_;
-  rclcpp::Time traj_time_;
-
-  std::optional<std::reference_wrapper<hardware_interface::LoanedStateInterface>> scaling_state_interface_ =
-      std::nullopt;
-
   std::shared_ptr<scaled_joint_trajectory_controller::ParamListener> scaled_param_listener_;
   scaled_joint_trajectory_controller::Params scaled_params_;
 };
