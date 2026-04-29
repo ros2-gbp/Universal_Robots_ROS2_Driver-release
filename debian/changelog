@@ -1,0 +1,271 @@
+ros-rolling-ur-calibration (5.0.0-2trixie) trixie; urgency=high
+
+  * Ensure calibration library in ur_calibration is always built as static (#1667 <https://github.com/UniversalRobots/Universal_Robots_ROS2_Driver/issues/1667>)
+  * Contributors: Silvio Traversaro
+
+ -- Felix Exner <feex@universal-robots.com>  Thu, 09 Apr 2026 05:00:00 -0000
+
+ros-rolling-ur-calibration (4.5.0-2trixie) trixie; urgency=high
+
+
+
+ -- Felix Exner <feex@universal-robots.com>  Tue, 13 Jan 2026 06:00:00 -0000
+
+ros-rolling-ur-calibration (4.4.0-2trixie) trixie; urgency=high
+
+  * Explicitly state PolyScope X compatibility (#1563 <https://github.com/UniversalRobots/Universal_Robots_ROS2_Driver/issues/1563>)
+  * Implement motion_primitive interface in hardware interface (#1341 <https://github.com/UniversalRobots/Universal_Robots_ROS2_Driver/issues/1341>)
+    With this it is possible to use motion_primitives to command the robot's motion.
+  * Add migration notes to individual packages (#1545 <https://github.com/UniversalRobots/Universal_Robots_ROS2_Driver/issues/1545>)
+    * Add migration notes to packages.
+    Also added a GitHub action to build the Sphinx documentation.
+    * Add conf.py to moveit_config package
+    * Suppress reference warnings when building package docs individually
+    * Apply suggestions from code review
+    ---------
+    Co-authored-by: Felix Exner <mailto:feex@universal-robots.com>
+  * Contributors: Felix Exner, Mathias Fuhrer, URJala
+
+ -- Felix Exner <feex@universal-robots.com>  Thu, 13 Nov 2025 06:00:00 -0000
+
+ros-rolling-ur-calibration (4.3.0-2trixie) trixie; urgency=high
+
+
+
+ -- Felix Exner <feex@universal-robots.com>  Tue, 14 Oct 2025 05:00:00 -0000
+
+ros-rolling-ur-calibration (4.2.0-2trixie) trixie; urgency=high
+
+
+
+ -- Felix Exner <feex@universal-robots.com>  Tue, 16 Sep 2025 05:00:00 -0000
+
+ros-rolling-ur-calibration (4.1.0-2trixie) trixie; urgency=high
+
+  * Use hpp headers from geometry2 (#1467 <https://github.com/UniversalRobots/Universal_Robots_ROS2_Driver/issues/1467>)
+  * Fix ur_calibration compilation on Windows (#1400 <https://github.com/UniversalRobots/Universal_Robots_ROS2_Driver/issues/1400>)
+  * Contributors: Felix Exner, Silvio Traversaro
+
+ -- Felix Exner <feex@universal-robots.com>  Tue, 29 Jul 2025 05:00:00 -0000
+
+ros-rolling-ur-calibration (4.0.3-2trixie) trixie; urgency=high
+
+
+
+ -- Felix Exner <feex@universal-robots.com>  Mon, 16 Jun 2025 05:00:00 -0000
+
+ros-rolling-ur-calibration (4.0.2-2trixie) trixie; urgency=high
+
+
+
+ -- Felix Exner <feex@universal-robots.com>  Fri, 13 Jun 2025 05:00:00 -0000
+
+ros-rolling-ur-calibration (4.0.1-2trixie) trixie; urgency=high
+
+  * Replace ament_target_dependencies calls (#1373 <https://github.com/UniversalRobots/Universal_Robots_ROS2_Driver/issues/1373>)
+  * Update feature list (#1372 <https://github.com/UniversalRobots/Universal_Robots_ROS2_Driver/issues/1372>)
+  * Contributors: Felix Exner
+
+ -- Felix Exner <feex@universal-robots.com>  Wed, 28 May 2025 05:00:00 -0000
+
+ros-rolling-ur-calibration (4.0.0-2trixie) trixie; urgency=high
+
+
+
+ -- Felix Exner <feex@universal-robots.com>  Tue, 20 May 2025 05:00:00 -0000
+
+ros-rolling-ur-calibration (3.2.1-2trixie) trixie; urgency=high
+
+
+
+ -- Felix Exner <feex@universal-robots.com>  Fri, 11 Apr 2025 05:00:00 -0000
+
+ros-rolling-ur-calibration (3.2.0-2trixie) trixie; urgency=high
+
+  * Use modern CMake to link against yaml-cpp (#1295 <https://github.com/UniversalRobots/Universal_Robots_ROS2_Driver/issues/1295>)
+  * Contributors: Felix Exner
+
+ -- Felix Exner <feex@universal-robots.com>  Thu, 10 Apr 2025 05:00:00 -0000
+
+ros-rolling-ur-calibration (3.1.1-2trixie) trixie; urgency=high
+
+
+
+ -- Felix Exner <feex@universal-robots.com>  Mon, 17 Mar 2025 05:00:00 -0000
+
+ros-rolling-ur-calibration (3.1.0-2trixie) trixie; urgency=high
+
+
+
+ -- Felix Exner <feex@universal-robots.com>  Wed, 05 Mar 2025 06:00:00 -0000
+
+ros-rolling-ur-calibration (3.0.2-2trixie) trixie; urgency=high
+
+
+
+ -- Felix Exner <feex@universal-robots.com>  Tue, 21 Jan 2025 06:00:00 -0000
+
+ros-rolling-ur-calibration (3.0.1-2trixie) trixie; urgency=high
+
+
+
+ -- Felix Exner <feex@universal-robots.com>  Mon, 30 Dec 2024 06:00:00 -0000
+
+ros-rolling-ur-calibration (3.0.0-2trixie) trixie; urgency=high
+
+  * Update package maintainers (#1203 <https://github.com/UniversalRobots/Universal_Robots_ROS2_Driver/issues/1203>)
+  * Initialize segments in constructor of DHRobot in calibration.hpp (#1197 <https://github.com/UniversalRobots/Universal_Robots_ROS2_Driver/issues/1197>)
+  * Contributors: Benjamin, Felix Exner
+
+ -- Felix Exner <feex@universal-robots.com>  Wed, 18 Dec 2024 06:00:00 -0000
+
+ros-rolling-ur-calibration (2.4.13-2trixie) trixie; urgency=high
+
+
+
+ -- Felix Exner <feex@universal-robots.com>  Mon, 28 Oct 2024 05:00:00 -0000
+
+ros-rolling-ur-calibration (2.4.12-2trixie) trixie; urgency=high
+
+
+
+ -- Felix Exner <feex@universal-robots.com>  Mon, 14 Oct 2024 05:00:00 -0000
+
+ros-rolling-ur-calibration (2.4.11-2trixie) trixie; urgency=high
+
+
+
+ -- Felix Exner <feex@universal-robots.com>  Thu, 10 Oct 2024 05:00:00 -0000
+
+ros-rolling-ur-calibration (2.4.10-2trixie) trixie; urgency=high
+
+  * Update maintainers team (#1088 <https://github.com/UniversalRobots/Universal_Robots_ROS2_Driver/issues/1088>)
+  * Contributors: Vincenzo Di Pentima
+
+ -- Felix Exner <feex@universal-robots.com>  Wed, 11 Sep 2024 05:00:00 -0000
+
+ros-rolling-ur-calibration (2.4.9-2trixie) trixie; urgency=high
+
+
+
+ -- Felix Exner <feex@universal-robots.com>  Fri, 09 Aug 2024 05:00:00 -0000
+
+ros-rolling-ur-calibration (2.4.8-2trixie) trixie; urgency=high
+
+
+
+ -- Felix Exner <feex@universal-robots.com>  Mon, 01 Jul 2024 05:00:00 -0000
+
+ros-rolling-ur-calibration (2.4.7-2trixie) trixie; urgency=high
+
+
+
+ -- Felix Exner <feex@universal-robots.com>  Wed, 19 Jun 2024 05:00:00 -0000
+
+ros-rolling-ur-calibration (2.4.6-2trixie) trixie; urgency=high
+
+  * Fix calibration (#1017 <https://github.com/UniversalRobots/Universal_Robots_ROS2_Driver/issues/1017>)
+  * Restructure documentation for full stack documentation (#984 <https://github.com/UniversalRobots/Universal_Robots_ROS2_Driver/issues/984>)
+  * Contributors: Felix Exner (fexner), Vincenzo Di Pentima
+
+ -- Felix Exner <feex@universal-robots.com>  Mon, 17 Jun 2024 05:00:00 -0000
+
+ros-rolling-ur-calibration (2.4.5-2trixie) trixie; urgency=high
+
+
+
+ -- Felix Exner <feex@universal-robots.com>  Thu, 16 May 2024 05:00:00 -0000
+
+ros-rolling-ur-calibration (2.4.4-2trixie) trixie; urgency=high
+
+
+
+ -- Felix Exner <feex@universal-robots.com>  Thu, 04 Apr 2024 05:00:00 -0000
+
+ros-rolling-ur-calibration (2.4.3-2trixie) trixie; urgency=high
+
+
+
+ -- Felix Exner <feex@universal-robots.com>  Fri, 02 Feb 2024 06:00:00 -0000
+
+ros-rolling-ur-calibration (2.4.2-2trixie) trixie; urgency=high
+
+
+
+ -- Felix Exner <feex@universal-robots.com>  Thu, 23 Nov 2023 06:00:00 -0000
+
+ros-rolling-ur-calibration (2.4.1-2trixie) trixie; urgency=high
+
+
+
+ -- Felix Exner <feex@universal-robots.com>  Thu, 21 Sep 2023 05:00:00 -0000
+
+ros-rolling-ur-calibration (2.4.0-2trixie) trixie; urgency=high
+
+  * Use mock_hardware and mock_sensor_commands instead of fake (#739 <https://github.com/UniversalRobots/Universal_Robots_ROS2_Driver/issues/739>)
+    * Use mock_hardware and mock_sensor_commands instead of fake
+    This has been deprecated a while back and was never adapted.
+    * Update documentation to mock_hardware
+  * Contributors: Felix Exner (fexner)
+
+ -- Felix Exner <feex@universal-robots.com>  Mon, 28 Aug 2023 05:00:00 -0000
+
+ros-rolling-ur-calibration (2.3.2-2trixie) trixie; urgency=high
+
+  * Fixed formatting (#685 <https://github.com/UniversalRobots/Universal_Robots_ROS2_Driver/issues/685>)
+    * Removed empty lines from python files
+    * Fixed typo in changelogs
+  * Contributors: Felix Exner (fexner)
+
+ -- Felix Exner <feex@universal-robots.com>  Fri, 02 Jun 2023 05:00:00 -0000
+
+ros-rolling-ur-calibration (2.3.1-2trixie) trixie; urgency=high
+
+
+
+ -- Felix Exner <feex@universal-robots.com>  Thu, 16 Mar 2023 05:00:00 -0000
+
+ros-rolling-ur-calibration (2.3.0-2trixie) trixie; urgency=high
+
+  * Fixes launchfile references (#490 <https://github.com/UniversalRobots/Universal_Robots_ROS2_Driver/issues/490>)
+    The filename with the dual type ending was wrong.
+  * Contributors: Felix Exner
+
+ -- Felix Exner <feex@universal-robots.com>  Thu, 02 Mar 2023 06:00:00 -0000
+
+ros-rolling-ur-calibration (2.2.4-2trixie) trixie; urgency=high
+
+
+
+ -- Felix Exner <feex@universal-robots.com>  Fri, 07 Oct 2022 05:00:00 -0000
+
+ros-rolling-ur-calibration (2.2.3-2trixie) trixie; urgency=high
+
+
+
+ -- Felix Exner <feex@universal-robots.com>  Wed, 27 Jul 2022 05:00:00 -0000
+
+ros-rolling-ur-calibration (2.2.2-2trixie) trixie; urgency=high
+
+  * Made sure all past maintainers are listed as authors (#429 <https://github.com/UniversalRobots/Universal_Robots_ROS2_Driver/issues/429>)
+  * Contributors: Felix Exner
+
+ -- Felix Exner <feex@universal-robots.com>  Tue, 19 Jul 2022 05:00:00 -0000
+
+ros-rolling-ur-calibration (2.2.1-2trixie) trixie; urgency=high
+
+
+
+ -- Felix Exner <feex@universal-robots.com>  Mon, 27 Jun 2022 05:00:00 -0000
+
+ros-rolling-ur-calibration (2.2.0-2trixie) trixie; urgency=high
+
+  * Updated package maintainers
+  * Update license to BSD-3-Clause (#277 <https://github.com/UniversalRobots/Universal_Robots_ROS2_Driver/issues/277>)
+  * Add missing dependency on angles and update formatting for linters. (#283 <https://github.com/UniversalRobots/Universal_Robots_ROS2_Driver/issues/283>)
+  * Calibration extraction package (#186 <https://github.com/UniversalRobots/Universal_Robots_ROS2_Driver/issues/186>)
+  * Contributors: Denis Štogl, Felix Exner, livanov93
+
+ -- Felix Exner <feex@universal-robots.com>  Mon, 20 Jun 2022 05:00:00 -0000
+
+
