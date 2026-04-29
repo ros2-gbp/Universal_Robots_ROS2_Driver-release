@@ -1,0 +1,12 @@
+Source: ros-lyrical-ur
+Section: misc
+Priority: optional
+Maintainer: Felix Exner <feex@universal-robots.com>
+Build-Depends: debhelper (>= 9.0.0), ros-lyrical-ament-cmake, ros-lyrical-ament-lint-auto <!nocheck>, ros-lyrical-ament-lint-common <!nocheck>, ros-lyrical-ros-workspace
+Homepage: https://index.ros.org/p/ur/#lyrical
+Standards-Version: 3.9.2
+
+Package: ros-lyrical-ur
+Architecture: any
+Depends: ${shlibs:Depends}, ${misc:Depends}, ros-lyrical-ur-calibration, ros-lyrical-ur-controllers, ros-lyrical-ur-dashboard-msgs, ros-lyrical-ur-moveit-config, ros-lyrical-ur-robot-driver, ros-lyrical-ros-workspace
+Description: Metapackage for universal robots
