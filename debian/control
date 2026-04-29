@@ -1,0 +1,13 @@
+Source: ros-lyrical-ur-robot-driver
+Section: misc
+Priority: optional
+Maintainer: Felix Exner <feex@universal-robots.com>
+Build-Depends: debhelper (>= 9.0.0), ros-lyrical-ament-cmake, ros-lyrical-ament-cmake-python, ros-lyrical-backward-ros, ros-lyrical-control-msgs, ros-lyrical-controller-manager, ros-lyrical-controller-manager-msgs, ros-lyrical-geometry-msgs, ros-lyrical-hardware-interface, ros-lyrical-launch-testing-ament-cmake <!nocheck>, ros-lyrical-motion-primitives-controllers, ros-lyrical-pluginlib, ros-lyrical-rclcpp, ros-lyrical-rclcpp-lifecycle, ros-lyrical-rclpy, ros-lyrical-ros2run <!nocheck>, ros-lyrical-std-msgs, ros-lyrical-std-srvs, ros-lyrical-tf2-geometry-msgs, ros-lyrical-ur-client-library, ros-lyrical-ur-controllers, ros-lyrical-ur-dashboard-msgs, ros-lyrical-ur-description, ros-lyrical-ur-msgs, ros-lyrical-ros-workspace
+Homepage: https://docs.universal-robots.com/Universal_Robots_ROS_Documentation/
+Standards-Version: 3.9.2
+
+Package: ros-lyrical-ur-robot-driver
+Architecture: any
+Depends: ${shlibs:Depends}, ${misc:Depends}, ros-lyrical-backward-ros, ros-lyrical-control-msgs, ros-lyrical-controller-manager, ros-lyrical-controller-manager-msgs, ros-lyrical-effort-controllers, ros-lyrical-force-torque-sensor-broadcaster, ros-lyrical-geometry-msgs, ros-lyrical-hardware-interface, ros-lyrical-joint-state-broadcaster, ros-lyrical-joint-state-publisher, ros-lyrical-joint-trajectory-controller, ros-lyrical-launch, ros-lyrical-launch-ros, ros-lyrical-motion-primitives-controllers, ros-lyrical-pluginlib, ros-lyrical-pose-broadcaster, ros-lyrical-position-controllers, ros-lyrical-rclcpp, ros-lyrical-rclcpp-lifecycle, ros-lyrical-rclpy, ros-lyrical-robot-state-publisher, ros-lyrical-ros2-controllers-test-nodes, ros-lyrical-rviz2, ros-lyrical-std-msgs, ros-lyrical-std-srvs, ros-lyrical-tf2-geometry-msgs, ros-lyrical-ur-client-library, ros-lyrical-ur-controllers, ros-lyrical-ur-dashboard-msgs, ros-lyrical-ur-description, ros-lyrical-ur-msgs, ros-lyrical-urdf, ros-lyrical-velocity-controllers, ros-lyrical-xacro, socat, ros-lyrical-ros-workspace
+Description: The ROS 2 driver for Universal Robots manipulators.
+ This driver supports all robot models as listed in the documentation. For robot controllers, PolyScope X, PolyScope 5 and CB3 controllers are supported.
