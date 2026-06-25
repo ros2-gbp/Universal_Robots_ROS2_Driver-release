@@ -155,6 +155,8 @@ URPositionHardwareInterface::on_init(const hardware_interface::HardwareInfo& sys
   trajectory_joint_positions_.reserve(32768);
   trajectory_joint_velocities_.reserve(32768);
   trajectory_joint_accelerations_.reserve(32768);
+  stop_requested_ = false;
+
   for (size_t i = 0; i < 6; i++) {
     force_mode_task_frame_[i] = NO_NEW_CMD_;
     force_mode_selection_vector_[i] = static_cast<uint32_t>(NO_NEW_CMD_);
@@ -340,6 +342,14 @@ std::vector<hardware_interface::StateInterface> URPositionHardwareInterface::exp
 
   state_interfaces.emplace_back(
       hardware_interface::StateInterface(tf_prefix + TOOL_CONTACT_GPIO, "tool_contact_state", &tool_contact_state_));
+
+  state_interfaces.emplace_back(hardware_interface::StateInterface(tf_prefix + "payload", "mass", &rtde_payload_mass_));
+  state_interfaces.emplace_back(
+      hardware_interface::StateInterface(tf_prefix + "payload", "cog.x", &rtde_payload_cog_[0]));
+  state_interfaces.emplace_back(
+      hardware_interface::StateInterface(tf_prefix + "payload", "cog.y", &rtde_payload_cog_[1]));
+  state_interfaces.emplace_back(
+      hardware_interface::StateInterface(tf_prefix + "payload", "cog.z", &rtde_payload_cog_[2]));
 
   return state_interfaces;
 }
@@ -813,6 +823,8 @@ hardware_interface::return_type URPositionHardwareInterface::read(const rclcpp::
     readBitsetData<uint32_t>(data_package_buffer_, "analog_io_types", analog_io_types_);
     readBitsetData<uint32_t>(data_package_buffer_, "tool_analog_input_types", tool_analog_input_types_);
     readData(data_package_buffer_, "tcp_offset", tcp_offset_);
+    readData(data_package_buffer_, "payload", rtde_payload_mass_);
+    readData(data_package_buffer_, "payload_cog", rtde_payload_cog_);
 
     // required transforms
     extractToolPose();
@@ -881,7 +893,12 @@ hardware_interface::return_type URPositionHardwareInterface::write(const rclcpp:
   if ((runtime_state_ == static_cast<uint32_t>(rtde::RUNTIME_STATE::PLAYING) ||
        runtime_state_ == static_cast<uint32_t>(rtde::RUNTIME_STATE::PAUSING)) &&
       robot_program_running_ && (!non_blocking_read_ || packet_read_)) {
-    if (position_controller_running_) {
+    if (stop_requested_) {
+      ur_driver_->writeJointCommand(urcl_position_commands_, urcl::comm::ControlMode::MODE_STOPPED);
+      stop_requested_ = false;
+      robot_program_running_ = false;  // We reset that here, as well to avoid a race condition
+                                       // between the reverse interface callback and the next write.
+    } else if (position_controller_running_) {
       ur_driver_->writeJointCommand(urcl_position_commands_, urcl::comm::ControlMode::MODE_SERVOJ, receive_timeout_);
 
     } else if (velocity_controller_running_) {
@@ -996,7 +1013,7 @@ void URPositionHardwareInterface::checkAsyncIO()
   }
 
   if (!std::isnan(hand_back_control_cmd_) && ur_driver_ != nullptr) {
-    robot_program_running_ = false;
+    stop_requested_ = true;
     hand_back_control_async_success_ = true;
     hand_back_control_cmd_ = NO_NEW_CMD_;
   }
