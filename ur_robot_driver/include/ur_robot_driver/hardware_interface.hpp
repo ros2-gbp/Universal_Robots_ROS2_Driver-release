@@ -264,6 +264,8 @@ protected:
   urcl::vector3d_t payload_center_of_gravity_;
   double payload_mass_;
   double payload_async_success_;
+  double rtde_payload_mass_ = 0.0;
+  urcl::vector3d_t rtde_payload_cog_{ 0.0, 0.0, 0.0 };
 
   // Friction model parameters
   urcl::vector6d_t friction_model_viscous_;
@@ -294,7 +296,8 @@ protected:
   std::array<double, 4> robot_status_bits_copy_;
   std::array<double, 11> safety_status_bits_copy_;
 
-  bool robot_program_running_;
+  std::atomic<bool> robot_program_running_;
+  std::atomic<bool> stop_requested_;
   bool non_blocking_read_;
   double robot_program_running_copy_;
 
