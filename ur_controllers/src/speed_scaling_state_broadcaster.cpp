@@ -41,6 +41,7 @@
 #include "hardware_interface/types/hardware_interface_type_values.hpp"
 #include "rclcpp/clock.hpp"
 #include "rclcpp/qos.hpp"
+#include "rclcpp/qos_event.hpp"
 #include "rclcpp/time.hpp"
 #include "rclcpp_lifecycle/lifecycle_node.hpp"
 #include "rcpputils/split.hpp"
@@ -108,8 +109,8 @@ SpeedScalingStateBroadcaster::on_configure(const rclcpp_lifecycle::State& /*prev
   RCLCPP_INFO(get_node()->get_logger(), "Publisher rate set to : %.1f Hz", publish_rate_);
 
   try {
-    speed_scaling_state_publisher_ =
-        get_node()->create_publisher<std_msgs::msg::Float64>("~/speed_scaling", rclcpp::SystemDefaultsQoS());
+    speed_scaling_state_publisher_ = std::make_shared<realtime_tools::RealtimePublisher<std_msgs::msg::Float64>>(
+        get_node()->create_publisher<std_msgs::msg::Float64>("~/speed_scaling", rclcpp::SystemDefaultsQoS()));
   } catch (const std::exception& e) {
     // get_node() may throw, logging raw here
     fprintf(stderr, "Exception thrown during init stage with message: %s \n", e.what());
@@ -135,12 +136,19 @@ controller_interface::return_type SpeedScalingStateBroadcaster::update(const rcl
 {
   if (publish_rate_ > 0.0 && period > rclcpp::Duration(1.0 / publish_rate_, 0.0)) {
     // Speed scaling is the only interface of the controller
-    speed_scaling_state_msg_.data = state_interfaces_[0].get_optional().value_or(1.0) * 100.0;
+    speed_scaling_state_msg_.data = state_interfaces_[0].get_value() * 100.0;
 
     // publish
-    speed_scaling_state_publisher_->publish(speed_scaling_state_msg_);
+    speed_scaling_state_publisher_->tryPublish(speed_scaling_state_msg_);
   }
   return controller_interface::return_type::OK;
+}
+
+controller_interface::CallbackReturn
+SpeedScalingStateBroadcaster::on_cleanup(const rclcpp_lifecycle::State& /*previous_state*/)
+{
+  speed_scaling_state_publisher_.reset();
+  return controller_interface::CallbackReturn::SUCCESS;
 }
 
 }  // namespace ur_controllers

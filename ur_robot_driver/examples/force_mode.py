@@ -94,7 +94,7 @@ class ForceModeExample(Node):
             "/controller_manager/switch_controller",
             SwitchController.Request(
                 deactivate_controllers=[
-                    "joint_trajectory_controller",
+                    "scaled_joint_trajectory_controller",
                     "forward_position_controller",
                 ],
                 activate_controllers=[

@@ -40,7 +40,6 @@ from rclpy.node import Node
 
 from controller_manager_msgs.srv import SwitchController
 from ur_msgs.action import FollowJointTrajectoryUntil
-from action_msgs.srv import CancelGoal_Response
 from trajectory_msgs.msg import JointTrajectory, JointTrajectoryPoint
 from builtin_interfaces.msg import Duration
 
@@ -59,7 +58,7 @@ from test_common import (  # noqa: E402
 @pytest.mark.launch_test
 @launch_testing.parametrize(
     "tf_prefix, initial_joint_controller",
-    [("", "joint_trajectory_controller"), ("my_ur_", "passthrough_trajectory_controller")],
+    [("", "scaled_joint_trajectory_controller"), ("my_ur_", "passthrough_trajectory_controller")],
 )
 def generate_test_description(tf_prefix, initial_joint_controller):
     return generate_driver_test_description(
@@ -107,11 +106,14 @@ class RobotDriverTest(unittest.TestCase):
     # Tests
     #
 
-    def test_trajectory_with_tool_contact_no_trigger_succeeds(self, tf_prefix):
+    def test_trajectory_with_tool_contact_no_trigger_succeeds(
+        self, tf_prefix, initial_joint_controller
+    ):
+        self._controller_manager_interface.wait_for_controller(initial_joint_controller)
         self.assertTrue(
             self._controller_manager_interface.switch_controller(
                 strictness=SwitchController.Request.BEST_EFFORT,
-                activate_controllers=["tool_contact_controller"],
+                activate_controllers=["tool_contact_controller", initial_joint_controller],
             ).ok
         )
         trajectory = JointTrajectory()
@@ -135,18 +137,13 @@ class RobotDriverTest(unittest.TestCase):
         self.assertEqual(
             result.until_condition_result, FollowJointTrajectoryUntil.Result.NOT_TRIGGERED
         )
-        self.assertTrue(
-            self._controller_manager_interface.switch_controller(
-                strictness=SwitchController.Request.BEST_EFFORT,
-                deactivate_controllers=["tool_contact_controller"],
-            ).ok
-        )
 
-    def test_trajectory_until_can_cancel(self, tf_prefix):
+    def test_trajectory_until_can_cancel(self, tf_prefix, initial_joint_controller):
+        self._controller_manager_interface.wait_for_controller(initial_joint_controller)
         self.assertTrue(
             self._controller_manager_interface.switch_controller(
                 strictness=SwitchController.Request.BEST_EFFORT,
-                activate_controllers=["tool_contact_controller"],
+                activate_controllers=["tool_contact_controller", initial_joint_controller],
             ).ok
         )
         trajectory = JointTrajectory()
@@ -163,10 +160,4 @@ class RobotDriverTest(unittest.TestCase):
         )
         self.assertTrue(goal_handle.accepted)
         result = self._trajectory_until_interface.cancel_goal(goal_handle)
-        self.assertEqual(result.return_code, CancelGoal_Response.ERROR_NONE)
-        self.assertTrue(
-            self._controller_manager_interface.switch_controller(
-                strictness=SwitchController.Request.BEST_EFFORT,
-                deactivate_controllers=["tool_contact_controller"],
-            ).ok
-        )
+        self.assertTrue(len(result.goals_canceling) > 0)

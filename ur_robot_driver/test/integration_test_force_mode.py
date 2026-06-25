@@ -115,6 +115,7 @@ class ForceModeTest(unittest.TestCase):
         )
 
         self._controller_manager_interface.wait_for_controller("force_mode_controller")
+        self._controller_manager_interface.wait_for_controller("scaled_joint_trajectory_controller")
         self._controller_manager_interface.wait_for_controller("joint_trajectory_controller")
 
     def setUp(self):
@@ -272,6 +273,7 @@ class ForceModeTest(unittest.TestCase):
                     "passthrough_trajectory_controller",
                 ],
                 deactivate_controllers=[
+                    "scaled_joint_trajectory_controller",
                     "joint_trajectory_controller",
                     "force_mode_controller",
                 ],
@@ -304,6 +306,7 @@ class ForceModeTest(unittest.TestCase):
                     "force_mode_controller",
                 ],
                 deactivate_controllers=[
+                    "scaled_joint_trajectory_controller",
                     "joint_trajectory_controller",
                     "passthrough_trajectory_controller",
                 ],
@@ -319,6 +322,7 @@ class ForceModeTest(unittest.TestCase):
                     "passthrough_trajectory_controller",
                 ],
                 deactivate_controllers=[
+                    "scaled_joint_trajectory_controller",
                     "joint_trajectory_controller",
                 ],
             ).ok
@@ -331,6 +335,7 @@ class ForceModeTest(unittest.TestCase):
                     "force_mode_controller",
                 ],
                 deactivate_controllers=[
+                    "scaled_joint_trajectory_controller",
                     "joint_trajectory_controller",
                 ],
             ).ok
@@ -345,6 +350,7 @@ class ForceModeTest(unittest.TestCase):
                     "force_mode_controller",
                 ],
                 deactivate_controllers=[
+                    "scaled_joint_trajectory_controller",
                     "joint_trajectory_controller",
                 ],
             ).ok
@@ -386,6 +392,7 @@ class ForceModeTest(unittest.TestCase):
                     "force_mode_controller",
                 ],
                 deactivate_controllers=[
+                    "scaled_joint_trajectory_controller",
                     "joint_trajectory_controller",
                 ],
             ).ok
@@ -427,6 +434,7 @@ class ForceModeTest(unittest.TestCase):
                 activate_controllers=[],
                 deactivate_controllers=[
                     "force_mode_controller",
+                    "scaled_joint_trajectory_controller",
                     "joint_trajectory_controller",
                 ],
             ).ok
@@ -459,6 +467,7 @@ class ForceModeTest(unittest.TestCase):
                     "force_mode_controller",
                 ],
                 deactivate_controllers=[
+                    "scaled_joint_trajectory_controller",
                     "joint_trajectory_controller",
                 ],
             ).ok
@@ -524,6 +533,7 @@ class ForceModeTest(unittest.TestCase):
                 activate_controllers=[],
                 deactivate_controllers=[
                     "force_mode_controller",
+                    "scaled_joint_trajectory_controller",
                     "joint_trajectory_controller",
                 ],
             ).ok
@@ -551,6 +561,7 @@ class ForceModeTest(unittest.TestCase):
                     "force_mode_controller",
                 ],
                 deactivate_controllers=[
+                    "scaled_joint_trajectory_controller",
                     "joint_trajectory_controller",
                 ],
             ).ok

@@ -34,6 +34,7 @@
 # real-life applications, we do recommend to use something like MoveIt!
 
 import time
+import sys
 
 import rclpy
 from rclpy.action import ActionClient
@@ -48,24 +49,24 @@ TRAJECTORIES = {
     "traj0": [
         {
             "positions": [0.043128, -1.28824, 1.37179, -1.82208, -1.63632, -0.18],
-            "velocities": [0, 0, 0, 0, 0, 0],
+            "velocities": [0.0, 0.0, 0.0, 0.0, 0.0, 0.0],
             "time_from_start": Duration(sec=4, nanosec=0),
         },
         {
             "positions": [-0.195016, -1.70093, 0.902027, -0.944217, -1.52982, -0.195171],
-            "velocities": [0, 0, 0, 0, 0, 0],
+            "velocities": [0.0, 0.0, 0.0, 0.0, 0.0, 0.0],
             "time_from_start": Duration(sec=8, nanosec=0),
         },
     ],
     "traj1": [
         {
             "positions": [-0.195016, -1.70094, 0.902027, -0.944217, -1.52982, -0.195171],
-            "velocities": [0, 0, 0, 0, 0, 0],
+            "velocities": [0.0, 0.0, 0.0, 0.0, 0.0, 0.0],
             "time_from_start": Duration(sec=0, nanosec=0),
         },
         {
             "positions": [0.30493, -0.982258, 0.955637, -1.48215, -1.72737, 0.204445],
-            "velocities": [0, 0, 0, 0, 0, 0],
+            "velocities": [0.0, 0.0, 0.0, 0.0, 0.0, 0.0],
             "time_from_start": Duration(sec=8, nanosec=0),
         },
     ],
@@ -77,7 +78,8 @@ class JTCClient(rclpy.node.Node):
 
     def __init__(self):
         super().__init__("jtc_client")
-        self.declare_parameter("controller_name", "joint_trajectory_controller")
+        self.declare_parameter("controller_name", "scaled_joint_trajectory_controller")
+        self.declare_parameter("tf_prefix", "")
         self.declare_parameter(
             "joints",
             [
@@ -91,7 +93,10 @@ class JTCClient(rclpy.node.Node):
         )
 
         controller_name = self.get_parameter("controller_name").value + "/follow_joint_trajectory"
-        self.joints = self.get_parameter("joints").value
+        self.tf_prefix = self.get_parameter("tf_prefix").value
+        self.joints = [
+            self.tf_prefix + joint_name for joint_name in self.get_parameter("joints").value
+        ]
 
         if self.joints is None or len(self.joints) == 0:
             raise Exception('"joints" parameter is required')
@@ -204,15 +209,19 @@ class JTCClient(rclpy.node.Node):
 def main(args=None):
     rclpy.init(args=args)
 
+    exit_code = 0
+
     jtc_client = JTCClient()
     try:
         rclpy.spin(jtc_client)
     except RuntimeError as err:
         jtc_client.get_logger().error(str(err))
+        exit_code = 1
     except SystemExit:
         rclpy.logging.get_logger("jtc_client").info("Done")
 
     rclpy.shutdown()
+    sys.exit(exit_code)
 
 
 if __name__ == "__main__":
