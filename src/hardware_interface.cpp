@@ -60,6 +60,41 @@ namespace rtde = urcl::rtde_interface;
 namespace ur_robot_driver
 {
 
+RobotTypeWithSeries robotTypeFromString(const std::string& robot_type_str)
+{
+  if (robot_type_str == "ur3") {
+    return { urcl::RobotType::UR3, urcl::RobotSeries::CB3 };
+  } else if (robot_type_str == "ur3e") {
+    return { urcl::RobotType::UR3, urcl::RobotSeries::E_SERIES };
+  } else if (robot_type_str == "ur5") {
+    return { urcl::RobotType::UR5, urcl::RobotSeries::CB3 };
+  } else if (robot_type_str == "ur5e") {
+    return { urcl::RobotType::UR5, urcl::RobotSeries::E_SERIES };
+  } else if (robot_type_str == "ur7e") {  // UR7e reports as UR5
+    return { urcl::RobotType::UR5, urcl::RobotSeries::E_SERIES };
+  } else if (robot_type_str == "ur10") {
+    return { urcl::RobotType::UR10, urcl::RobotSeries::CB3 };
+  } else if (robot_type_str == "ur10e") {
+    return { urcl::RobotType::UR10, urcl::RobotSeries::E_SERIES };
+  } else if (robot_type_str == "ur12e") {  // UR12e reports as UR10
+    return { urcl::RobotType::UR10, urcl::RobotSeries::E_SERIES };
+  } else if (robot_type_str == "ur16e") {
+    return { urcl::RobotType::UR16, urcl::RobotSeries::E_SERIES };
+  } else if (robot_type_str == "ur15") {
+    return { urcl::RobotType::UR15, urcl::RobotSeries::UR_SERIES };
+  } else if (robot_type_str == "ur18") {
+    return { urcl::RobotType::UR18, urcl::RobotSeries::UR_SERIES };
+  } else if (robot_type_str == "ur20") {
+    return { urcl::RobotType::UR20, urcl::RobotSeries::UR_SERIES };
+  } else if (robot_type_str == "ur30") {
+    return { urcl::RobotType::UR30, urcl::RobotSeries::UR_SERIES };
+  } else if (robot_type_str == "ur8long") {
+    return { urcl::RobotType::UR8LONG, urcl::RobotSeries::UR_SERIES };
+  } else {
+    throw std::invalid_argument("Unknown robot type: " + robot_type_str);
+  }
+}
+
 URPositionHardwareInterface::URPositionHardwareInterface()
 {
   mode_compatibility_[hardware_interface::HW_IF_POSITION][hardware_interface::HW_IF_VELOCITY] = false;
@@ -178,6 +213,7 @@ URPositionHardwareInterface::on_init(const hardware_interface::HardwareComponent
   trajectory_joint_positions_.reserve(32768);
   trajectory_joint_velocities_.reserve(32768);
   trajectory_joint_accelerations_.reserve(32768);
+  stop_requested_ = false;
 
   // Motion primitives stuff
   async_moprim_thread_shutdown_ = false;
@@ -372,6 +408,14 @@ std::vector<hardware_interface::StateInterface> URPositionHardwareInterface::exp
   state_interfaces.emplace_back(
       hardware_interface::StateInterface(tf_prefix + TOOL_CONTACT_GPIO, "tool_contact_state", &tool_contact_state_));
 
+  state_interfaces.emplace_back(hardware_interface::StateInterface(tf_prefix + "payload", "mass", &rtde_payload_mass_));
+  state_interfaces.emplace_back(
+      hardware_interface::StateInterface(tf_prefix + "payload", "cog.x", &rtde_payload_cog_[0]));
+  state_interfaces.emplace_back(
+      hardware_interface::StateInterface(tf_prefix + "payload", "cog.y", &rtde_payload_cog_[1]));
+  state_interfaces.emplace_back(
+      hardware_interface::StateInterface(tf_prefix + "payload", "cog.z", &rtde_payload_cog_[2]));
+
   // Motion primitives stuff
   state_interfaces.emplace_back(hardware_interface::StateInterface(tf_prefix + HW_IF_MOTION_PRIMITIVES,
                                                                    "execution_status", &hw_moprim_states_[0]));
@@ -477,6 +521,15 @@ std::vector<hardware_interface::CommandInterface> URPositionHardwareInterface::e
   command_interfaces.emplace_back(tf_prefix + FORCE_MODE_GPIO, "disable_cmd", &force_mode_disable_cmd_);
   command_interfaces.emplace_back(tf_prefix + FORCE_MODE_GPIO, "damping", &force_mode_damping_);
   command_interfaces.emplace_back(tf_prefix + FORCE_MODE_GPIO, "gain_scaling", &force_mode_gain_scaling_);
+
+  command_interfaces.emplace_back(
+      hardware_interface::CommandInterface(tf_prefix + "gravity", "x", &gravity_vector_[0]));
+  command_interfaces.emplace_back(
+      hardware_interface::CommandInterface(tf_prefix + "gravity", "y", &gravity_vector_[1]));
+  command_interfaces.emplace_back(
+      hardware_interface::CommandInterface(tf_prefix + "gravity", "z", &gravity_vector_[2]));
+  command_interfaces.emplace_back(
+      hardware_interface::CommandInterface(tf_prefix + "gravity", "gravity_async_success", &gravity_async_success_));
 
   for (size_t i = 0; i < 18; ++i) {
     command_interfaces.emplace_back(hardware_interface::CommandInterface(
@@ -753,6 +806,37 @@ URPositionHardwareInterface::on_configure(const rclcpp_lifecycle::State& previou
   }
   // Timeout before the reverse interface will be dropped by the robot
   receive_timeout_ = urcl::RobotReceiveTimeout::sec(std::stof(info_.hardware_parameters["robot_receive_timeout"]));
+  //
+  // Export version information to state interfaces
+  version_info_ = ur_driver_->getVersion();
+  get_robot_software_version_major_ = version_info_.major;
+  get_robot_software_version_minor_ = version_info_.minor;
+  get_robot_software_version_build_ = version_info_.build;
+  get_robot_software_version_bugfix_ = version_info_.bugfix;
+
+  std::string ur_type = info_.hardware_parameters["ur_type"];
+  auto expected_type = robotTypeFromString(ur_type);
+  auto robot_type = ur_driver_->getPrimaryClient()->getRobotType();
+  auto robot_series = ur_driver_->getPrimaryClient()->getRobotSeries();
+
+  bool verify_robot_model = false;
+  if (info_.hardware_parameters.find("verify_robot_model") != info_.hardware_parameters.end()) {
+    verify_robot_model =
+        (info_.hardware_parameters["verify_robot_model"] == "true") || (info_.hardware_parameters["verify_robot_"
+                                                                                                  "model"] == "True");
+  }
+  if (verify_robot_model) {
+    if (robot_type != expected_type.robot_type || expected_type.robot_series != robot_series) {
+      RCLCPP_FATAL_STREAM(rclcpp::get_logger("URPositionHardwareInterface"),
+                          "The connected robot is of type '"
+                              << robotTypeString(robot_type) << "' and version " << version_info_
+                              << " but the driver was configured for type '" << ur_type
+                              << "'. Please check the 'ur_type' parameter and make sure it matches your "
+                                 "actual robot. This can lead to critical inaccuracies of tcp positions.");
+      ur_driver_.reset();
+      return hardware_interface::CallbackReturn::ERROR;
+    }
+  }
 
   RCLCPP_INFO(rclcpp::get_logger("URPositionHardwareInterface"), "Calibration checksum: '%s'.",
               calibration_checksum.c_str());
@@ -770,13 +854,6 @@ URPositionHardwareInterface::on_configure(const rclcpp_lifecycle::State& previou
                         "[https://github.com/UniversalRobots/Universal_Robots_ROS2_Driver/blob/main/ur_calibration/"
                         "README.md] for details.");
   }
-
-  // Export version information to state interfaces
-  version_info_ = ur_driver_->getVersion();
-  get_robot_software_version_major_ = version_info_.major;
-  get_robot_software_version_minor_ = version_info_.minor;
-  get_robot_software_version_build_ = version_info_.build;
-  get_robot_software_version_bugfix_ = version_info_.bugfix;
 
   RCLCPP_INFO(rclcpp::get_logger("URPositionHardwareInterface"), "Initializing InstructionExecutor");
   instruction_executor_ = std::make_shared<urcl::InstructionExecutor>(ur_driver_);
@@ -920,6 +997,8 @@ hardware_interface::return_type URPositionHardwareInterface::read(const rclcpp::
     readBitsetData<uint32_t>(data_package_buffer_, "analog_io_types", analog_io_types_);
     readBitsetData<uint32_t>(data_package_buffer_, "tool_analog_input_types", tool_analog_input_types_);
     readData(data_package_buffer_, "tcp_offset", tcp_offset_);
+    readData(data_package_buffer_, "payload", rtde_payload_mass_);
+    readData(data_package_buffer_, "payload_cog", rtde_payload_cog_);
 
     // required transforms
     extractToolPose();
@@ -992,7 +1071,12 @@ hardware_interface::return_type URPositionHardwareInterface::write(const rclcpp:
   if ((runtime_state_ == static_cast<uint32_t>(rtde::RUNTIME_STATE::PLAYING) ||
        runtime_state_ == static_cast<uint32_t>(rtde::RUNTIME_STATE::PAUSING)) &&
       robot_program_running_ && (!non_blocking_read_ || packet_read_)) {
-    if (position_controller_running_) {
+    if (stop_requested_) {
+      ur_driver_->writeJointCommand(urcl_position_commands_, urcl::comm::ControlMode::MODE_STOPPED);
+      stop_requested_ = false;
+      robot_program_running_ = false;  // We reset that here, as well to avoid a race condition
+                                       // between the reverse interface callback and the next write.
+    } else if (position_controller_running_) {
       ur_driver_->writeJointCommand(urcl_position_commands_, urcl::comm::ControlMode::MODE_SERVOJ, receive_timeout_);
 
     } else if (velocity_controller_running_) {
@@ -1055,6 +1139,7 @@ void URPositionHardwareInterface::initAsyncIO()
   payload_mass_ = NO_NEW_CMD_;
   payload_center_of_gravity_ = { NO_NEW_CMD_, NO_NEW_CMD_, NO_NEW_CMD_ };
 
+  gravity_vector_ = { NO_NEW_CMD_, NO_NEW_CMD_, NO_NEW_CMD_ };
   friction_model_viscous_.fill(NO_NEW_CMD_);
   friction_model_coulomb_.fill(NO_NEW_CMD_);
 }
@@ -1113,7 +1198,7 @@ void URPositionHardwareInterface::checkAsyncIO()
   }
 
   if (!std::isnan(hand_back_control_cmd_) && ur_driver_ != nullptr) {
-    robot_program_running_ = false;
+    stop_requested_ = true;
     hand_back_control_async_success_ = true;
     hand_back_control_cmd_ = NO_NEW_CMD_;
   }
@@ -1126,6 +1211,11 @@ void URPositionHardwareInterface::checkAsyncIO()
     payload_center_of_gravity_ = { NO_NEW_CMD_, NO_NEW_CMD_, NO_NEW_CMD_ };
   }
 
+  if (!std::isnan(gravity_vector_[0]) && !std::isnan(gravity_vector_[1]) && !std::isnan(gravity_vector_[2]) &&
+      ur_driver_ != nullptr) {
+    gravity_async_success_ = ur_driver_->setGravity(gravity_vector_);
+    gravity_vector_ = { NO_NEW_CMD_, NO_NEW_CMD_, NO_NEW_CMD_ };
+  }
   if (!std::isnan(friction_model_viscous_[0]) && ur_driver_ != nullptr) {
     friction_model_async_success_ = ur_driver_->setFrictionScales(friction_model_viscous_, friction_model_coulomb_);
     friction_model_viscous_.fill(NO_NEW_CMD_);
