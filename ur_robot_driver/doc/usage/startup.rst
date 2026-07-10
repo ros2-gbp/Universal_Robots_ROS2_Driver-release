@@ -1,3 +1,5 @@
+:github_url: https://github.com/UniversalRobots/Universal_Robots_ROS2_Driver/blob/main/ur_robot_driver/doc/usage/startup.rst
+
 .. _ur_robot_driver_startup:
 
 Startup the driver
@@ -22,7 +24,7 @@ nodes for UR robots. The only required arguments are the ``ur_type`` and ``robot
 
    $ ros2 launch ur_robot_driver ur_control.launch.py ur_type:=ur5e robot_ip:=192.168.56.101
 
-Allowed ``ur_type`` strings: ``ur3``, ``ur5``, ``ur10``, ``ur3e``, ``ur5e``, ``ur7e``, ``ur10e``,
+Allowed ``ur_type`` strings: ``ur3``, ``ur3e``, ``ur5``, ``ur5e``, ``ur7e``, ``ur10``, ``ur10e``,
 ``ur12e``, ``ur16e``, ``ur8long``, ``ur15``, ``ur18``, ``ur20``, ``ur30``.
 
 Other important arguments are:
@@ -32,7 +34,7 @@ Other important arguments are:
 * ``use_mock_hardware`` (default: *false* ) - Use simple hardware emulator from ros2_control. Useful for testing launch files, descriptions, etc.
 * ``headless_mode`` (default: *false*) - Start driver in :ref:`headless_mode`.
 * ``launch_rviz`` (default: *true*) - Start RViz together with the driver.
-* ``initial_joint_controller`` (default: *scaled_joint_trajectory_controller*) - Use this if you
+* ``initial_joint_controller`` (default: *joint_trajectory_controller*) - Use this if you
   want to start the robot with another controller.
 
   .. note::

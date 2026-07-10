@@ -38,7 +38,6 @@ import unittest
 import pytest
 import rclpy
 from control_msgs.action import FollowJointTrajectory
-from controller_manager_msgs.srv import SwitchController
 from rclpy.node import Node
 from std_msgs.msg import Bool
 
@@ -105,11 +104,11 @@ class HandBackControlTest(unittest.TestCase):
 
         self._follow_joint_trajectory = ActionInterface(
             self.node,
-            "/scaled_joint_trajectory_controller/follow_joint_trajectory",
+            "/joint_trajectory_controller/follow_joint_trajectory",
             FollowJointTrajectory,
         )
 
-        self._controller_manager_interface.wait_for_controller("scaled_joint_trajectory_controller")
+        self._controller_manager_interface.wait_for_controller("joint_trajectory_controller")
 
     def setUp(self):
         self._dashboard_interface.start_robot()
@@ -164,14 +163,7 @@ class HandBackControlTest(unittest.TestCase):
 
         self._dashboard_interface.play()
         self._controller_manager_interface.wait_for_controller(
-            "scaled_joint_trajectory_controller", "active"
-        )
-        self.assertTrue(
-            self._controller_manager_interface.switch_controller(
-                strictness=SwitchController.Request.BEST_EFFORT,
-                deactivate_controllers=["passthrough_trajectory_controller"],
-                activate_controllers=["scaled_joint_trajectory_controller"],
-            ).ok
+            "joint_trajectory_controller", "active"
         )
 
         self.assertTrue(

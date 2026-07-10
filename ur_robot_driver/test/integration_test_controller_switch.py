@@ -49,13 +49,13 @@ from test_common import (  # noqa: E402
 )
 
 ALL_CONTROLLERS = [
-    "scaled_joint_trajectory_controller",
     "joint_trajectory_controller",
     "forward_position_controller",
     "forward_velocity_controller",
     "passthrough_trajectory_controller",
     "force_mode_controller",
     "freedrive_mode_controller",
+    "motion_primitive_forward_controller",
     "friction_model_controller",
 ]
 
@@ -107,16 +107,7 @@ class ControllerSwitchTest(unittest.TestCase):
             self._controller_manager_interface.switch_controller(
                 strictness=SwitchController.Request.STRICT,
                 activate_controllers=[
-                    "scaled_joint_trajectory_controller",
                     "joint_trajectory_controller",
-                ],
-            ).ok
-        )
-        self.assertFalse(
-            self._controller_manager_interface.switch_controller(
-                strictness=SwitchController.Request.STRICT,
-                activate_controllers=[
-                    "scaled_joint_trajectory_controller",
                     "forward_position_controller",
                 ],
             ).ok
@@ -134,7 +125,7 @@ class ControllerSwitchTest(unittest.TestCase):
             self._controller_manager_interface.switch_controller(
                 strictness=SwitchController.Request.STRICT,
                 activate_controllers=[
-                    "scaled_joint_trajectory_controller",
+                    "joint_trajectory_controller",
                     "forward_velocity_controller",
                 ],
             ).ok
@@ -143,7 +134,7 @@ class ControllerSwitchTest(unittest.TestCase):
             self._controller_manager_interface.switch_controller(
                 strictness=SwitchController.Request.STRICT,
                 activate_controllers=[
-                    "scaled_joint_trajectory_controller",
+                    "joint_trajectory_controller",
                     "passthrough_trajectory_controller",
                 ],
             ).ok
@@ -170,7 +161,7 @@ class ControllerSwitchTest(unittest.TestCase):
             self._controller_manager_interface.switch_controller(
                 strictness=SwitchController.Request.STRICT,
                 activate_controllers=[
-                    "scaled_joint_trajectory_controller",
+                    "joint_trajectory_controller",
                     "force_mode_controller",
                 ],
             ).ok
@@ -179,7 +170,7 @@ class ControllerSwitchTest(unittest.TestCase):
             self._controller_manager_interface.switch_controller(
                 strictness=SwitchController.Request.STRICT,
                 activate_controllers=[
-                    "scaled_joint_trajectory_controller",
+                    "joint_trajectory_controller",
                     "freedrive_mode_controller",
                 ],
             ).ok
@@ -192,7 +183,7 @@ class ControllerSwitchTest(unittest.TestCase):
             self._controller_manager_interface.switch_controller(
                 strictness=SwitchController.Request.BEST_EFFORT,
                 activate_controllers=[
-                    "scaled_joint_trajectory_controller",
+                    "joint_trajectory_controller",
                 ],
                 deactivate_controllers=[
                     "joint_trajectory_controller",
@@ -204,14 +195,16 @@ class ControllerSwitchTest(unittest.TestCase):
                 ],
             ).ok
         )
-        self.assertFalse(
-            self._controller_manager_interface.switch_controller(
-                strictness=SwitchController.Request.STRICT,
-                activate_controllers=[
-                    "forward_position_controller",
-                ],
-            ).ok
-        )
+        # This got removed on 2025-10-29 due to a change in ros2_control
+        # See https://github.com/ros-controls/ros2_control/issues/2758 for details
+        # self.assertFalse(
+        # self._controller_manager_interface.switch_controller(
+        # strictness=SwitchController.Request.STRICT,
+        # activate_controllers=[
+        # "forward_position_controller",
+        # ],
+        # ).ok
+        # )
         self.assertFalse(
             self._controller_manager_interface.switch_controller(
                 strictness=SwitchController.Request.STRICT,
@@ -257,7 +250,7 @@ class ControllerSwitchTest(unittest.TestCase):
             self._controller_manager_interface.switch_controller(
                 strictness=SwitchController.Request.STRICT,
                 deactivate_controllers=[
-                    "scaled_joint_trajectory_controller",
+                    "joint_trajectory_controller",
                 ],
             ).ok
         )
@@ -272,7 +265,6 @@ class ControllerSwitchTest(unittest.TestCase):
                 strictness=SwitchController.Request.BEST_EFFORT,
                 activate_controllers=["passthrough_trajectory_controller"],
                 deactivate_controllers=[
-                    "scaled_joint_trajectory_controller",
                     "joint_trajectory_controller",
                     "forward_position_controller",
                     "forward_velocity_controller",
@@ -284,7 +276,7 @@ class ControllerSwitchTest(unittest.TestCase):
             self._controller_manager_interface.switch_controller(
                 strictness=SwitchController.Request.STRICT,
                 activate_controllers=[
-                    "scaled_joint_trajectory_controller",
+                    "joint_trajectory_controller",
                 ],
             ).ok
         )
@@ -360,7 +352,6 @@ class ControllerSwitchTest(unittest.TestCase):
                     "passthrough_trajectory_controller",
                 ],
                 deactivate_controllers=[
-                    "scaled_joint_trajectory_controller",
                     "joint_trajectory_controller",
                     "forward_position_controller",
                     "forward_velocity_controller",
@@ -385,7 +376,6 @@ class ControllerSwitchTest(unittest.TestCase):
                     "force_mode_controller",
                 ],
                 deactivate_controllers=[
-                    "scaled_joint_trajectory_controller",
                     "joint_trajectory_controller",
                     "forward_position_controller",
                     "forward_velocity_controller",
@@ -417,7 +407,7 @@ class ControllerSwitchTest(unittest.TestCase):
             self._controller_manager_interface.switch_controller(
                 strictness=SwitchController.Request.STRICT,
                 activate_controllers=[
-                    "scaled_joint_trajectory_controller",
+                    "joint_trajectory_controller",
                     "tool_contact_controller",
                 ],
             ).ok
@@ -426,7 +416,7 @@ class ControllerSwitchTest(unittest.TestCase):
             self._controller_manager_interface.switch_controller(
                 strictness=SwitchController.Request.STRICT,
                 deactivate_controllers=[
-                    "scaled_joint_trajectory_controller",
+                    "joint_trajectory_controller",
                     "tool_contact_controller",
                 ],
             ).ok
@@ -483,6 +473,112 @@ class ControllerSwitchTest(unittest.TestCase):
             ).ok
         )
 
+        self.assertTrue(
+            self._controller_manager_interface.switch_controller(
+                strictness=SwitchController.Request.STRICT,
+                activate_controllers=[
+                    "motion_primitive_forward_controller",
+                    "tool_contact_controller",
+                ],
+            ).ok
+        )
+        self.assertTrue(
+            self._controller_manager_interface.switch_controller(
+                strictness=SwitchController.Request.STRICT,
+                deactivate_controllers=[
+                    "motion_primitive_forward_controller",
+                    "tool_contact_controller",
+                ],
+            ).ok
+        )
+
+    def test_moprim_compatibility(self):
+        # Deactivate all writing controllers
+        self.assertTrue(
+            self._controller_manager_interface.switch_controller(
+                strictness=SwitchController.Request.BEST_EFFORT,
+                deactivate_controllers=ALL_CONTROLLERS,
+            ).ok
+        )
+
+        time.sleep(3)
+
+        # moprim controller should not start with any other joint controller
+        self.assertFalse(
+            self._controller_manager_interface.switch_controller(
+                strictness=SwitchController.Request.STRICT,
+                activate_controllers=[
+                    "motion_primitive_forward_controller",
+                    "joint_trajectory_controller",
+                ],
+            ).ok
+        )
+        self.assertFalse(
+            self._controller_manager_interface.switch_controller(
+                strictness=SwitchController.Request.STRICT,
+                activate_controllers=[
+                    "motion_primitive_forward_controller",
+                    "forward_effort_controller",
+                ],
+            ).ok
+        )
+        self.assertFalse(
+            self._controller_manager_interface.switch_controller(
+                strictness=SwitchController.Request.STRICT,
+                activate_controllers=[
+                    "motion_primitive_forward_controller",
+                    "forward_velocity_controller",
+                ],
+            ).ok
+        )
+        self.assertFalse(
+            self._controller_manager_interface.switch_controller(
+                strictness=SwitchController.Request.STRICT,
+                activate_controllers=[
+                    "motion_primitive_forward_controller",
+                    "forward_position_controller",
+                ],
+            ).ok
+        )
+        self.assertFalse(
+            self._controller_manager_interface.switch_controller(
+                strictness=SwitchController.Request.STRICT,
+                activate_controllers=[
+                    "motion_primitive_forward_controller",
+                    "passthrough_trajectory_controller",
+                ],
+            ).ok
+        )
+        self.assertFalse(
+            self._controller_manager_interface.switch_controller(
+                strictness=SwitchController.Request.STRICT,
+                activate_controllers=[
+                    "motion_primitive_forward_controller",
+                    "freedrive_mode_controller",
+                ],
+            ).ok
+        )
+
+        # MoPrim controller and force_mode should be possible to combine
+        self.assertTrue(
+            self._controller_manager_interface.switch_controller(
+                strictness=SwitchController.Request.STRICT,
+                activate_controllers=[
+                    "motion_primitive_forward_controller",
+                    "force_mode_controller",
+                ],
+            ).ok
+        )
+        self.assertTrue(
+            self._controller_manager_interface.switch_controller(
+                strictness=SwitchController.Request.STRICT,
+                deactivate_controllers=[
+                    "motion_primitive_forward_controller",
+                    "force_mode_controller",
+                ],
+            ).ok
+        )
+
     def test_friction_model_compatibility(self):
         """Test that friction_model_controller is compatible with all motion controllers."""
         # Deactivate all writing controllers
@@ -495,12 +591,12 @@ class ControllerSwitchTest(unittest.TestCase):
 
         time.sleep(3)
 
-        # friction_model + scaled_joint_trajectory_controller
+        # friction_model + joint_trajectory_controller
         self.assertTrue(
             self._controller_manager_interface.switch_controller(
                 strictness=SwitchController.Request.STRICT,
                 activate_controllers=[
-                    "scaled_joint_trajectory_controller",
+                    "joint_trajectory_controller",
                     "friction_model_controller",
                 ],
             ).ok
@@ -509,7 +605,7 @@ class ControllerSwitchTest(unittest.TestCase):
             self._controller_manager_interface.switch_controller(
                 strictness=SwitchController.Request.STRICT,
                 deactivate_controllers=[
-                    "scaled_joint_trajectory_controller",
+                    "joint_trajectory_controller",
                     "friction_model_controller",
                 ],
             ).ok

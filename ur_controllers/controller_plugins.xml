@@ -4,11 +4,6 @@
       This controller publishes the readings of all available speed scaling factors.
     </description>
   </class>
-  <class name="ur_controllers/ScaledJointTrajectoryController" type="ur_controllers::ScaledJointTrajectoryController" base_class_type="controller_interface::ControllerInterface">
-    <description>
-      Scaled position-based joint trajectory controller.
-    </description>
-  </class>
   <class name="ur_controllers/GPIOController" type="ur_controllers::GPIOController" base_class_type="controller_interface::ControllerInterface">
     <description>
       This controller publishes the Tool IO.
@@ -42,6 +37,11 @@
   <class name="ur_controllers/ToolContactController" type="ur_controllers::ToolContactController" base_class_type="controller_interface::ControllerInterface">
     <description>
       Controller to use the tool contact functionality of the robot.
+    </description>
+  </class>
+  <class name="ur_controllers/GravityUpdateController" type="ur_controllers::GravityUpdateController" base_class_type="controller_interface::ControllerInterface">
+    <description>
+      Controller to set the gravity direction of the robot.
     </description>
   </class>
 </library>
