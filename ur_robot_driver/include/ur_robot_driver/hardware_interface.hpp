@@ -284,10 +284,13 @@ protected:
 
   // Payload stuff
   urcl::vector3d_t payload_center_of_gravity_;
+  urcl::vector6d_t payload_inertia_;
   double payload_mass_;
+  double payload_transition_time_;
   double payload_async_success_;
   double rtde_payload_mass_ = 0.0;
   urcl::vector3d_t rtde_payload_cog_{ 0.0, 0.0, 0.0 };
+  urcl::vector6d_t rtde_payload_inertia_{ 0.0, 0.0, 0.0, 0.0, 0.0, 0.0 };
 
   // Friction model parameters
   urcl::vector6d_t friction_model_viscous_;
@@ -305,6 +308,10 @@ protected:
   double force_mode_disable_cmd_;
   double force_mode_damping_;
   double force_mode_gain_scaling_;
+
+  // Gravity stuff
+  urcl::vector3d_t gravity_vector_;
+  double gravity_async_success_;
 
   //*************** Motion primitives stuff ***************
   std::shared_ptr<urcl::InstructionExecutor> instruction_executor_;
@@ -357,7 +364,8 @@ protected:
   std::array<double, 4> robot_status_bits_copy_;
   std::array<double, 11> safety_status_bits_copy_;
 
-  bool robot_program_running_;
+  std::atomic<bool> robot_program_running_;
+  std::atomic<bool> stop_requested_;
   bool non_blocking_read_;
   double robot_program_running_copy_;
 
