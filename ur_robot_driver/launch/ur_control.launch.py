@@ -155,6 +155,7 @@ def launch_setup(context):
                     "speed_scaling_state_broadcaster",
                     "tcp_pose_broadcaster",
                     "ur_configuration_controller",
+                    "gravity_update_controller",
                 ]
             },
         ],
@@ -188,6 +189,10 @@ def launch_setup(context):
         return Node(
             package="controller_manager",
             executable="spawner",
+            parameters=[
+                {"verify_payload_on_set": NotSubstitution(use_mock_hardware)},
+                ParameterFile(controllers_file, allow_substs=True),
+            ],
             arguments=[
                 "--controller-manager",
                 "/controller_manager",
@@ -205,6 +210,7 @@ def launch_setup(context):
         "force_torque_sensor_broadcaster",
         "tcp_pose_broadcaster",
         "ur_configuration_controller",
+        "gravity_update_controller",
         "friction_model_controller",
     ]
     controllers_inactive = [
