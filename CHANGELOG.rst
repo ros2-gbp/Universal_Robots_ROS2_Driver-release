@@ -2,6 +2,14 @@
 Changelog for package ur_dashboard_msgs
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+4.8.0 (2026-07-09)
+------------------
+* Update safety status msg with new IO plane stop (backport `#1817 <https://github.com/UniversalRobots/Universal_Robots_ROS2_Driver/issues/1817>`_) (`#1820 <https://github.com/UniversalRobots/Universal_Robots_ROS2_Driver/issues/1820>`_)
+* Contributors: Felix Exner, mergify[bot]
+
+4.7.0 (2026-05-15)
+------------------
+
 4.6.0 (2026-04-09)
 ------------------
 * Use integer representation of SafetyStatus.msg (backport `#1734 <https://github.com/UniversalRobots/Universal_Robots_ROS2_Driver/issues/1734>`_) (`#1743 <https://github.com/UniversalRobots/Universal_Robots_ROS2_Driver/issues/1743>`_)
