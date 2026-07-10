@@ -9,6 +9,15 @@ option(
   OFF
 )
 
+# This test spins up a fresh URSim container for every supported robot model
+# (and one model-mismatch case), which takes a long time. It is therefore kept
+# behind its own flag so a normal integration-test run is not slowed down by it.
+option(
+  UR_ROBOT_DRIVER_RUN_ROBOT_MODELS_TEST
+  "Run the integration test that runs the driver against URSim for every supported robot model"
+  OFF
+)
+
 if(CMAKE_COMPILER_IS_GNUCXX OR CMAKE_CXX_COMPILER_ID MATCHES "Clang")
   add_compile_options(-Wall)
   add_compile_options(-Wextra)
@@ -64,12 +73,17 @@ target_link_libraries(ur_robot_driver_plugin PUBLIC
   rclcpp::rclcpp
   rclcpp_lifecycle::rclcpp_lifecycle
   ur_client_library::urcl
-  motion_primitives_controllers::motion_primitives_controllers
 )
+# NOTE: only headers (enums) are used from motion_primitives_controllers. Linking
+# against its shared library causes it to be eagerly loaded as a DT_NEEDED
+# dependency of this plugin, which breaks class_loader's registration of the
+# MotionPrimitivesForwardController controller (results in
+# "MultiLibraryClassLoader: no factory exists for it" at runtime).
 target_include_directories(
   ur_robot_driver_plugin
   PRIVATE
   include
+  ${motion_primitives_controllers_INCLUDE_DIRS}
 )
 pluginlib_export_plugin_description_file(hardware_interface hardware_interface_plugin.xml)
 
@@ -137,7 +151,10 @@ add_executable(urscript_interface
 )
 target_link_libraries(urscript_interface PUBLIC
   rclcpp::rclcpp
+  rclcpp_action::rclcpp_action
   ${std_msgs_TARGETS}
+  ${ur_msgs_TARGETS}
+  rclcpp::rclcpp
   ur_client_library::urcl
 )
 
@@ -296,6 +313,10 @@ if(BUILD_TESTING)
       TIMEOUT
         800
     )
+    add_launch_test(test/integration_test_hand_back_control.py
+      TIMEOUT
+        800
+    )
     add_launch_test(test/integration_test_tool_contact.py
       TIMEOUT
         800
@@ -304,5 +325,11 @@ if(BUILD_TESTING)
       TIMEOUT
         800
     )
+    if(${UR_ROBOT_DRIVER_RUN_ROBOT_MODELS_TEST})
+      add_launch_test(test/integration_test_robot_models.py
+        TIMEOUT
+          2700
+      )
+    endif()
   endif()
 endif()
