@@ -29,4 +29,3 @@ actual_current
 tcp_offset
 payload
 payload_cog
-payload_inertia

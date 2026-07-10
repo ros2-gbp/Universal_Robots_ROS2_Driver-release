@@ -2,29 +2,24 @@
 Changelog for package ur_controllers
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-7.0.0 (2026-07-09)
+4.8.0 (2026-07-09)
 ------------------
-* Allow setting payload inertia matrix via set_payload service   (`#1808 <https://github.com/UniversalRobots/Universal_Robots_ROS2_Driver/issues/1808>`_)
-* Allow updating robot gravity (`#1606 <https://github.com/UniversalRobots/Universal_Robots_ROS2_Driver/issues/1606>`_)
-* Use a realtime_tools::RealtimePublisher for publishing the state (`#1822 <https://github.com/UniversalRobots/Universal_Robots_ROS2_Driver/issues/1822>`_)
-* Make GPIO controller publishers realtime safe (`#1807 <https://github.com/UniversalRobots/Universal_Robots_ROS2_Driver/issues/1807>`_)
-* Update minimum CMake version to 3.28.3 (`#1814 <https://github.com/UniversalRobots/Universal_Robots_ROS2_Driver/issues/1814>`_)
-* Contributors: AdamPettinger, Felix Exner, Hasan Amin, Sergi Romero
+* Allow updating robot gravity (backport `#1606 <https://github.com/UniversalRobots/Universal_Robots_ROS2_Driver/issues/1606>`_) (`#1846 <https://github.com/UniversalRobots/Universal_Robots_ROS2_Driver/issues/1846>`_)
+* Use a realtime_tools::RealtimePublisher for publishing the state (backport `#1822 <https://github.com/UniversalRobots/Universal_Robots_ROS2_Driver/issues/1822>`_) (`#1825 <https://github.com/UniversalRobots/Universal_Robots_ROS2_Driver/issues/1825>`_)
+* Make GPIO controller publishers realtime safe (backport `#1807 <https://github.com/UniversalRobots/Universal_Robots_ROS2_Driver/issues/1807>`_) (`#1828 <https://github.com/UniversalRobots/Universal_Robots_ROS2_Driver/issues/1828>`_)
+* Contributors: Felix Exner, mergify[bot]
 
-6.0.0 (2026-05-12)
+4.7.0 (2026-05-15)
 ------------------
-* Check payload state in gpio_controller (`#1770 <https://github.com/UniversalRobots/Universal_Robots_ROS2_Driver/issues/1770>`_)
-* BREAKING: Remove scaled joint trajectory controller (`#1769 <https://github.com/UniversalRobots/Universal_Robots_ROS2_Driver/issues/1769>`_)
-* Contributors: Felix Exner
+* Check payload state in gpio_controller (backport `#1770 <https://github.com/UniversalRobots/Universal_Robots_ROS2_Driver/issues/1770>`_) (`#1777 <https://github.com/UniversalRobots/Universal_Robots_ROS2_Driver/issues/1777>`_)
+* Contributors: mergify[bot]
 
-5.0.0 (2026-04-09)
+4.6.0 (2026-04-09)
 ------------------
-* Improved controller usage documentation (`#1754 <https://github.com/UniversalRobots/Universal_Robots_ROS2_Driver/issues/1754>`_)
-* Friction model controller (`#1704 <https://github.com/UniversalRobots/Universal_Robots_ROS2_Driver/issues/1704>`_)
-* Remove Werror from CMakeLists (`#1720 <https://github.com/UniversalRobots/Universal_Robots_ROS2_Driver/issues/1720>`_)
-* Do not install moveit dependencies (`#1671 <https://github.com/UniversalRobots/Universal_Robots_ROS2_Driver/issues/1671>`_)
+* Friction model controller (backport `#1704 <https://github.com/UniversalRobots/Universal_Robots_ROS2_Driver/issues/1704>`_) (`#1752 <https://github.com/UniversalRobots/Universal_Robots_ROS2_Driver/issues/1752>`_)
+* [ur_controllers] Remove Werror from CMakeLists (backport `#1720 <https://github.com/UniversalRobots/Universal_Robots_ROS2_Driver/issues/1720>`_) (`#1729 <https://github.com/UniversalRobots/Universal_Robots_ROS2_Driver/issues/1729>`_)
 * Add deprecation warning for scaled JTC (`#1660 <https://github.com/UniversalRobots/Universal_Robots_ROS2_Driver/issues/1660>`_)
-* Contributors: Felix Exner, Rune Søe-Knudsen
+* Contributors: Felix Exner, mergify[bot]
 
 4.5.0 (2026-01-13)
 ------------------
