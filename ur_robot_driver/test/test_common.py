@@ -73,7 +73,13 @@ from ur_dashboard_msgs.srv import (
     SetOperationalMode,
     SetUserRole,
 )
-from ur_msgs.srv import SetIO, GetRobotSoftwareVersion, SetForceMode, SetFrictionModelParameters
+from ur_msgs.srv import (
+    SetIO,
+    SetPayload,
+    GetRobotSoftwareVersion,
+    SetForceMode,
+    SetFrictionModelParameters,
+)
 from builtin_interfaces.msg import Duration
 from control_msgs.action import FollowJointTrajectory
 from trajectory_msgs.msg import JointTrajectory, JointTrajectoryPoint
@@ -243,6 +249,7 @@ class DashboardInterface(
         "load_installation": Load,
         "load_program": Load,
         "close_popup": Trigger,
+        "close_safety_popup": Trigger,
         "get_loaded_program": GetLoadedProgram,
         "program_state": GetProgramState,
         "program_running": IsProgramRunning,
@@ -267,6 +274,9 @@ class DashboardInterface(
     },
 ):
     def start_robot(self):
+        self._check_call(self.close_popup())
+        self._check_call(self.close_safety_popup())
+        self._check_call(self.stop())
         self._check_call(self.power_off())
         self._check_call(self.power_on())
         self._check_call(self.brake_release())
@@ -326,6 +336,8 @@ class IoStatusInterface(
     initial_services={"set_io": SetIO},
     services={
         "resend_robot_program": Trigger,
+        "set_payload": SetPayload,
+        "hand_back_control": Trigger,
     },
 ):
     pass
@@ -461,22 +473,35 @@ def _declare_launch_arguments():
     return declared_arguments
 
 
-def _ursim_action(ursim_version="latest", ur_type="ur5e"):
+def _ursim_action(
+    ursim_version="latest",
+    ur_type="ur5e",
+    container_name=None,
+    program_folder=None,
+    urcap_folder=None,
+):
+    cmd = [
+        PathJoinSubstitution(
+            [
+                FindPackagePrefix("ur_client_library"),
+                "lib",
+                "ur_client_library",
+                "start_ursim.sh",
+            ]
+        ),
+        "-m",
+        ur_type,
+        "-v",
+        ursim_version,
+    ]
+    if container_name is not None:
+        cmd += ["-n", container_name]
+    if program_folder is not None:
+        cmd += ["-p", program_folder]
+    if urcap_folder is not None:
+        cmd += ["-u", urcap_folder]
     return ExecuteProcess(
-        cmd=[
-            PathJoinSubstitution(
-                [
-                    FindPackagePrefix("ur_client_library"),
-                    "lib",
-                    "ur_client_library",
-                    "start_ursim.sh",
-                ]
-            ),
-            "-m",
-            ur_type,
-            "-v",
-            ursim_version,
-        ],
+        cmd=cmd,
         name="start_ursim",
         output="screen",
     )
@@ -543,16 +568,19 @@ def generate_driver_test_description(
     tf_prefix="",
     initial_joint_controller="scaled_joint_trajectory_controller",
     controller_spawner_timeout=TIMEOUT_WAIT_SERVICE_INITIAL,
+    headless_mode=True,
+    ursim_version="latest",
+    ur_type="ur5e",
+    ursim_program_folder=None,
+    urcap_folder=None,
 ):
-    ur_type = LaunchConfiguration("ur_type")
-
     launch_arguments = {
         "robot_ip": "192.168.56.101",
         "ur_type": ur_type,
         "launch_rviz": "false",
         "controller_spawner_timeout": str(controller_spawner_timeout),
         "initial_joint_controller": initial_joint_controller,
-        "headless_mode": "true",
+        "headless_mode": "true" if headless_mode else "false",
         "launch_dashboard_client": "true",
         "start_joint_controller": "false",
     }
@@ -580,7 +608,90 @@ def generate_driver_test_description(
         OnProcessExit(target_action=wait_dashboard_server, on_exit=robot_driver)
     )
 
+    ursim_starter = _ursim_action(
+        ursim_version=ursim_version,
+        ur_type=ur_type,
+        program_folder=ursim_program_folder,
+        urcap_folder=urcap_folder,
+    )
+
     return LaunchDescription(
         _declare_launch_arguments()
-        + [ReadyToTest(), wait_dashboard_server, _ursim_action(), driver_starter]
+        + [ReadyToTest(), wait_dashboard_server, ursim_starter, driver_starter]
+    )
+
+
+def generate_driver_test_description_for_model(
+    ur_type,
+    tf_prefix="",
+    initial_joint_controller="joint_trajectory_controller",
+    controller_spawner_timeout=TIMEOUT_WAIT_SERVICE_INITIAL,
+    ursim_version="latest",
+    ursim_type=None,
+):
+    """
+    Generate a launch description that brings up URSim and the driver for an explicit ``ur_type``.
+
+    Unlike :func:`generate_driver_test_description`, this helper does not read the
+    ``ur_type`` launch argument but uses the value passed in. This makes it suitable
+    for tests parametrized over multiple robot models, where each parametrization
+    needs to spawn its own URSim of the matching model.
+
+    The optional ``ursim_type`` argument allows the URSim model to differ from the
+    driver's ``ur_type``. This is useful for negative tests that verify the driver
+    rejects a configuration mismatch. If not given, URSim is started for the same
+    model as the driver.
+    """
+    if ursim_type is None:
+        ursim_type = ur_type
+
+    launch_arguments = {
+        "robot_ip": "192.168.56.101",
+        "ur_type": ur_type,
+        "launch_rviz": "false",
+        "controller_spawner_timeout": str(controller_spawner_timeout),
+        "initial_joint_controller": initial_joint_controller,
+        "headless_mode": "true",
+        "launch_dashboard_client": "true",
+        "start_joint_controller": "false",
+        "verify_robot_model": "true",
+    }
+    if tf_prefix:
+        launch_arguments["tf_prefix"] = tf_prefix
+
+    robot_driver = IncludeLaunchDescription(
+        PythonLaunchDescriptionSource(
+            PathJoinSubstitution(
+                [FindPackageShare("ur_robot_driver"), "launch", "ur_control.launch.py"]
+            )
+        ),
+        launch_arguments=launch_arguments.items(),
+    )
+    wait_dashboard_server = ExecuteProcess(
+        cmd=[
+            PathJoinSubstitution(
+                [FindPackagePrefix("ur_robot_driver"), "bin", "wait_dashboard_server.sh"]
+            )
+        ],
+        name="wait_dashboard_server",
+        output="screen",
+    )
+    driver_starter = RegisterEventHandler(
+        OnProcessExit(target_action=wait_dashboard_server, on_exit=robot_driver)
+    )
+
+    # Use a per-model container name so leftover containers from a previous
+    # parametrization can never be confused with the current one.
+    container_name = f"ursim_{ursim_type}"
+
+    return LaunchDescription(
+        _declare_launch_arguments()
+        + [
+            ReadyToTest(),
+            wait_dashboard_server,
+            _ursim_action(
+                ursim_version=ursim_version, ur_type=ursim_type, container_name=container_name
+            ),
+            driver_starter,
+        ]
     )
