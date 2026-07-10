@@ -2,6 +2,14 @@
 Changelog for package ur_moveit_config
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+4.8.0 (2026-07-09)
+------------------
+
+4.7.0 (2026-05-15)
+------------------
+* [Doc moveit_config] Add a note about joint_limits.yaml (backport `#1764 <https://github.com/UniversalRobots/Universal_Robots_ROS2_Driver/issues/1764>`_) (`#1766 <https://github.com/UniversalRobots/Universal_Robots_ROS2_Driver/issues/1766>`_)
+* Contributors: mergify[bot]
+
 4.6.0 (2026-04-09)
 ------------------
 * Add sim_time to servo launch file (`#1651 <https://github.com/UniversalRobots/Universal_Robots_ROS2_Driver/issues/1651>`_)
