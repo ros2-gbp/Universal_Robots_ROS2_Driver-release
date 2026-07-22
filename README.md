@@ -1,3 +1,33 @@
+## ur_robot_driver (humble) - 2.14.0-1
+
+The packages in the `ur_robot_driver` repository were released into the `humble` distro by running `/home/feex/.local/bin/bloom-release ur_robot_driver --rosdistro humble` on `Wed, 22 Jul 2026 10:19:25 -0000`
+
+These packages were released:
+- `ur`
+- `ur_bringup`
+- `ur_calibration`
+- `ur_controllers`
+- `ur_dashboard_msgs`
+- `ur_moveit_config`
+- `ur_robot_driver`
+
+Version of package(s) in repository `ur_robot_driver`:
+
+- upstream repository: https://github.com/UniversalRobots/Universal_Robots_ROS2_Driver.git
+- release repository: https://github.com/ros2-gbp/Universal_Robots_ROS2_Driver-release.git
+- rosdistro version: `2.13.2-1`
+- old version: `2.13.2-1`
+- new version: `2.14.0-1`
+
+Versions of tools used:
+
+- bloom version: `0.14.3`
+- catkin_pkg version: `1.1.0`
+- rosdep version: `0.26.0`
+- rosdistro version: `1.0.1`
+- vcstools version: `0.1.42`
+
+
 ## ur_robot_driver (kilted) - 4.8.0-1
 
 The packages in the `ur_robot_driver` repository were released into the `kilted` distro by running `/home/feex/.local/bin/bloom-release ur_robot_driver --rosdistro kilted` on `Fri, 10 Jul 2026 07:40:47 -0000`
