@@ -29,6 +29,8 @@
 #
 # Author: Denis Stogl
 
+import yaml
+
 from launch_ros.actions import Node
 from launch_ros.parameter_descriptions import ParameterFile, ParameterValue
 from launch_ros.substitutions import FindPackagePrefix, FindPackageShare
@@ -89,6 +91,7 @@ def launch_setup(context, *args, **kwargs):
     reverse_port = LaunchConfiguration("reverse_port")
     script_sender_port = LaunchConfiguration("script_sender_port")
     trajectory_port = LaunchConfiguration("trajectory_port")
+    verify_robot_model = LaunchConfiguration("verify_robot_model")
 
     joint_limit_params = PathJoinSubstitution(
         [FindPackageShare(description_package), "config", ur_type, "joint_limits.yaml"]
@@ -205,6 +208,11 @@ def launch_setup(context, *args, **kwargs):
             "trajectory_port:=",
             trajectory_port,
             " ",
+            "ur_type:=",
+            ur_type,
+            " ",
+            "verify_robot_model:=",
+            verify_robot_model,
         ]
     )
     robot_description = {
@@ -227,6 +235,13 @@ def launch_setup(context, *args, **kwargs):
             ur_type.perform(context) + "_update_rate.yaml",
         ]
     )
+
+    # Expose the controller_manager update_rate as a launch configuration so
+    # that '$(var update_rate)' substitutions inside controller config yaml
+    # resolve to the correct rate for this ur_type.
+    with open(update_rate_config_file.perform(context)) as f:
+        update_rate = yaml.safe_load(f)["controller_manager"]["ros__parameters"]["update_rate"]
+    context.launch_configurations["update_rate"] = str(update_rate)
 
     control_node = Node(
         package="controller_manager",
@@ -697,4 +712,13 @@ def generate_launch_description():
             description="Port that will be opened for trajectory control.",
         )
     )
+    declared_arguments.append(
+        DeclareLaunchArgument(
+            "verify_robot_model",
+            default_value="false",
+            description="Whether the robot model should be verified against the actual robot. "
+            "This is recommended to be true, but can be set to false for faster startup.",
+        )
+    )
+
     return LaunchDescription(declared_arguments + [OpaqueFunction(function=launch_setup)])
