@@ -73,11 +73,6 @@ generate_parameter_library(
 )
 
 generate_parameter_library(
-  gravity_update_controller_parameters
-  src/gravity_update_controller_parameters.yaml
-)
-
-generate_parameter_library(
   speed_scaling_state_broadcaster_parameters
   src/speed_scaling_state_broadcaster_parameters.yaml
 )
@@ -110,7 +105,6 @@ add_library(${PROJECT_NAME} SHARED
   src/speed_scaling_state_broadcaster.cpp
   src/freedrive_mode_controller.cpp
   src/gpio_controller.cpp
-  src/gravity_update_controller.cpp
   src/passthrough_trajectory_controller.cpp
   src/ur_configuration_controller.cpp)
 
@@ -122,30 +116,15 @@ target_link_libraries(${PROJECT_NAME}
   force_mode_controller_parameters
   friction_model_controller_parameters
   gpio_controller_parameters
-  gravity_update_controller_parameters
   speed_scaling_state_broadcaster_parameters
   scaled_joint_trajectory_controller_parameters
   freedrive_mode_controller_parameters
   passthrough_trajectory_controller_parameters
   ur_configuration_controller_parameters
-  ${geometry_msgs_TARGETS}
-  ${lifecycle_msgs_TARGETS}
-  ${std_msgs_TARGETS}
-  ${std_srvs_TARGETS}
-  ${tf2_geometry_msgs_TARGETS}
-  ${ur_dashboard_msgs_TARGETS}
-  ${control_msgs_TARGETS}
-  ${trajectory_msgs_TARGETS}
-  ${ur_msgs_TARGETS}
-  ${action_msgs_TARGETS}
-  angles::angles
-  controller_interface::controller_interface
-  joint_trajectory_controller::joint_trajectory_controller
-  pluginlib::pluginlib
-  rclcpp_lifecycle::rclcpp_lifecycle
-  rcutils::rcutils
-  realtime_tools::realtime_tools
-  tf2_ros::tf2_ros
+)
+
+ament_target_dependencies(${PROJECT_NAME}
+  ${THIS_PACKAGE_INCLUDE_DEPENDS}
 )
 
 # prevent pluginlib from using boost
@@ -190,16 +169,45 @@ if(BUILD_TESTING)
   )
   target_link_libraries(test_load_force_mode_controller
     ${PROJECT_NAME}
-    controller_manager::controller_manager
-    ros2_control_test_assets::ros2_control_test_assets
+  )
+  ament_target_dependencies(test_load_force_mode_controller
+    controller_manager
+    ros2_control_test_assets
   )
   ament_add_gmock(test_load_freedrive_mode_controller
     test/test_load_freedrive_mode_controller.cpp
   )
   target_link_libraries(test_load_freedrive_mode_controller
     ${PROJECT_NAME}
-    controller_manager::controller_manager
-    ros2_control_test_assets::ros2_control_test_assets
+  )
+  ament_target_dependencies(test_load_freedrive_mode_controller
+    controller_manager
+    ros2_control_test_assets
+  )
+  ament_add_gmock(test_load_scaled_joint_trajectory_controller
+    test/test_load_scaled_joint_trajectory_controller.cpp
+  )
+  target_link_libraries(test_load_scaled_joint_trajectory_controller
+    ${PROJECT_NAME}
+  )
+  ament_target_dependencies(test_load_scaled_joint_trajectory_controller
+    controller_manager
+    ros2_control_test_assets
+  )
+  ament_add_gmock(test_scaled_joint_trajectory_controller_sampling
+    test/test_scaled_joint_trajectory_controller_sampling.cpp
+  )
+  target_link_libraries(test_scaled_joint_trajectory_controller_sampling
+    ${PROJECT_NAME}
+  )
+  ament_target_dependencies(test_scaled_joint_trajectory_controller_sampling
+    controller_interface
+    hardware_interface
+    joint_trajectory_controller
+    lifecycle_msgs
+    rclcpp
+    rclcpp_lifecycle
+    trajectory_msgs
   )
   ament_add_gmock(test_load_friction_model_controller
     test/test_load_friction_model_controller.cpp
