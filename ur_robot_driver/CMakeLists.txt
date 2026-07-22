@@ -9,6 +9,15 @@ option(
   OFF
 )
 
+# This test spins up a fresh URSim container for every supported robot model
+# (and one model-mismatch case), which takes a long time. It is therefore kept
+# behind its own flag so a normal integration-test run is not slowed down by it.
+option(
+  UR_ROBOT_DRIVER_RUN_ROBOT_MODELS_TEST
+  "Run the integration test that runs the driver against URSim for every supported robot model"
+  ON
+)
+
 if(CMAKE_COMPILER_IS_GNUCXX OR CMAKE_CXX_COMPILER_ID MATCHES "Clang")
   add_compile_options(-Wall)
   add_compile_options(-Wextra)
@@ -25,6 +34,7 @@ find_package(ament_cmake REQUIRED)
 find_package(backward_ros REQUIRED)
 find_package(controller_manager REQUIRED)
 find_package(controller_manager_msgs REQUIRED)
+find_package(control_msgs REQUIRED)
 find_package(geometry_msgs REQUIRED)
 find_package(hardware_interface REQUIRED)
 find_package(pluginlib REQUIRED)
@@ -43,6 +53,7 @@ include_directories(include)
 set(THIS_PACKAGE_INCLUDE_DEPENDS
   controller_manager
   controller_manager_msgs
+  control_msgs
   geometry_msgs
   hardware_interface
   pluginlib
@@ -137,6 +148,7 @@ target_link_libraries(trajectory_until_node PUBLIC
   ${std_msgs_TARGETS}
   rclcpp_action::rclcpp_action
   ${ur_msgs_TARGETS}
+  ${control_msgs_TARGETS}
 )
 
 install(
@@ -282,5 +294,11 @@ if(BUILD_TESTING)
       TIMEOUT
         800
     )
+    if(${UR_ROBOT_DRIVER_RUN_ROBOT_MODELS_TEST})
+      add_launch_test(test/integration_test_robot_models.py
+        TIMEOUT
+          2700
+      )
+    endif()
   endif()
 endif()
