@@ -73,6 +73,12 @@ def launch_setup(context):
         executable="ros2_control_node",
         parameters=[
             LaunchConfiguration("update_rate_config_file"),
+            {
+                "hardware_synchronization.expect_blocking_read_write": LaunchConfiguration(
+                    "blocking_read"
+                ),
+                "overruns.print_warnings": NotSubstitution(LaunchConfiguration("headless_mode")),
+            },
             ParameterFile(controllers_file, allow_substs=True),
             # We use the tf_prefix as substitution in there, so that's why we keep it as an
             # argument for this launchfile
@@ -155,6 +161,7 @@ def launch_setup(context):
                     "speed_scaling_state_broadcaster",
                     "tcp_pose_broadcaster",
                     "ur_configuration_controller",
+                    "gravity_update_controller",
                 ]
             },
         ],
@@ -187,6 +194,10 @@ def launch_setup(context):
         return Node(
             package="controller_manager",
             executable="spawner",
+            parameters=[
+                {"verify_payload_on_set": NotSubstitution(use_mock_hardware)},
+                ParameterFile(controllers_file, allow_substs=True),
+            ],
             arguments=[
                 "--controller-manager",
                 "/controller_manager",
@@ -204,6 +215,7 @@ def launch_setup(context):
         "force_torque_sensor_broadcaster",
         "tcp_pose_broadcaster",
         "ur_configuration_controller",
+        "gravity_update_controller",
         "friction_model_controller",
     ]
     controllers_inactive = [
@@ -216,6 +228,7 @@ def launch_setup(context):
         "passthrough_trajectory_controller",
         "freedrive_mode_controller",
         "tool_contact_controller",
+        "twist_controller",
     ]
     if activate_joint_controller.perform(context) == "true":
         controllers_active.append(initial_joint_controller.perform(context))
@@ -258,7 +271,7 @@ def generate_launch_description():
     declared_arguments.append(
         DeclareLaunchArgument(
             "ur_type",
-            description="Type/series of used UR robot.",
+            description="Robot model of the used UR robot.",
             choices=[
                 "ur3",
                 "ur5",
@@ -523,6 +536,13 @@ def generate_launch_description():
                 LaunchConfiguration("ur_type"),
                 "_update_rate.yaml",
             ],
+        )
+    )
+    declared_arguments.append(
+        DeclareLaunchArgument(
+            "blocking_read",
+            default_value="false",
+            description="Block in read() effectively synchronizing the driver with the robot controller.",
         )
     )
     return LaunchDescription(declared_arguments + [OpaqueFunction(function=launch_setup)])
