@@ -2,6 +2,23 @@
 Changelog for package ur_controllers
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+7.1.0 (2026-09-10)
+------------------
+* Fix flaky quintic spline test in passthrough controller (`#1941 <https://github.com/UniversalRobots/Universal_Robots_ROS2_Driver/issues/1941>`_)
+* Fix tool contact controller (`#1952 <https://github.com/UniversalRobots/Universal_Robots_ROS2_Driver/issues/1952>`_)
+* Set command interface in tool contact controller (`#1939 <https://github.com/UniversalRobots/Universal_Robots_ROS2_Driver/issues/1939>`_)
+* Add Cartesian twist controller (`#1586 <https://github.com/UniversalRobots/Universal_Robots_ROS2_Driver/issues/1586>`_)
+* Contributors: Felix Exner, URJala
+
+7.0.0 (2026-07-09)
+------------------
+* Allow setting payload inertia matrix via set_payload service   (`#1808 <https://github.com/UniversalRobots/Universal_Robots_ROS2_Driver/issues/1808>`_)
+* Allow updating robot gravity (`#1606 <https://github.com/UniversalRobots/Universal_Robots_ROS2_Driver/issues/1606>`_)
+* Use a realtime_tools::RealtimePublisher for publishing the state (`#1822 <https://github.com/UniversalRobots/Universal_Robots_ROS2_Driver/issues/1822>`_)
+* Make GPIO controller publishers realtime safe (`#1807 <https://github.com/UniversalRobots/Universal_Robots_ROS2_Driver/issues/1807>`_)
+* Update minimum CMake version to 3.28.3 (`#1814 <https://github.com/UniversalRobots/Universal_Robots_ROS2_Driver/issues/1814>`_)
+* Contributors: AdamPettinger, Felix Exner, Hasan Amin, Sergi Romero
+
 6.0.0 (2026-05-12)
 ------------------
 * Check payload state in gpio_controller (`#1770 <https://github.com/UniversalRobots/Universal_Robots_ROS2_Driver/issues/1770>`_)
