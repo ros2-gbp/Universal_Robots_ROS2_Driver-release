@@ -2,45 +2,56 @@
 Changelog for package ur_moveit_config
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-3.9.0 (2026-09-11)
+4.9.0 (2026-09-11)
 ------------------
-* Fix a typo in launch file arg docstring (backport `#1917 <https://github.com/UniversalRobots/Universal_Robots_ROS2_Driver/issues/1917>`_) (`#1930 <https://github.com/UniversalRobots/Universal_Robots_ROS2_Driver/issues/1930>`_)
-* [Doc moveit_config] Add a note about ``joint_limits.yaml`` (backport `#1764 <https://github.com/UniversalRobots/Universal_Robots_ROS2_Driver/issues/1764>`_) (`#1765 <https://github.com/UniversalRobots/Universal_Robots_ROS2_Driver/issues/1765>`_)
+* Fix a typo in launch file arg docstring (backport `#1917 <https://github.com/UniversalRobots/Universal_Robots_ROS2_Driver/issues/1917>`_) (`#1931 <https://github.com/UniversalRobots/Universal_Robots_ROS2_Driver/issues/1931>`_)
 * Contributors: mergify[bot]
 
-3.8.0 (2026-04-09)
+4.8.0 (2026-07-09)
 ------------------
-* Add sim_time to servo launch file (backport `#1651 <https://github.com/UniversalRobots/Universal_Robots_ROS2_Driver/issues/1651>`_) (`#1655 <https://github.com/UniversalRobots/Universal_Robots_ROS2_Driver/issues/1655>`_)
+
+4.7.0 (2026-05-15)
+------------------
+* [Doc moveit_config] Add a note about joint_limits.yaml (backport `#1764 <https://github.com/UniversalRobots/Universal_Robots_ROS2_Driver/issues/1764>`_) (`#1766 <https://github.com/UniversalRobots/Universal_Robots_ROS2_Driver/issues/1766>`_)
 * Contributors: mergify[bot]
 
-3.7.0 (2026-01-13)
+4.6.0 (2026-04-09)
+------------------
+* Add sim_time to servo launch file (`#1651 <https://github.com/UniversalRobots/Universal_Robots_ROS2_Driver/issues/1651>`_)
+* Contributors: Jennifer Buehler
+
+4.5.0 (2026-01-13)
 ------------------
 
-3.6.0 (2025-11-13)
+4.4.0 (2025-11-13)
 ------------------
-* Explicitly state PolyScope X compatibility (backport `#1563 <https://github.com/UniversalRobots/Universal_Robots_ROS2_Driver/issues/1563>`_) (`#1568 <https://github.com/UniversalRobots/Universal_Robots_ROS2_Driver/issues/1568>`_)
-* Contributors: mergify[bot]
+* Explicitly state PolyScope X compatibility (`#1563 <https://github.com/UniversalRobots/Universal_Robots_ROS2_Driver/issues/1563>`_)
+* Add migration notes to individual packages (`#1545 <https://github.com/UniversalRobots/Universal_Robots_ROS2_Driver/issues/1545>`_)
+* Contributors: Felix Exner, URJala
 
-3.5.0 (2025-10-23)
+4.3.0 (2025-10-14)
 ------------------
-* Add support for UR18 (backport of `#1524 <https://github.com/UniversalRobots/Universal_Robots_ROS2_Driver/issues/1524>`_) (`#1526 <https://github.com/UniversalRobots/Universal_Robots_ROS2_Driver/issues/1526>`_)
-* Contributors: mergify[bot]
+* Add support for UR18 (`#1524 <https://github.com/UniversalRobots/Universal_Robots_ROS2_Driver/issues/1524>`_)
+* Contributors: Felix Exner
 
-3.4.0 (2025-09-16)
+4.2.0 (2025-09-16)
 ------------------
-* Add support for launching UR8Long (backport `#1490 <https://github.com/UniversalRobots/Universal_Robots_ROS2_Driver/issues/1490>`_) (`#1497 <https://github.com/UniversalRobots/Universal_Robots_ROS2_Driver/issues/1497>`_)
-* Contributors: mergify[bot]
+* Add support for launching UR8Long (`#1490 <https://github.com/UniversalRobots/Universal_Robots_ROS2_Driver/issues/1490>`_)
+* Contributors: Felix Exner
 
-3.3.3 (2025-06-24)
-------------------
-
-3.3.2 (2025-06-10)
+4.1.0 (2025-07-29)
 ------------------
 
-3.3.1 (2025-05-28)
+4.0.3 (2025-06-16)
 ------------------
 
-3.3.0 (2025-05-20)
+4.0.2 (2025-06-13)
+------------------
+
+4.0.1 (2025-05-28)
+------------------
+
+4.0.0 (2025-05-20)
 ------------------
 * Add support for UR15 (`#1358 <https://github.com/UniversalRobots/Universal_Robots_ROS2_Driver/issues/1358>`_)
 * Contributors: Felix Exner

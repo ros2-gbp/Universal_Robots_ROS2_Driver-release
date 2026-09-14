@@ -1,112 +1,131 @@
-3.9.0 (2026-09-11)
+4.9.0 (2026-09-11)
 ------------------
-* Allow using blocking read in controller manager (backport `#1760 <https://github.com/UniversalRobots/Universal_Robots_ROS2_Driver/issues/1760>`_) (`#1920 <https://github.com/UniversalRobots/Universal_Robots_ROS2_Driver/issues/1920>`_)
-* [RobotStateHelper] Fix worker thread lifecycle management (backport `#1950 <https://github.com/UniversalRobots/Universal_Robots_ROS2_Driver/issues/1950>`_) (`#1969 <https://github.com/UniversalRobots/Universal_Robots_ROS2_Driver/issues/1969>`_)
-* Update dashboard client for 10.14.0 (`#1945 <https://github.com/UniversalRobots/Universal_Robots_ROS2_Driver/issues/1945>`_) (`#1973 <https://github.com/UniversalRobots/Universal_Robots_ROS2_Driver/issues/1973>`_)
-* Fix flaky quintic spline test in passthrough controller (backport `#1941 <https://github.com/UniversalRobots/Universal_Robots_ROS2_Driver/issues/1941>`_) (`#1965 <https://github.com/UniversalRobots/Universal_Robots_ROS2_Driver/issues/1965>`_)
-* Fix/passthrough controller very short trajectories (backport `#1940 <https://github.com/UniversalRobots/Universal_Robots_ROS2_Driver/issues/1940>`_) (`#1955 <https://github.com/UniversalRobots/Universal_Robots_ROS2_Driver/issues/1955>`_)
-* [Docs] Update links to ROS installation documentation (`#1961 <https://github.com/UniversalRobots/Universal_Robots_ROS2_Driver/issues/1961>`_)
-* Report operational status with mock hardware (backport `#1923 <https://github.com/UniversalRobots/Universal_Robots_ROS2_Driver/issues/1923>`_) (`#1933 <https://github.com/UniversalRobots/Universal_Robots_ROS2_Driver/issues/1933>`_)
-* Add Cartesian twist controller (backport `#1586 <https://github.com/UniversalRobots/Universal_Robots_ROS2_Driver/issues/1586>`_) (`#1924 <https://github.com/UniversalRobots/Universal_Robots_ROS2_Driver/issues/1924>`_)
-* Fix a typo in launch file arg docstring (backport `#1917 <https://github.com/UniversalRobots/Universal_Robots_ROS2_Driver/issues/1917>`_) (`#1930 <https://github.com/UniversalRobots/Universal_Robots_ROS2_Driver/issues/1930>`_)
-* Fix ``trajectory_until_node`` goal acceptance handshake (backport `#1909 <https://github.com/UniversalRobots/Universal_Robots_ROS2_Driver/issues/1909>`_) (`#1913 <https://github.com/UniversalRobots/Universal_Robots_ROS2_Driver/issues/1913>`_)
-* Add note about blocked tool comm port (backport `#1904 <https://github.com/UniversalRobots/Universal_Robots_ROS2_Driver/issues/1904>`_) (`#1905 <https://github.com/UniversalRobots/Universal_Robots_ROS2_Driver/issues/1905>`_)
-* Add autoconnect parameter to dashboard client (backport `#1881 <https://github.com/UniversalRobots/Universal_Robots_ROS2_Driver/issues/1881>`_) (`#1888 <https://github.com/UniversalRobots/Universal_Robots_ROS2_Driver/issues/1888>`_)
-* Allow setting payload inertia matrix via ``set_payload`` service in a backwards-compatible way (backport `#1811 <https://github.com/UniversalRobots/Universal_Robots_ROS2_Driver/issues/1811>`_) (`#1879 <https://github.com/UniversalRobots/Universal_Robots_ROS2_Driver/issues/1879>`_)
-* Fix link to ``action_definitions`` doc page (backport `#1876 <https://github.com/UniversalRobots/Universal_Robots_ROS2_Driver/issues/1876>`_) (`#1883 <https://github.com/UniversalRobots/Universal_Robots_ROS2_Driver/issues/1883>`_)
-* Migrate Urscript interface to primary client (backport `#1833 <https://github.com/UniversalRobots/Universal_Robots_ROS2_Driver/issues/1833>`_) (`#1866 <https://github.com/UniversalRobots/Universal_Robots_ROS2_Driver/issues/1866>`_)
-* Add explicit ``control_msgs`` dependency for Jazzy (`#1864 <https://github.com/UniversalRobots/Universal_Robots_ROS2_Driver/issues/1864>`_)
-* Remove controller switch to passthrough controller (backport `#1857 <https://github.com/UniversalRobots/Universal_Robots_ROS2_Driver/issues/1857>`_) (`#1861 <https://github.com/UniversalRobots/Universal_Robots_ROS2_Driver/issues/1861>`_)
-* Jazzy update model test (`#1854 <https://github.com/UniversalRobots/Universal_Robots_ROS2_Driver/issues/1854>`_)
-* Allow updating robot gravity (backport `#1606 <https://github.com/UniversalRobots/Universal_Robots_ROS2_Driver/issues/1606>`_) (`#1845 <https://github.com/UniversalRobots/Universal_Robots_ROS2_Driver/issues/1845>`_)
-* [tests] Fix shadowed function arg (backport `#1835 <https://github.com/UniversalRobots/Universal_Robots_ROS2_Driver/issues/1835>`_) (`#1843 <https://github.com/UniversalRobots/Universal_Robots_ROS2_Driver/issues/1843>`_)
-* Verify robot model (backport `#1779 <https://github.com/UniversalRobots/Universal_Robots_ROS2_Driver/issues/1779>`_) (`#1791 <https://github.com/UniversalRobots/Universal_Robots_ROS2_Driver/issues/1791>`_)
-* Explicitly send ``MODE_STOPPED`` when returning control to the robot (backport `#1678 <https://github.com/UniversalRobots/Universal_Robots_ROS2_Driver/issues/1678>`_) (`#1831 <https://github.com/UniversalRobots/Universal_Robots_ROS2_Driver/issues/1831>`_)
-* Clarify effort control limitations in URSim (backport `#1800 <https://github.com/UniversalRobots/Universal_Robots_ROS2_Driver/issues/1800>`_) (`#1803 <https://github.com/UniversalRobots/Universal_Robots_ROS2_Driver/issues/1803>`_)
-* Fail example move on error (backport `#1795 <https://github.com/UniversalRobots/Universal_Robots_ROS2_Driver/issues/1795>`_) (`#1797 <https://github.com/UniversalRobots/Universal_Robots_ROS2_Driver/issues/1797>`_)
-* Update README and ``ci_status`` pages (backport `#1784 <https://github.com/UniversalRobots/Universal_Robots_ROS2_Driver/issues/1784>`_) (`#1788 <https://github.com/UniversalRobots/Universal_Robots_ROS2_Driver/issues/1788>`_)
-* Check payload state in ``gpio_controller`` (backport `#1770 <https://github.com/UniversalRobots/Universal_Robots_ROS2_Driver/issues/1770>`_) (`#1776 <https://github.com/UniversalRobots/Universal_Robots_ROS2_Driver/issues/1776>`_)
-* Contributors: Felix Exner, Plumezz, mergify[bot]
-
-3.8.0 (2026-04-09)
-------------------
-* Friction model controller (backport `#1704 <https://github.com/UniversalRobots/Universal_Robots_ROS2_Driver/issues/1704>`_) (`#1751 <https://github.com/UniversalRobots/Universal_Robots_ROS2_Driver/issues/1751>`_)
-* Use integer representation of SafetyStatus.msg (backport `#1734 <https://github.com/UniversalRobots/Universal_Robots_ROS2_Driver/issues/1734>`_) (`#1742 <https://github.com/UniversalRobots/Universal_Robots_ROS2_Driver/issues/1742>`_)
-* Update driver to use refactored tool communication script (backport `#1721 <https://github.com/UniversalRobots/Universal_Robots_ROS2_Driver/issues/1721>`_) (`#1745 <https://github.com/UniversalRobots/Universal_Robots_ROS2_Driver/issues/1745>`_)
-* [ur_controllers] Remove Werror from CMakeLists (backport `#1720 <https://github.com/UniversalRobots/Universal_Robots_ROS2_Driver/issues/1720>`_) (`#1728 <https://github.com/UniversalRobots/Universal_Robots_ROS2_Driver/issues/1728>`_)
-* Use refactored RTDE client in driver (backport `#1726 <https://github.com/UniversalRobots/Universal_Robots_ROS2_Driver/issues/1726>`_) (`#1732 <https://github.com/UniversalRobots/Universal_Robots_ROS2_Driver/issues/1732>`_)
-* [Docs] Fix service definition of UpdateProgram (backport `#1723 <https://github.com/UniversalRobots/Universal_Robots_ROS2_Driver/issues/1723>`_) (`#1724 <https://github.com/UniversalRobots/Universal_Robots_ROS2_Driver/issues/1724>`_)
-* Services to support various dashboard calls (backport `#1674 <https://github.com/UniversalRobots/Universal_Robots_ROS2_Driver/issues/1674>`_) (`#1709 <https://github.com/UniversalRobots/Universal_Robots_ROS2_Driver/issues/1709>`_)
-* Use a secondary program to confirm urscript_interface initialization (backport `#1685 <https://github.com/UniversalRobots/Universal_Robots_ROS2_Driver/issues/1685>`_) (`#1698 <https://github.com/UniversalRobots/Universal_Robots_ROS2_Driver/issues/1698>`_)
-* Dashboard client new x commands (backport `#1679 <https://github.com/UniversalRobots/Universal_Robots_ROS2_Driver/issues/1679>`_) (`#1695 <https://github.com/UniversalRobots/Universal_Robots_ROS2_Driver/issues/1695>`_)
-* Add component lifecycle test to CMakeLists.txt (`#1684 <https://github.com/UniversalRobots/Universal_Robots_ROS2_Driver/issues/1684>`_)
-* Update ft frame_id to tool0_controller (backport `#1652 <https://github.com/UniversalRobots/Universal_Robots_ROS2_Driver/issues/1652>`_) (`#1654 <https://github.com/UniversalRobots/Universal_Robots_ROS2_Driver/issues/1654>`_)
-* [Driver Tests] Unlock protective stop during test case setup (backport `#1641 <https://github.com/UniversalRobots/Universal_Robots_ROS2_Driver/issues/1641>`_) (`#1647 <https://github.com/UniversalRobots/Universal_Robots_ROS2_Driver/issues/1647>`_)
+* Update dashboard client for 10.14.0 (backport `#1945 <https://github.com/UniversalRobots/Universal_Robots_ROS2_Driver/issues/1945>`_) (`#1974 <https://github.com/UniversalRobots/Universal_Robots_ROS2_Driver/issues/1974>`_)
+* [RobotStateHelper] Fix worker thread lifecycle management (backport `#1950 <https://github.com/UniversalRobots/Universal_Robots_ROS2_Driver/issues/1950>`_) (`#1970 <https://github.com/UniversalRobots/Universal_Robots_ROS2_Driver/issues/1970>`_)
+* Fix tolerance parsing in passthrough controller (backport `#1941 <https://github.com/UniversalRobots/Universal_Robots_ROS2_Driver/issues/1941>`_) (`#1966 <https://github.com/UniversalRobots/Universal_Robots_ROS2_Driver/issues/1966>`_)
+* Fix/passthrough controller very short trajectories (backport `#1940 <https://github.com/UniversalRobots/Universal_Robots_ROS2_Driver/issues/1940>`_) (`#1956 <https://github.com/UniversalRobots/Universal_Robots_ROS2_Driver/issues/1956>`_)
+* [Docs] Update links to ROS installation documentation (`#1960 <https://github.com/UniversalRobots/Universal_Robots_ROS2_Driver/issues/1960>`_)
+* Report operational status with mock hardware (backport `#1923 <https://github.com/UniversalRobots/Universal_Robots_ROS2_Driver/issues/1923>`_) (`#1934 <https://github.com/UniversalRobots/Universal_Robots_ROS2_Driver/issues/1934>`_)
+* Add Cartesian twist controller (backport `#1586 <https://github.com/UniversalRobots/Universal_Robots_ROS2_Driver/issues/1586>`_) (`#1925 <https://github.com/UniversalRobots/Universal_Robots_ROS2_Driver/issues/1925>`_)
+* Fix a typo in launch file arg docstring (backport `#1917 <https://github.com/UniversalRobots/Universal_Robots_ROS2_Driver/issues/1917>`_) (`#1931 <https://github.com/UniversalRobots/Universal_Robots_ROS2_Driver/issues/1931>`_)
+* Suppress overrun warnings when blocking read (backport `#1927 <https://github.com/UniversalRobots/Universal_Robots_ROS2_Driver/issues/1927>`_) (`#1928 <https://github.com/UniversalRobots/Universal_Robots_ROS2_Driver/issues/1928>`_)
+* Use blocking read in controller manager (backport `#1760 <https://github.com/UniversalRobots/Universal_Robots_ROS2_Driver/issues/1760>`_) (`#1921 <https://github.com/UniversalRobots/Universal_Robots_ROS2_Driver/issues/1921>`_)
+* Fix ``trajectory_until_node`` goal acceptance handshake (backport `#1909 <https://github.com/UniversalRobots/Universal_Robots_ROS2_Driver/issues/1909>`_) (`#1914 <https://github.com/UniversalRobots/Universal_Robots_ROS2_Driver/issues/1914>`_)
+* Add note about blocked tool comm port (backport `#1904 <https://github.com/UniversalRobots/Universal_Robots_ROS2_Driver/issues/1904>`_) (`#1906 <https://github.com/UniversalRobots/Universal_Robots_ROS2_Driver/issues/1906>`_)
+* Allow setting payload inertia matrix via set_payload service (backport `#1811 <https://github.com/UniversalRobots/Universal_Robots_ROS2_Driver/issues/1811>`_) (`#1878 <https://github.com/UniversalRobots/Universal_Robots_ROS2_Driver/issues/1878>`_)
+* Add autoconnect parameter to dashboard client (backport `#1881 <https://github.com/UniversalRobots/Universal_Robots_ROS2_Driver/issues/1881>`_) (`#1889 <https://github.com/UniversalRobots/Universal_Robots_ROS2_Driver/issues/1889>`_)
+* Fix link to action_definitions doc page (backport `#1876 <https://github.com/UniversalRobots/Universal_Robots_ROS2_Driver/issues/1876>`_) (`#1884 <https://github.com/UniversalRobots/Universal_Robots_ROS2_Driver/issues/1884>`_)
 * Contributors: Felix Exner, mergify[bot]
 
-3.7.0 (2026-01-13)
+4.8.0 (2026-07-09)
 ------------------
-* Fix flange-to-TCP wrench transformation (backport `#1615 <https://github.com/UniversalRobots/Universal_Robots_ROS2_Driver/issues/1615>`_) (`#1636 <https://github.com/UniversalRobots/Universal_Robots_ROS2_Driver/issues/1636>`_)
-* Expose rw_rate in xacro macro for hardware interface (backport `#1631 <https://github.com/UniversalRobots/Universal_Robots_ROS2_Driver/issues/1631>`_) (`#1634 <https://github.com/UniversalRobots/Universal_Robots_ROS2_Driver/issues/1634>`_)
-* Initialize force mode interfaces to NaN on init (backport `#1625 <https://github.com/UniversalRobots/Universal_Robots_ROS2_Driver/issues/1625>`_) (`#1628 <https://github.com/UniversalRobots/Universal_Robots_ROS2_Driver/issues/1628>`_)
-* [DashboardClient] Add a parameter callback (backport of `#1598 <https://github.com/UniversalRobots/Universal_Robots_ROS2_Driver/issues/1598>`_) (`#1605 <https://github.com/UniversalRobots/Universal_Robots_ROS2_Driver/issues/1605>`_)
-* Replace dashboard client on PolyScope X warning (backport of `#1599 <https://github.com/UniversalRobots/Universal_Robots_ROS2_Driver/issues/1599>`_) (`#1603 <https://github.com/UniversalRobots/Universal_Robots_ROS2_Driver/issues/1603>`_)
-* Add ros2run as a test_depend (backport of `#1597 <https://github.com/UniversalRobots/Universal_Robots_ROS2_Driver/issues/1597>`_) (`#1601 <https://github.com/UniversalRobots/Universal_Robots_ROS2_Driver/issues/1601>`_)
-* [Docs] Update tool comm setup for PolyScope X (backport `#1588 <https://github.com/UniversalRobots/Universal_Robots_ROS2_Driver/issues/1588>`_) (`#1590 <https://github.com/UniversalRobots/Universal_Robots_ROS2_Driver/issues/1590>`_)
+* Migrate Urscript interface to primary client (backport `#1833 <https://github.com/UniversalRobots/Universal_Robots_ROS2_Driver/issues/1833>`_) (`#1867 <https://github.com/UniversalRobots/Universal_Robots_ROS2_Driver/issues/1867>`_)
+* Remove controller switch to passthrough controller (backport `#1857 <https://github.com/UniversalRobots/Universal_Robots_ROS2_Driver/issues/1857>`_) (`#1862 <https://github.com/UniversalRobots/Universal_Robots_ROS2_Driver/issues/1862>`_)
+* Update model test (backport `#1848 <https://github.com/UniversalRobots/Universal_Robots_ROS2_Driver/issues/1848>`_) (`#1855 <https://github.com/UniversalRobots/Universal_Robots_ROS2_Driver/issues/1855>`_)
+* Replace linking to moprim controller my using its include directories (backport `#1853 <https://github.com/UniversalRobots/Universal_Robots_ROS2_Driver/issues/1853>`_) (`#1856 <https://github.com/UniversalRobots/Universal_Robots_ROS2_Driver/issues/1856>`_)
+* Allow updating robot gravity (backport `#1606 <https://github.com/UniversalRobots/Universal_Robots_ROS2_Driver/issues/1606>`_) (`#1846 <https://github.com/UniversalRobots/Universal_Robots_ROS2_Driver/issues/1846>`_)
+* [tests] Fix shadowed function arg (backport `#1835 <https://github.com/UniversalRobots/Universal_Robots_ROS2_Driver/issues/1835>`_) (`#1844 <https://github.com/UniversalRobots/Universal_Robots_ROS2_Driver/issues/1844>`_)
+* Explicitly send MODE_STOPPED when returning control to the robot (backport `#1678 <https://github.com/UniversalRobots/Universal_Robots_ROS2_Driver/issues/1678>`_) (`#1832 <https://github.com/UniversalRobots/Universal_Robots_ROS2_Driver/issues/1832>`_)
+* Clarify effort control limitations in URSim (backport `#1800 <https://github.com/UniversalRobots/Universal_Robots_ROS2_Driver/issues/1800>`_) (`#1804 <https://github.com/UniversalRobots/Universal_Robots_ROS2_Driver/issues/1804>`_)
+* Fail example move on error (backport `#1795 <https://github.com/UniversalRobots/Universal_Robots_ROS2_Driver/issues/1795>`_) (`#1798 <https://github.com/UniversalRobots/Universal_Robots_ROS2_Driver/issues/1798>`_)
+* Contributors: Felix Exner, mergify[bot]
 
-3.6.0 (2025-11-13)
+4.7.0 (2026-05-15)
 ------------------
-* Docs: Corrects forward hardware interfaces & Contributing.md (backport `#1569 <https://github.com/UniversalRobots/Universal_Robots_ROS2_Driver/issues/1569>`_) (`#1570 <https://github.com/UniversalRobots/Universal_Robots_ROS2_Driver/issues/1570>`_)
-* Explicitly state PolyScope X compatibility (backport `#1563 <https://github.com/UniversalRobots/Universal_Robots_ROS2_Driver/issues/1563>`_) (`#1568 <https://github.com/UniversalRobots/Universal_Robots_ROS2_Driver/issues/1568>`_)
-* Fix flaky tests (backport `#1559 <https://github.com/UniversalRobots/Universal_Robots_ROS2_Driver/issues/1559>`_) (`#1567 <https://github.com/UniversalRobots/Universal_Robots_ROS2_Driver/issues/1567>`_)
-* Dashboard client polyscopex (backport `#1546 <https://github.com/UniversalRobots/Universal_Robots_ROS2_Driver/issues/1546>`_) (`#1561 <https://github.com/UniversalRobots/Universal_Robots_ROS2_Driver/issues/1561>`_)
-* Fix syntax for link to robot_manual (backport of `#1558 <https://github.com/UniversalRobots/Universal_Robots_ROS2_Driver/issues/1558>`_) (`#1560 <https://github.com/UniversalRobots/Universal_Robots_ROS2_Driver/issues/1560>`_)
-* Temporarily deactivate one testcase in controller_switch_test (backport `#1553 <https://github.com/UniversalRobots/Universal_Robots_ROS2_Driver/issues/1553>`_) (`#1554 <https://github.com/UniversalRobots/Universal_Robots_ROS2_Driver/issues/1554>`_)
-* Contributors: mergify[bot]
+* Update README and ci_status pages (`#1784 <https://github.com/UniversalRobots/Universal_Robots_ROS2_Driver/issues/1784>`_)
+* Kilted verify robot model (`#1779 <https://github.com/UniversalRobots/Universal_Robots_ROS2_Driver/issues/1779>`_)
+* Check payload state in gpio_controller (backport `#1770 <https://github.com/UniversalRobots/Universal_Robots_ROS2_Driver/issues/1770>`_) (`#1777 <https://github.com/UniversalRobots/Universal_Robots_ROS2_Driver/issues/1777>`_)
+* Contributors: Felix Exner, mergify[bot]
 
-3.5.0 (2025-10-23)
+4.6.0 (2026-04-09)
 ------------------
-* Add missing update_rate config files for UR7e and UR12e (backport `#1544 <https://github.com/UniversalRobots/Universal_Robots_ROS2_Driver/issues/1544>`_) (`#1548 <https://github.com/UniversalRobots/Universal_Robots_ROS2_Driver/issues/1548>`_)
-* Specify that only PS5 needs the option of remote control explicitly enabled (backport of `#1530 <https://github.com/UniversalRobots/Universal_Robots_ROS2_Driver/issues/1530>`_) (`#1534 <https://github.com/UniversalRobots/Universal_Robots_ROS2_Driver/issues/1534>`_)
-* Add missing dependency to effort_controllers (backport of `#1531 <https://github.com/UniversalRobots/Universal_Robots_ROS2_Driver/issues/1531>`_) (`#1532 <https://github.com/UniversalRobots/Universal_Robots_ROS2_Driver/issues/1532>`_)
-* Add effort command interface to hardware interface (backport of `#1411 <https://github.com/UniversalRobots/Universal_Robots_ROS2_Driver/issues/1411>`_) (`#1529 <https://github.com/UniversalRobots/Universal_Robots_ROS2_Driver/issues/1529>`_)
-* Trajectory until node (backport `#1461 <https://github.com/UniversalRobots/Universal_Robots_ROS2_Driver/issues/1461>`_) (`#1523 <https://github.com/UniversalRobots/Universal_Robots_ROS2_Driver/issues/1523>`_)
-* Add support for UR18 (backport of `#1524 <https://github.com/UniversalRobots/Universal_Robots_ROS2_Driver/issues/1524>`_) (`#1526 <https://github.com/UniversalRobots/Universal_Robots_ROS2_Driver/issues/1526>`_)
-* Wait for used controllers in test setup (backport of `#1519 <https://github.com/UniversalRobots/Universal_Robots_ROS2_Driver/issues/1519>`_) (`#1521 <https://github.com/UniversalRobots/Universal_Robots_ROS2_Driver/issues/1521>`_)
-* Running integration tests with mock hardware (`#1226 <https://github.com/UniversalRobots/Universal_Robots_ROS2_Driver/issues/1226>`_) (`#1509 <https://github.com/UniversalRobots/Universal_Robots_ROS2_Driver/issues/1509>`_)
-* Add test for hardware component lifecycle (backport `#1476 <https://github.com/UniversalRobots/Universal_Robots_ROS2_Driver/issues/1476>`_) (`#1507 <https://github.com/UniversalRobots/Universal_Robots_ROS2_Driver/issues/1507>`_)
-* Contributors: mergify[bot]
+* Friction model controller (backport `#1704 <https://github.com/UniversalRobots/Universal_Robots_ROS2_Driver/issues/1704>`_) (`#1752 <https://github.com/UniversalRobots/Universal_Robots_ROS2_Driver/issues/1752>`_)
+* Update driver to use refactored tool communication script (backport `#1721 <https://github.com/UniversalRobots/Universal_Robots_ROS2_Driver/issues/1721>`_) (`#1746 <https://github.com/UniversalRobots/Universal_Robots_ROS2_Driver/issues/1746>`_)
+* Use integer representation of SafetyStatus.msg (backport `#1734 <https://github.com/UniversalRobots/Universal_Robots_ROS2_Driver/issues/1734>`_) (`#1743 <https://github.com/UniversalRobots/Universal_Robots_ROS2_Driver/issues/1743>`_)
+* [ur_controllers] Remove Werror from CMakeLists (backport `#1720 <https://github.com/UniversalRobots/Universal_Robots_ROS2_Driver/issues/1720>`_) (`#1729 <https://github.com/UniversalRobots/Universal_Robots_ROS2_Driver/issues/1729>`_)
+* Use refactored RTDE client in driver (backport `#1726 <https://github.com/UniversalRobots/Universal_Robots_ROS2_Driver/issues/1726>`_) (`#1733 <https://github.com/UniversalRobots/Universal_Robots_ROS2_Driver/issues/1733>`_)
+* [Docs] Fix service definition of UpdateProgram (backport `#1723 <https://github.com/UniversalRobots/Universal_Robots_ROS2_Driver/issues/1723>`_) (`#1725 <https://github.com/UniversalRobots/Universal_Robots_ROS2_Driver/issues/1725>`_)
+* Services to support various dashboard calls (backport `#1674 <https://github.com/UniversalRobots/Universal_Robots_ROS2_Driver/issues/1674>`_) (`#1710 <https://github.com/UniversalRobots/Universal_Robots_ROS2_Driver/issues/1710>`_)
+* Use a secondary program to confirm urscript_interface initialization (backport `#1685 <https://github.com/UniversalRobots/Universal_Robots_ROS2_Driver/issues/1685>`_) (`#1699 <https://github.com/UniversalRobots/Universal_Robots_ROS2_Driver/issues/1699>`_)
+* Dashboard client new x commands (backport `#1679 <https://github.com/UniversalRobots/Universal_Robots_ROS2_Driver/issues/1679>`_) (`#1696 <https://github.com/UniversalRobots/Universal_Robots_ROS2_Driver/issues/1696>`_)
+* Fix cleanup (backport `#1683 <https://github.com/UniversalRobots/Universal_Robots_ROS2_Driver/issues/1683>`_) (`#1686 <https://github.com/UniversalRobots/Universal_Robots_ROS2_Driver/issues/1686>`_)
+* Update ft frame_id to tool0_controller (`#1652 <https://github.com/UniversalRobots/Universal_Robots_ROS2_Driver/issues/1652>`_)
+* [Driver Tests] Unlock protective stop during test case setup (`#1641 <https://github.com/UniversalRobots/Universal_Robots_ROS2_Driver/issues/1641>`_)
+* Contributors: Chen Chen, Felix Exner, mergify[bot]
 
-3.4.0 (2025-09-16)
+4.5.0 (2026-01-13)
 ------------------
-* Add support for launching UR8Long (backport `#1490 <https://github.com/UniversalRobots/Universal_Robots_ROS2_Driver/issues/1490>`_) (`#1497 <https://github.com/UniversalRobots/Universal_Robots_ROS2_Driver/issues/1497>`_)
-* [Force mode test] Remove wrong seq entry (backport of `#1488 <https://github.com/UniversalRobots/Universal_Robots_ROS2_Driver/issues/1488>`_) (`#1489 <https://github.com/UniversalRobots/Universal_Robots_ROS2_Driver/issues/1489>`_)
-* Add migration of ros2_control node to migration notes (backport of `#1458 <https://github.com/UniversalRobots/Universal_Robots_ROS2_Driver/issues/1458>`_) (`#1466 <https://github.com/UniversalRobots/Universal_Robots_ROS2_Driver/issues/1466>`_)
-* Fix flaky controller switch test (backport of `#1447 <https://github.com/UniversalRobots/Universal_Robots_ROS2_Driver/issues/1447>`_) (`#1451 <https://github.com/UniversalRobots/Universal_Robots_ROS2_Driver/issues/1451>`_)
-* fix_flaky_force_mode_test (backport of `#1429 <https://github.com/UniversalRobots/Universal_Robots_ROS2_Driver/issues/1429>`_) (`#1449 <https://github.com/UniversalRobots/Universal_Robots_ROS2_Driver/issues/1449>`_)
-* Reduce flakiness of trajectory controller tests (backport of `#1443 <https://github.com/UniversalRobots/Universal_Robots_ROS2_Driver/issues/1443>`_) (`#1445 <https://github.com/UniversalRobots/Universal_Robots_ROS2_Driver/issues/1445>`_)
-* Added 'is in remote control' call as a dashboard service (backport of `#1433 <https://github.com/UniversalRobots/Universal_Robots_ROS2_Driver/issues/1433>`_) (`#1437 <https://github.com/UniversalRobots/Universal_Robots_ROS2_Driver/issues/1437>`_)
-* ur_robot_driver: Fix compilation on Windows (backport of `#1421 <https://github.com/UniversalRobots/Universal_Robots_ROS2_Driver/issues/1421>`_) (`#1432 <https://github.com/UniversalRobots/Universal_Robots_ROS2_Driver/issues/1432>`_)
-  Co-authored-by: Silvio Traversaro <silvio@traversaro.it>
-* Contributors: mergify[bot]
+* Fix flange-to-TCP wrench transformation (`#1615 <https://github.com/UniversalRobots/Universal_Robots_ROS2_Driver/issues/1615>`_)
+* Exposes rw_rate in xacro macro for hardware interface (`#1631 <https://github.com/UniversalRobots/Universal_Robots_ROS2_Driver/issues/1631>`_)
+* Initialize force mode interfaces to NaN on init (`#1625 <https://github.com/UniversalRobots/Universal_Robots_ROS2_Driver/issues/1625>`_)
+* [DashboardClient] Add a parameter callback (`#1598 <https://github.com/UniversalRobots/Universal_Robots_ROS2_Driver/issues/1598>`_)
+* Replace dashboard client on PolyScope X warning (`#1599 <https://github.com/UniversalRobots/Universal_Robots_ROS2_Driver/issues/1599>`_)
+* Add ros2run as a test_depend (`#1597 <https://github.com/UniversalRobots/Universal_Robots_ROS2_Driver/issues/1597>`_)
+* Docs: Update tool comm setup for PolyScope X (`#1588 <https://github.com/UniversalRobots/Universal_Robots_ROS2_Driver/issues/1588>`_)
+* Contributors: Felix Exner, Li Yunwen, Maximilian Schik
 
-3.3.3 (2025-06-24)
+4.4.0 (2025-11-13)
 ------------------
-* Refactor prepare_switch method (backport of `#1417 <https://github.com/UniversalRobots/Universal_Robots_ROS2_Driver/issues/1417>`_) (`#1428 <https://github.com/UniversalRobots/Universal_Robots_ROS2_Driver/issues/1428>`_)
-* Update simulation page to also explicitly mention PolyScope X (backport of `#1415 <https://github.com/UniversalRobots/Universal_Robots_ROS2_Driver/issues/1415>`_) (`#1426 <https://github.com/UniversalRobots/Universal_Robots_ROS2_Driver/issues/1426>`_)
-* Contributors: mergify[bot]
+* Docs: Corrects forward hardware interfaces & Contributing.md (`#1569 <https://github.com/UniversalRobots/Universal_Robots_ROS2_Driver/issues/1569>`_)
+* Explicitly state PolyScope X compatibility (`#1563 <https://github.com/UniversalRobots/Universal_Robots_ROS2_Driver/issues/1563>`_)
+* Fix flaky tests (`#1559 <https://github.com/UniversalRobots/Universal_Robots_ROS2_Driver/issues/1559>`_)
+* Increase default dashboard client timeout to 2 seconds (`#1564 <https://github.com/UniversalRobots/Universal_Robots_ROS2_Driver/issues/1564>`_)
+* Dashboard client polyscopex (`#1546 <https://github.com/UniversalRobots/Universal_Robots_ROS2_Driver/issues/1546>`_)
+* Implement motion_primitive interface in hardware interface (`#1341 <https://github.com/UniversalRobots/Universal_Robots_ROS2_Driver/issues/1341>`_)
+* Fix syntax for link to robot_manual (`#1558 <https://github.com/UniversalRobots/Universal_Robots_ROS2_Driver/issues/1558>`_)
+* Temporarily deactivate one testcase in controller_switch_test (`#1553 <https://github.com/UniversalRobots/Universal_Robots_ROS2_Driver/issues/1553>`_)
+* Add missing update_rate config files for UR7e and UR12e (`#1544 <https://github.com/UniversalRobots/Universal_Robots_ROS2_Driver/issues/1544>`_)
+* Add migration notes to individual packages (`#1545 <https://github.com/UniversalRobots/Universal_Robots_ROS2_Driver/issues/1545>`_)
+* Specify that only PolyScope 5 needs the option of remote control explicitly e… (`#1530 <https://github.com/UniversalRobots/Universal_Robots_ROS2_Driver/issues/1530>`_)
+* Contributors: Felix Exner, Mathias Fuhrer, Matthias Mayr, URJala
 
-3.3.2 (2025-06-10)
+4.3.0 (2025-10-14)
 ------------------
-* Remove unnecessary arguments. (backport of `#1389 <https://github.com/UniversalRobots/Universal_Robots_ROS2_Driver/issues/1389>`_) (`#1390 <https://github.com/UniversalRobots/Universal_Robots_ROS2_Driver/issues/1390>`_)
-* Contributors: mergify[bot]
+* Add missing dependency to effort_controllers (`#1531 <https://github.com/UniversalRobots/Universal_Robots_ROS2_Driver/issues/1531>`_)
+* Add effort command interface to hardware interface (`#1411 <https://github.com/UniversalRobots/Universal_Robots_ROS2_Driver/issues/1411>`_)
+* Add support for UR18 (`#1524 <https://github.com/UniversalRobots/Universal_Robots_ROS2_Driver/issues/1524>`_)
+* Trajectory until node (`#1461 <https://github.com/UniversalRobots/Universal_Robots_ROS2_Driver/issues/1461>`_)
+* Wait for used controllers in test setup (`#1519 <https://github.com/UniversalRobots/Universal_Robots_ROS2_Driver/issues/1519>`_)
+* Running integration tests with mock hardware (`#1226 <https://github.com/UniversalRobots/Universal_Robots_ROS2_Driver/issues/1226>`_)
+* Add test for hardware component lifecycle (`#1476 <https://github.com/UniversalRobots/Universal_Robots_ROS2_Driver/issues/1476>`_)
+* Contributors: Felix Exner, URJala
 
-3.3.1 (2025-05-28)
+4.2.0 (2025-09-16)
 ------------------
-* [force mode controller] Fix the task frame orientation (backport of `#1379 <https://github.com/UniversalRobots/Universal_Robots_ROS2_Driver/issues/1379>`_) (`#1381 <https://github.com/UniversalRobots/Universal_Robots_ROS2_Driver/issues/1381>`_)
-* Contributors: mergify[bot]
+* Add support for launching UR8Long (`#1490 <https://github.com/UniversalRobots/Universal_Robots_ROS2_Driver/issues/1490>`_)
+* [Force mode test] Remove wrong seq entry (`#1488 <https://github.com/UniversalRobots/Universal_Robots_ROS2_Driver/issues/1488>`_)
+* Contributors: Felix Exner
 
-3.3.0 (2025-05-20)
+4.1.0 (2025-07-29)
+------------------
+* Migrate hardware_interface's on_init method (`#1464 <https://github.com/UniversalRobots/Universal_Robots_ROS2_Driver/issues/1464>`_)
+* Add scaling parameters to upstream JTC (`#1465 <https://github.com/UniversalRobots/Universal_Robots_ROS2_Driver/issues/1465>`_)
+* Add migration of ros2_control node to migration notes (`#1458 <https://github.com/UniversalRobots/Universal_Robots_ROS2_Driver/issues/1458>`_)
+* Fix flaky controller switch test (`#1447 <https://github.com/UniversalRobots/Universal_Robots_ROS2_Driver/issues/1447>`_)
+* fix_flaky_force_mode_test (`#1429 <https://github.com/UniversalRobots/Universal_Robots_ROS2_Driver/issues/1429>`_)
+* Reduce flakiness of trajectory controller tests (`#1443 <https://github.com/UniversalRobots/Universal_Robots_ROS2_Driver/issues/1443>`_)
+* Added 'is in remote control' call as a dashboard service (`#1433 <https://github.com/UniversalRobots/Universal_Robots_ROS2_Driver/issues/1433>`_)
+* ur_robot_driver: Fix compilation on Windows (`#1421 <https://github.com/UniversalRobots/Universal_Robots_ROS2_Driver/issues/1421>`_)
+* Refactor prepare_switch method (`#1417 <https://github.com/UniversalRobots/Universal_Robots_ROS2_Driver/issues/1417>`_)
+* Update simulation page to also explicitly mention PolyScope X (`#1415 <https://github.com/UniversalRobots/Universal_Robots_ROS2_Driver/issues/1415>`_)
+* Contributors: Felix Exner, Mads Holm Peters, Silvio Traversaro
+
+4.0.3 (2025-06-16)
+------------------
+
+4.0.2 (2025-06-13)
+------------------
+* Remove unnecessary arguments. (`#1389 <https://github.com/UniversalRobots/Universal_Robots_ROS2_Driver/issues/1389>`_)
+* Contributors: Dr. Denis
+
+4.0.1 (2025-05-28)
+------------------
+* [force mode controller] Fix the task frame orientation (`#1379 <https://github.com/UniversalRobots/Universal_Robots_ROS2_Driver/issues/1379>`_)
+* Replace ament_target_dependencies calls (`#1373 <https://github.com/UniversalRobots/Universal_Robots_ROS2_Driver/issues/1373>`_)
+* Update feature list (`#1372 <https://github.com/UniversalRobots/Universal_Robots_ROS2_Driver/issues/1372>`_)
+* Contributors: Felix Exner
+
+4.0.0 (2025-05-20)
 ------------------
 * Add support for UR15 (`#1358 <https://github.com/UniversalRobots/Universal_Robots_ROS2_Driver/issues/1358>`_)
 * [CI] Check links using lychee instead of a custom script (`#1355 <https://github.com/UniversalRobots/Universal_Robots_ROS2_Driver/issues/1355>`_)

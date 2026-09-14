@@ -2,45 +2,55 @@
 Changelog for package ur_dashboard_msgs
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-3.9.0 (2026-09-11)
+4.9.0 (2026-09-11)
 ------------------
-* Update dashboard client for 10.14.0 (`#1945 <https://github.com/UniversalRobots/Universal_Robots_ROS2_Driver/issues/1945>`_) (`#1973 <https://github.com/UniversalRobots/Universal_Robots_ROS2_Driver/issues/1973>`_)
-* Update safety status msg with new IO plane stop (backport `#1817 <https://github.com/UniversalRobots/Universal_Robots_ROS2_Driver/issues/1817>`_) (`#1819 <https://github.com/UniversalRobots/Universal_Robots_ROS2_Driver/issues/1819>`_)
+* Update dashboard client for 10.14.0 (backport `#1945 <https://github.com/UniversalRobots/Universal_Robots_ROS2_Driver/issues/1945>`_) (`#1974 <https://github.com/UniversalRobots/Universal_Robots_ROS2_Driver/issues/1974>`_)
 * Contributors: mergify[bot]
 
-3.8.0 (2026-04-09)
+4.8.0 (2026-07-09)
 ------------------
-* Use integer representation of SafetyStatus.msg (backport `#1734 <https://github.com/UniversalRobots/Universal_Robots_ROS2_Driver/issues/1734>`_) (`#1742 <https://github.com/UniversalRobots/Universal_Robots_ROS2_Driver/issues/1742>`_)
-* Services to support various dashboard calls (backport `#1674 <https://github.com/UniversalRobots/Universal_Robots_ROS2_Driver/issues/1674>`_) (`#1709 <https://github.com/UniversalRobots/Universal_Robots_ROS2_Driver/issues/1709>`_)
-* Dashboard client new x commands (backport `#1679 <https://github.com/UniversalRobots/Universal_Robots_ROS2_Driver/issues/1679>`_) (`#1695 <https://github.com/UniversalRobots/Universal_Robots_ROS2_Driver/issues/1695>`_)
+* Update safety status msg with new IO plane stop (backport `#1817 <https://github.com/UniversalRobots/Universal_Robots_ROS2_Driver/issues/1817>`_) (`#1820 <https://github.com/UniversalRobots/Universal_Robots_ROS2_Driver/issues/1820>`_)
+* Contributors: Felix Exner, mergify[bot]
+
+4.7.0 (2026-05-15)
+------------------
+
+4.6.0 (2026-04-09)
+------------------
+* Use integer representation of SafetyStatus.msg (backport `#1734 <https://github.com/UniversalRobots/Universal_Robots_ROS2_Driver/issues/1734>`_) (`#1743 <https://github.com/UniversalRobots/Universal_Robots_ROS2_Driver/issues/1743>`_)
+* Services to support various dashboard calls (backport `#1674 <https://github.com/UniversalRobots/Universal_Robots_ROS2_Driver/issues/1674>`_) (`#1710 <https://github.com/UniversalRobots/Universal_Robots_ROS2_Driver/issues/1710>`_)
+* Dashboard client new x commands (backport `#1679 <https://github.com/UniversalRobots/Universal_Robots_ROS2_Driver/issues/1679>`_) (`#1696 <https://github.com/UniversalRobots/Universal_Robots_ROS2_Driver/issues/1696>`_)
 * Contributors: mergify[bot]
 
-3.7.0 (2026-01-13)
+4.5.0 (2026-01-13)
 ------------------
 
-3.6.0 (2025-11-13)
+4.4.0 (2025-11-13)
 ------------------
-* Explicitly state PolyScope X compatibility (backport `#1563 <https://github.com/UniversalRobots/Universal_Robots_ROS2_Driver/issues/1563>`_) (`#1568 <https://github.com/UniversalRobots/Universal_Robots_ROS2_Driver/issues/1568>`_)
-* Contributors: mergify[bot]
+* Explicitly state PolyScope X compatibility (`#1563 <https://github.com/UniversalRobots/Universal_Robots_ROS2_Driver/issues/1563>`_)
+* Contributors: Felix Exner
 
-3.5.0 (2025-10-23)
-------------------
-
-3.4.0 (2025-09-16)
-------------------
-* Added 'is in remote control' call as a dashboard service (backport of `#1433 <https://github.com/UniversalRobots/Universal_Robots_ROS2_Driver/issues/1433>`_) (`#1437 <https://github.com/UniversalRobots/Universal_Robots_ROS2_Driver/issues/1437>`_)
-* Contributors: mergify[bot]
-
-3.3.3 (2025-06-24)
+4.3.0 (2025-10-14)
 ------------------
 
-3.3.2 (2025-06-10)
+4.2.0 (2025-09-16)
 ------------------
 
-3.3.1 (2025-05-28)
+4.1.0 (2025-07-29)
+------------------
+* Added 'is in remote control' call as a dashboard service (`#1433 <https://github.com/UniversalRobots/Universal_Robots_ROS2_Driver/issues/1433>`_)
+* Contributors: Mads Holm Peters
+
+4.0.3 (2025-06-16)
 ------------------
 
-3.3.0 (2025-05-20)
+4.0.2 (2025-06-13)
+------------------
+
+4.0.1 (2025-05-28)
+------------------
+
+4.0.0 (2025-05-20)
 ------------------
 
 3.2.1 (2025-04-11)

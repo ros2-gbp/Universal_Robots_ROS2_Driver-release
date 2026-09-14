@@ -77,7 +77,7 @@ def launch_setup(context):
                 "hardware_synchronization.expect_blocking_read_write": LaunchConfiguration(
                     "blocking_read"
                 ),
-                "overruns.print_warnings": NotSubstitution(LaunchConfiguration("headless_mode")),
+                "overruns.print_warnings": NotSubstitution(LaunchConfiguration("blocking_read")),
             },
             ParameterFile(controllers_file, allow_substs=True),
             # We use the tf_prefix as substitution in there, so that's why we keep it as an
@@ -181,10 +181,11 @@ def launch_setup(context):
         executable="trajectory_until_node",
         name="trajectory_until_node",
         output="screen",
-        parameters=[
-            {
-                "motion_controller": initial_joint_controller,
-            },
+        remappings=[
+            (
+                "/motion_controller/follow_joint_trajectory",
+                f"/{initial_joint_controller.perform(context)}/follow_joint_trajectory",
+            ),
         ],
     )
 
@@ -228,6 +229,7 @@ def launch_setup(context):
         "passthrough_trajectory_controller",
         "freedrive_mode_controller",
         "tool_contact_controller",
+        "motion_primitive_forward_controller",
         "twist_controller",
     ]
     if activate_joint_controller.perform(context) == "true":
@@ -386,6 +388,7 @@ def generate_launch_description():
                 "forward_position_controller",
                 "freedrive_mode_controller",
                 "passthrough_trajectory_controller",
+                "motion_primitive_forward_controller",
             ],
             description="Initially loaded robot controller.",
         )

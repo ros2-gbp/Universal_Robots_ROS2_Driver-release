@@ -51,6 +51,11 @@ down by the controller).
 ur_controlers/ScaledJointTrajectoryController
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+.. note::
+   The upstream joint_trajectory_controller has been updated to support the scaling feature
+   explained below. Hence, we have decided to deprecate the scaled joint trajectory controller.
+   It will get removed in ROS Lyrical Luth.
+
 These controllers work similar to the well-known
 `joint_trajectory_controller <https://control.ros.org/master/doc/ros2_controllers/joint_trajectory_controller/doc/userdoc.html>`_.
 
@@ -350,7 +355,7 @@ Controller compatibility
 The twist controller is mutually exclusive with all other motion controllers
 (``joint_trajectory_controller``, ``passthrough_trajectory_controller``,
 ``forward_position_controller``, ``forward_velocity_controller``, ``forward_effort_controller``,
-``freedrive_mode_controller``).
+``freedrive_mode_controller`` and ``motion_primitive_forward_controller``).
 It can be combined with the
 :ref:`tool_contact_controller <tool_contact_controller>` and the :ref:`force_mode_controller <force_mode_controller>`\*.
 

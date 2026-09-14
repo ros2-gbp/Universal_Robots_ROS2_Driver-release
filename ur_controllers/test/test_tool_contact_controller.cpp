@@ -81,7 +81,7 @@ protected:
     result_interface_ =
         std::make_shared<hardware_interface::StateInterface>("tool_contact", "tool_contact_result", &result_value_);
 
-    loaned_command_ = std::make_unique<hardware_interface::LoanedCommandInterface>(command_interface_, []() {});
+    loaned_command_ = std::make_unique<hardware_interface::LoanedCommandInterface>(command_interface_);
     loaned_state_ = std::make_unique<hardware_interface::LoanedStateInterface>(state_interface_);
     loaned_result_ = std::make_unique<hardware_interface::LoanedStateInterface>(result_interface_);
 
