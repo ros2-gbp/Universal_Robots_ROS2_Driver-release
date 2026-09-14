@@ -9,6 +9,15 @@ option(
   OFF
 )
 
+# This test spins up a fresh URSim container for every supported robot model
+# (and one model-mismatch case), which takes a long time. It is therefore kept
+# behind its own flag so a normal integration-test run is not slowed down by it.
+option(
+  UR_ROBOT_DRIVER_RUN_ROBOT_MODELS_TEST
+  "Run the integration test that runs the driver against URSim for every supported robot model"
+  OFF
+)
+
 if(CMAKE_COMPILER_IS_GNUCXX OR CMAKE_CXX_COMPILER_ID MATCHES "Clang")
   add_compile_options(-Wall)
   add_compile_options(-Wextra)
@@ -25,6 +34,7 @@ find_package(ament_cmake REQUIRED)
 find_package(backward_ros REQUIRED)
 find_package(controller_manager REQUIRED)
 find_package(controller_manager_msgs REQUIRED)
+find_package(control_msgs REQUIRED)
 find_package(geometry_msgs REQUIRED)
 find_package(hardware_interface REQUIRED)
 find_package(pluginlib REQUIRED)
@@ -43,6 +53,7 @@ include_directories(include)
 set(THIS_PACKAGE_INCLUDE_DEPENDS
   controller_manager
   controller_manager_msgs
+  control_msgs
   geometry_msgs
   hardware_interface
   pluginlib
@@ -60,6 +71,7 @@ add_library(ur_robot_driver_plugin
   SHARED
   src/dashboard_client_ros.cpp
   src/hardware_interface.cpp
+  src/mode_compatibility.cpp
   src/urcl_log_handler.cpp
   src/robot_state_helper.cpp
 )
@@ -103,12 +115,11 @@ ament_target_dependencies(controller_stopper_node ${${PROJECT_NAME}_EXPORTED_TAR
 # robot_state_helper
 #
 add_executable(robot_state_helper
-  src/robot_state_helper.cpp
   src/robot_state_helper_node.cpp
-  src/urcl_log_handler.cpp
 )
-target_link_libraries(robot_state_helper ur_client_library::urcl)
-ament_target_dependencies(robot_state_helper ${${PROJECT_NAME}_EXPORTED_TARGETS} ${THIS_PACKAGE_INCLUDE_DEPENDS})
+target_link_libraries(robot_state_helper
+  ur_robot_driver_plugin
+)
 
 add_executable(urscript_interface
   src/urscript_interface.cpp
@@ -126,6 +137,7 @@ target_link_libraries(trajectory_until_node PUBLIC
   ${std_msgs_TARGETS}
   rclcpp_action::rclcpp_action
   ${ur_msgs_TARGETS}
+  ${control_msgs_TARGETS}
 )
 
 install(
@@ -170,6 +182,7 @@ ament_export_dependencies(
   hardware_interface
   pluginlib
   rclcpp
+  rclcpp_action
   rclcpp_lifecycle
   ${THIS_PACKAGE_INCLUDE_DEPENDS}
 )
@@ -183,6 +196,7 @@ install(PROGRAMS
   scripts/wait_for_robot_description
   scripts/example_move.py
   scripts/start_ursim.sh
+  scripts/wait_robot_booted.py
   examples/examples.py
   examples/force_mode.py
   examples/move_until_example.py
@@ -200,10 +214,28 @@ install(DIRECTORY config launch urdf
 ament_package()
 
 if(BUILD_TESTING)
+  find_package(ament_cmake_gmock REQUIRED)
   find_package(ur_controllers REQUIRED)
   find_package(ur_description REQUIRED)
   find_package(ur_msgs REQUIRED)
   find_package(launch_testing_ament_cmake)
+
+  ament_add_gmock(test_mode_compatibility_symmetry
+    test/test_mode_compatibility_symmetry.cpp
+  )
+  target_link_libraries(test_mode_compatibility_symmetry
+    ur_robot_driver_plugin
+  )
+
+  ament_add_gmock(test_robot_state_helper
+    test/test_robot_state_helper.cpp
+  )
+  target_link_libraries(test_robot_state_helper
+    ur_robot_driver_plugin
+    rclcpp::rclcpp
+    rclcpp_action::rclcpp_action
+    ${std_srvs_TARGETS}
+  )
 
   add_launch_test(test/test_mock_hardware.py
     TIMEOUT
@@ -221,7 +253,7 @@ if(BUILD_TESTING)
     )
     add_launch_test(test/dashboard_client.py
       TIMEOUT
-        180
+        800 # Booting the simulators can take quite some time. Increasing this timeout to avoid spurious failures.
     )
     add_launch_test(test/example_move.py
       TIMEOUT
@@ -259,7 +291,15 @@ if(BUILD_TESTING)
       TIMEOUT
         800
     )
+    add_launch_test(test/integration_test_hand_back_control.py
+      TIMEOUT
+        800
+    )
     add_launch_test(test/integration_test_tool_contact.py
+      TIMEOUT
+        800
+    )
+    add_launch_test(test/integration_test_twist_controller.py
       TIMEOUT
         800
     )
@@ -267,5 +307,11 @@ if(BUILD_TESTING)
       TIMEOUT
         800
     )
+    if(${UR_ROBOT_DRIVER_RUN_ROBOT_MODELS_TEST})
+      add_launch_test(test/integration_test_robot_models.py
+        TIMEOUT
+          2700
+      )
+    endif()
   endif()
 endif()
