@@ -53,6 +53,7 @@
 #include <rclcpp/logging.hpp>
 #include "hardware_interface/types/hardware_interface_type_values.hpp"
 #include "ur_robot_driver/hardware_interface.hpp"
+#include "ur_robot_driver/mode_compatibility.hpp"
 #include "ur_robot_driver/urcl_log_handler.hpp"
 
 namespace rtde = urcl::rtde_interface;
@@ -97,70 +98,7 @@ RobotTypeWithSeries robotTypeFromString(const std::string& robot_type_str)
 
 URPositionHardwareInterface::URPositionHardwareInterface()
 {
-  mode_compatibility_[hardware_interface::HW_IF_POSITION][hardware_interface::HW_IF_VELOCITY] = false;
-  mode_compatibility_[hardware_interface::HW_IF_POSITION][hardware_interface::HW_IF_EFFORT] = false;
-  mode_compatibility_[hardware_interface::HW_IF_POSITION][FORCE_MODE_GPIO] = false;
-  mode_compatibility_[hardware_interface::HW_IF_POSITION][PASSTHROUGH_GPIO] = false;
-  mode_compatibility_[hardware_interface::HW_IF_POSITION][FREEDRIVE_MODE_GPIO] = false;
-  mode_compatibility_[hardware_interface::HW_IF_POSITION][TOOL_CONTACT_GPIO] = true;
-  mode_compatibility_[hardware_interface::HW_IF_POSITION][HW_IF_MOTION_PRIMITIVES] = false;
-
-  mode_compatibility_[hardware_interface::HW_IF_VELOCITY][hardware_interface::HW_IF_POSITION] = false;
-  mode_compatibility_[hardware_interface::HW_IF_VELOCITY][hardware_interface::HW_IF_EFFORT] = false;
-  mode_compatibility_[hardware_interface::HW_IF_VELOCITY][FORCE_MODE_GPIO] = false;
-  mode_compatibility_[hardware_interface::HW_IF_VELOCITY][PASSTHROUGH_GPIO] = false;
-  mode_compatibility_[hardware_interface::HW_IF_VELOCITY][FREEDRIVE_MODE_GPIO] = false;
-  mode_compatibility_[hardware_interface::HW_IF_VELOCITY][TOOL_CONTACT_GPIO] = true;
-  mode_compatibility_[hardware_interface::HW_IF_VELOCITY][HW_IF_MOTION_PRIMITIVES] = false;
-
-  mode_compatibility_[hardware_interface::HW_IF_EFFORT][hardware_interface::HW_IF_POSITION] = false;
-  mode_compatibility_[hardware_interface::HW_IF_EFFORT][hardware_interface::HW_IF_VELOCITY] = false;
-  mode_compatibility_[hardware_interface::HW_IF_EFFORT][FORCE_MODE_GPIO] = false;
-  mode_compatibility_[hardware_interface::HW_IF_EFFORT][PASSTHROUGH_GPIO] = false;
-  mode_compatibility_[hardware_interface::HW_IF_EFFORT][FREEDRIVE_MODE_GPIO] = false;
-  mode_compatibility_[hardware_interface::HW_IF_EFFORT][TOOL_CONTACT_GPIO] = true;
-  mode_compatibility_[hardware_interface::HW_IF_EFFORT][HW_IF_MOTION_PRIMITIVES] = false;
-
-  mode_compatibility_[FORCE_MODE_GPIO][hardware_interface::HW_IF_POSITION] = false;
-  mode_compatibility_[FORCE_MODE_GPIO][hardware_interface::HW_IF_VELOCITY] = false;
-  mode_compatibility_[FORCE_MODE_GPIO][hardware_interface::HW_IF_EFFORT] = false;
-  mode_compatibility_[FORCE_MODE_GPIO][PASSTHROUGH_GPIO] = true;
-  mode_compatibility_[FORCE_MODE_GPIO][FREEDRIVE_MODE_GPIO] = false;
-  mode_compatibility_[FORCE_MODE_GPIO][TOOL_CONTACT_GPIO] = false;
-  mode_compatibility_[FORCE_MODE_GPIO][HW_IF_MOTION_PRIMITIVES] = true;
-
-  mode_compatibility_[PASSTHROUGH_GPIO][hardware_interface::HW_IF_POSITION] = false;
-  mode_compatibility_[PASSTHROUGH_GPIO][hardware_interface::HW_IF_VELOCITY] = false;
-  mode_compatibility_[PASSTHROUGH_GPIO][hardware_interface::HW_IF_EFFORT] = false;
-  mode_compatibility_[PASSTHROUGH_GPIO][FORCE_MODE_GPIO] = true;
-  mode_compatibility_[PASSTHROUGH_GPIO][FREEDRIVE_MODE_GPIO] = false;
-  mode_compatibility_[PASSTHROUGH_GPIO][TOOL_CONTACT_GPIO] = true;
-  mode_compatibility_[PASSTHROUGH_GPIO][HW_IF_MOTION_PRIMITIVES] = false;
-
-  mode_compatibility_[FREEDRIVE_MODE_GPIO][hardware_interface::HW_IF_POSITION] = false;
-  mode_compatibility_[FREEDRIVE_MODE_GPIO][hardware_interface::HW_IF_VELOCITY] = false;
-  mode_compatibility_[FREEDRIVE_MODE_GPIO][hardware_interface::HW_IF_EFFORT] = false;
-  mode_compatibility_[FREEDRIVE_MODE_GPIO][FORCE_MODE_GPIO] = false;
-  mode_compatibility_[FREEDRIVE_MODE_GPIO][PASSTHROUGH_GPIO] = false;
-  mode_compatibility_[FREEDRIVE_MODE_GPIO][TOOL_CONTACT_GPIO] = false;
-  mode_compatibility_[FREEDRIVE_MODE_GPIO][TOOL_CONTACT_GPIO] = false;
-  mode_compatibility_[FREEDRIVE_MODE_GPIO][HW_IF_MOTION_PRIMITIVES] = false;
-
-  mode_compatibility_[TOOL_CONTACT_GPIO][hardware_interface::HW_IF_POSITION] = true;
-  mode_compatibility_[TOOL_CONTACT_GPIO][hardware_interface::HW_IF_VELOCITY] = true;
-  mode_compatibility_[TOOL_CONTACT_GPIO][hardware_interface::HW_IF_EFFORT] = true;
-  mode_compatibility_[TOOL_CONTACT_GPIO][FORCE_MODE_GPIO] = false;
-  mode_compatibility_[TOOL_CONTACT_GPIO][PASSTHROUGH_GPIO] = true;
-  mode_compatibility_[TOOL_CONTACT_GPIO][FREEDRIVE_MODE_GPIO] = false;
-  mode_compatibility_[TOOL_CONTACT_GPIO][HW_IF_MOTION_PRIMITIVES] = true;
-
-  mode_compatibility_[HW_IF_MOTION_PRIMITIVES][hardware_interface::HW_IF_POSITION] = false;
-  mode_compatibility_[HW_IF_MOTION_PRIMITIVES][hardware_interface::HW_IF_VELOCITY] = false;
-  mode_compatibility_[HW_IF_MOTION_PRIMITIVES][hardware_interface::HW_IF_EFFORT] = false;
-  mode_compatibility_[HW_IF_MOTION_PRIMITIVES][FORCE_MODE_GPIO] = true;
-  mode_compatibility_[HW_IF_MOTION_PRIMITIVES][PASSTHROUGH_GPIO] = false;
-  mode_compatibility_[HW_IF_MOTION_PRIMITIVES][FREEDRIVE_MODE_GPIO] = false;
-  mode_compatibility_[HW_IF_MOTION_PRIMITIVES][TOOL_CONTACT_GPIO] = true;
+  mode_compatibility_ = createModeCompatibilityMatrix();
 }
 
 URPositionHardwareInterface::~URPositionHardwareInterface()
@@ -189,12 +127,14 @@ URPositionHardwareInterface::on_init(const hardware_interface::HardwareComponent
   urcl_position_commands_ = { { 0.0, 0.0, 0.0, 0.0, 0.0, 0.0 } };
   urcl_position_commands_old_ = { { 0.0, 0.0, 0.0, 0.0, 0.0, 0.0 } };
   urcl_velocity_commands_ = { { 0.0, 0.0, 0.0, 0.0, 0.0, 0.0 } };
+  urcl_twist_commands_ = { { 0.0, 0.0, 0.0, 0.0, 0.0, 0.0 } };
   position_controller_running_ = false;
   velocity_controller_running_ = false;
   torque_controller_running_ = false;
   freedrive_mode_controller_running_ = false;
   passthrough_trajectory_controller_running_ = false;
   tool_contact_controller_running_ = false;
+  twist_controller_running_ = false;
   runtime_state_ = static_cast<uint32_t>(rtde::RUNTIME_STATE::STOPPED);
   pausing_state_ = PausingState::RUNNING;
   pausing_ramp_up_increment_ = 0.01;
@@ -213,6 +153,7 @@ URPositionHardwareInterface::on_init(const hardware_interface::HardwareComponent
   trajectory_joint_positions_.reserve(32768);
   trajectory_joint_velocities_.reserve(32768);
   trajectory_joint_accelerations_.reserve(32768);
+  stop_requested_ = false;
 
   // Motion primitives stuff
   async_moprim_thread_shutdown_ = false;
@@ -414,7 +355,18 @@ std::vector<hardware_interface::StateInterface> URPositionHardwareInterface::exp
       hardware_interface::StateInterface(tf_prefix + "payload", "cog.y", &rtde_payload_cog_[1]));
   state_interfaces.emplace_back(
       hardware_interface::StateInterface(tf_prefix + "payload", "cog.z", &rtde_payload_cog_[2]));
-
+  state_interfaces.emplace_back(
+      hardware_interface::StateInterface(tf_prefix + "payload", "inertia.ixx", &rtde_payload_inertia_[0]));
+  state_interfaces.emplace_back(
+      hardware_interface::StateInterface(tf_prefix + "payload", "inertia.iyy", &rtde_payload_inertia_[1]));
+  state_interfaces.emplace_back(
+      hardware_interface::StateInterface(tf_prefix + "payload", "inertia.izz", &rtde_payload_inertia_[2]));
+  state_interfaces.emplace_back(
+      hardware_interface::StateInterface(tf_prefix + "payload", "inertia.ixy", &rtde_payload_inertia_[3]));
+  state_interfaces.emplace_back(
+      hardware_interface::StateInterface(tf_prefix + "payload", "inertia.ixz", &rtde_payload_inertia_[4]));
+  state_interfaces.emplace_back(
+      hardware_interface::StateInterface(tf_prefix + "payload", "inertia.iyz", &rtde_payload_inertia_[5]));
   // Motion primitives stuff
   state_interfaces.emplace_back(hardware_interface::StateInterface(tf_prefix + HW_IF_MOTION_PRIMITIVES,
                                                                    "execution_status", &hw_moprim_states_[0]));
@@ -478,6 +430,20 @@ std::vector<hardware_interface::CommandInterface> URPositionHardwareInterface::e
   command_interfaces.emplace_back(
       hardware_interface::CommandInterface(tf_prefix + "payload", "cog.z", &payload_center_of_gravity_[2]));
   command_interfaces.emplace_back(
+      hardware_interface::CommandInterface(tf_prefix + "payload", "inertia.ixx", &payload_inertia_[0]));
+  command_interfaces.emplace_back(
+      hardware_interface::CommandInterface(tf_prefix + "payload", "inertia.iyy", &payload_inertia_[1]));
+  command_interfaces.emplace_back(
+      hardware_interface::CommandInterface(tf_prefix + "payload", "inertia.izz", &payload_inertia_[2]));
+  command_interfaces.emplace_back(
+      hardware_interface::CommandInterface(tf_prefix + "payload", "inertia.ixy", &payload_inertia_[3]));
+  command_interfaces.emplace_back(
+      hardware_interface::CommandInterface(tf_prefix + "payload", "inertia.ixz", &payload_inertia_[4]));
+  command_interfaces.emplace_back(
+      hardware_interface::CommandInterface(tf_prefix + "payload", "inertia.iyz", &payload_inertia_[5]));
+  command_interfaces.emplace_back(
+      hardware_interface::CommandInterface(tf_prefix + "payload", "transition_time", &payload_transition_time_));
+  command_interfaces.emplace_back(
       hardware_interface::CommandInterface(tf_prefix + "payload", "payload_async_success", &payload_async_success_));
 
   for (size_t i = 0; i < friction_model_viscous_.size(); ++i) {
@@ -520,6 +486,15 @@ std::vector<hardware_interface::CommandInterface> URPositionHardwareInterface::e
   command_interfaces.emplace_back(tf_prefix + FORCE_MODE_GPIO, "disable_cmd", &force_mode_disable_cmd_);
   command_interfaces.emplace_back(tf_prefix + FORCE_MODE_GPIO, "damping", &force_mode_damping_);
   command_interfaces.emplace_back(tf_prefix + FORCE_MODE_GPIO, "gain_scaling", &force_mode_gain_scaling_);
+
+  command_interfaces.emplace_back(
+      hardware_interface::CommandInterface(tf_prefix + "gravity", "x", &gravity_vector_[0]));
+  command_interfaces.emplace_back(
+      hardware_interface::CommandInterface(tf_prefix + "gravity", "y", &gravity_vector_[1]));
+  command_interfaces.emplace_back(
+      hardware_interface::CommandInterface(tf_prefix + "gravity", "z", &gravity_vector_[2]));
+  command_interfaces.emplace_back(
+      hardware_interface::CommandInterface(tf_prefix + "gravity", "gravity_async_success", &gravity_async_success_));
 
   for (size_t i = 0; i < 18; ++i) {
     command_interfaces.emplace_back(hardware_interface::CommandInterface(
@@ -579,6 +554,19 @@ std::vector<hardware_interface::CommandInterface> URPositionHardwareInterface::e
                                                                          "setpoint_accelerations_" + std::to_string(i),
                                                                          &passthrough_trajectory_accelerations_[i]));
   }
+
+  command_interfaces.emplace_back(
+      hardware_interface::CommandInterface(tf_prefix + TWIST_GPIO, "linear_velocity_x", &urcl_twist_commands_[0]));
+  command_interfaces.emplace_back(
+      hardware_interface::CommandInterface(tf_prefix + TWIST_GPIO, "linear_velocity_y", &urcl_twist_commands_[1]));
+  command_interfaces.emplace_back(
+      hardware_interface::CommandInterface(tf_prefix + TWIST_GPIO, "linear_velocity_z", &urcl_twist_commands_[2]));
+  command_interfaces.emplace_back(
+      hardware_interface::CommandInterface(tf_prefix + TWIST_GPIO, "angular_velocity_x", &urcl_twist_commands_[3]));
+  command_interfaces.emplace_back(
+      hardware_interface::CommandInterface(tf_prefix + TWIST_GPIO, "angular_velocity_y", &urcl_twist_commands_[4]));
+  command_interfaces.emplace_back(
+      hardware_interface::CommandInterface(tf_prefix + TWIST_GPIO, "angular_velocity_z", &urcl_twist_commands_[5]));
 
   command_interfaces.emplace_back(hardware_interface::CommandInterface(
       tf_prefix + TOOL_CONTACT_GPIO, "tool_contact_set_state", &tool_contact_set_state_));
@@ -823,6 +811,7 @@ URPositionHardwareInterface::on_configure(const rclcpp_lifecycle::State& previou
                               << " but the driver was configured for type '" << ur_type
                               << "'. Please check the 'ur_type' parameter and make sure it matches your "
                                  "actual robot. This can lead to critical inaccuracies of tcp positions.");
+      ur_driver_.reset();
       return hardware_interface::CallbackReturn::ERROR;
     }
   }
@@ -988,6 +977,7 @@ hardware_interface::return_type URPositionHardwareInterface::read(const rclcpp::
     readData(data_package_buffer_, "tcp_offset", tcp_offset_);
     readData(data_package_buffer_, "payload", rtde_payload_mass_);
     readData(data_package_buffer_, "payload_cog", rtde_payload_cog_);
+    readData(data_package_buffer_, "payload_inertia", rtde_payload_inertia_);
 
     // required transforms
     extractToolPose();
@@ -1060,7 +1050,12 @@ hardware_interface::return_type URPositionHardwareInterface::write(const rclcpp:
   if ((runtime_state_ == static_cast<uint32_t>(rtde::RUNTIME_STATE::PLAYING) ||
        runtime_state_ == static_cast<uint32_t>(rtde::RUNTIME_STATE::PAUSING)) &&
       robot_program_running_ && (!non_blocking_read_ || packet_read_)) {
-    if (position_controller_running_) {
+    if (stop_requested_) {
+      ur_driver_->writeJointCommand(urcl_position_commands_, urcl::comm::ControlMode::MODE_STOPPED);
+      stop_requested_ = false;
+      robot_program_running_ = false;  // We reset that here, as well to avoid a race condition
+                                       // between the reverse interface callback and the next write.
+    } else if (position_controller_running_) {
       ur_driver_->writeJointCommand(urcl_position_commands_, urcl::comm::ControlMode::MODE_SERVOJ, receive_timeout_);
 
     } else if (velocity_controller_running_) {
@@ -1075,10 +1070,10 @@ hardware_interface::return_type URPositionHardwareInterface::write(const rclcpp:
           urcl::control::TrajectoryControlMessage::TRAJECTORY_NOOP, 0,
           urcl::RobotReceiveTimeout::millisec(1000 * 5.0 / static_cast<double>(info_.rw_rate)));
       check_passthrough_trajectory_controller();
-
     } else if (motion_primitives_forward_controller_running_) {
       handleMoprimCommands();
-
+    } else if (twist_controller_running_) {
+      ur_driver_->writeJointCommand(urcl_twist_commands_, urcl::comm::ControlMode::MODE_SPEEDL, receive_timeout_);
     } else {
       ur_driver_->writeKeepalive();
     }
@@ -1122,7 +1117,10 @@ void URPositionHardwareInterface::initAsyncIO()
 
   payload_mass_ = NO_NEW_CMD_;
   payload_center_of_gravity_ = { NO_NEW_CMD_, NO_NEW_CMD_, NO_NEW_CMD_ };
+  payload_inertia_ = { NO_NEW_CMD_, NO_NEW_CMD_, NO_NEW_CMD_, NO_NEW_CMD_, NO_NEW_CMD_, NO_NEW_CMD_ };
+  payload_transition_time_ = NO_NEW_CMD_;
 
+  gravity_vector_ = { NO_NEW_CMD_, NO_NEW_CMD_, NO_NEW_CMD_ };
   friction_model_viscous_.fill(NO_NEW_CMD_);
   friction_model_coulomb_.fill(NO_NEW_CMD_);
 }
@@ -1181,19 +1179,30 @@ void URPositionHardwareInterface::checkAsyncIO()
   }
 
   if (!std::isnan(hand_back_control_cmd_) && ur_driver_ != nullptr) {
-    robot_program_running_ = false;
+    stop_requested_ = true;
     hand_back_control_async_success_ = true;
     hand_back_control_cmd_ = NO_NEW_CMD_;
   }
 
   if (!std::isnan(payload_mass_) && !std::isnan(payload_center_of_gravity_[0]) &&
       !std::isnan(payload_center_of_gravity_[1]) && !std::isnan(payload_center_of_gravity_[2]) &&
-      ur_driver_ != nullptr) {
-    payload_async_success_ = ur_driver_->setPayload(payload_mass_, payload_center_of_gravity_);
+      !std::isnan(payload_inertia_[0]) && !std::isnan(payload_inertia_[1]) && !std::isnan(payload_inertia_[2]) &&
+      !std::isnan(payload_inertia_[3]) && !std::isnan(payload_inertia_[4]) && !std::isnan(payload_inertia_[5]) &&
+      !std::isnan(payload_transition_time_) && ur_driver_ != nullptr) {
+    payload_async_success_ = ur_driver_->setTargetPayload(payload_mass_, payload_center_of_gravity_, payload_inertia_,
+                                                          payload_transition_time_);
+
     payload_mass_ = NO_NEW_CMD_;
     payload_center_of_gravity_ = { NO_NEW_CMD_, NO_NEW_CMD_, NO_NEW_CMD_ };
+    payload_inertia_ = { NO_NEW_CMD_, NO_NEW_CMD_, NO_NEW_CMD_, NO_NEW_CMD_, NO_NEW_CMD_, NO_NEW_CMD_ };
+    payload_transition_time_ = NO_NEW_CMD_;
   }
 
+  if (!std::isnan(gravity_vector_[0]) && !std::isnan(gravity_vector_[1]) && !std::isnan(gravity_vector_[2]) &&
+      ur_driver_ != nullptr) {
+    gravity_async_success_ = ur_driver_->setGravity(gravity_vector_);
+    gravity_vector_ = { NO_NEW_CMD_, NO_NEW_CMD_, NO_NEW_CMD_ };
+  }
   if (!std::isnan(friction_model_viscous_[0]) && ur_driver_ != nullptr) {
     friction_model_async_success_ = ur_driver_->setFrictionScales(friction_model_viscous_, friction_model_coulomb_);
     friction_model_viscous_.fill(NO_NEW_CMD_);
@@ -1377,6 +1386,9 @@ hardware_interface::return_type URPositionHardwareInterface::prepare_command_mod
     if (motion_primitives_forward_controller_running_) {
       control_modes[i].push_back(HW_IF_MOTION_PRIMITIVES);
     }
+    if (twist_controller_running_) {
+      control_modes[i].push_back(TWIST_GPIO);
+    }
   }
 
   auto is_mode_compatible = [this](const std::string& mode, const std::vector<std::string>& other_modes) {
@@ -1406,6 +1418,7 @@ hardware_interface::return_type URPositionHardwareInterface::prepare_command_mod
         { tf_prefix + FREEDRIVE_MODE_GPIO + "/async_success", FREEDRIVE_MODE_GPIO },
         { tf_prefix + TOOL_CONTACT_GPIO + "/tool_contact_set_state", TOOL_CONTACT_GPIO },
         { tf_prefix + HW_IF_MOTION_PRIMITIVES + "/motion_type", HW_IF_MOTION_PRIMITIVES },
+        { tf_prefix + TWIST_GPIO + "/linear_velocity_x", TWIST_GPIO }
       };
 
       for (auto& item : start_modes_to_check) {
@@ -1458,6 +1471,7 @@ hardware_interface::return_type URPositionHardwareInterface::prepare_command_mod
           StoppingInterface::STOP_TOOL_CONTACT },
         { tf_prefix + HW_IF_MOTION_PRIMITIVES + "/motion_type", HW_IF_MOTION_PRIMITIVES,
           StoppingInterface::STOP_MOTION_PRIMITIVES },
+        { tf_prefix + TWIST_GPIO + "/linear_velocity_x", TWIST_GPIO, StoppingInterface::STOP_TWIST }
       };
       for (auto& item : stop_modes_to_check) {
         if (key == std::get<0>(item)) {
@@ -1521,6 +1535,7 @@ hardware_interface::return_type URPositionHardwareInterface::perform_command_mod
     freedrive_activated_ = false;
     freedrive_mode_abort_ = 1.0;
   }
+
   if (stop_modes_.size() != 0 && std::find(stop_modes_[0].begin(), stop_modes_[0].end(),
                                            StoppingInterface::STOP_MOTION_PRIMITIVES) != stop_modes_[0].end()) {
     motion_primitives_forward_controller_running_ = false;
@@ -1533,6 +1548,12 @@ hardware_interface::return_type URPositionHardwareInterface::perform_command_mod
     tool_contact_controller_running_ = false;
     tool_contact_result_ = 3.0;
     ur_driver_->endToolContact();
+  }
+
+  if (stop_modes_.size() != 0 &&
+      std::find(stop_modes_[0].begin(), stop_modes_[0].end(), StoppingInterface::STOP_TWIST) != stop_modes_[0].end()) {
+    twist_controller_running_ = false;
+    urcl_twist_commands_ = { { 0.0, 0.0, 0.0, 0.0, 0.0, 0.0 } };
   }
 
   if (start_modes_.size() != 0 && std::find(start_modes_[0].begin(), start_modes_[0].end(),
@@ -1602,6 +1623,12 @@ hardware_interface::return_type URPositionHardwareInterface::perform_command_mod
       std::find(start_modes_[0].begin(), start_modes_[0].end(), TOOL_CONTACT_GPIO) != start_modes_[0].end()) {
     tool_contact_controller_running_ = true;
   }
+  if (start_modes_[0].size() != 0 &&
+      std::find(start_modes_[0].begin(), start_modes_[0].end(), TWIST_GPIO) != start_modes_[0].end()) {
+    velocity_controller_running_ = false;
+    position_controller_running_ = false;
+    twist_controller_running_ = true;
+  }
   start_modes_.clear();
   stop_modes_.clear();
 
@@ -1661,18 +1688,18 @@ void URPositionHardwareInterface::check_passthrough_trajectory_controller()
     ur_driver_->writeTrajectoryControlMessage(urcl::control::TrajectoryControlMessage::TRAJECTORY_CANCEL);
   } else if (passthrough_trajectory_transfer_state_ == 6.0) {
     if (passthrough_trajectory_size_ != trajectory_joint_positions_.size()) {
-      RCLCPP_INFO(get_logger(), "Got a new trajectory with %lu points.",
-                  static_cast<size_t>(passthrough_trajectory_size_));
       trajectory_joint_positions_.resize(passthrough_trajectory_size_);
       trajectory_joint_velocities_.resize(passthrough_trajectory_size_);
       trajectory_joint_accelerations_.resize(passthrough_trajectory_size_);
       trajectory_times_.resize(passthrough_trajectory_size_);
-      point_index_received = 0;
-      point_index_sent = 0;
-      trajectory_started = false;
-      last_time = 0.0;
-      passthrough_trajectory_transfer_state_ = 1.0;
     }
+    RCLCPP_INFO(get_logger(), "Got a new trajectory with %lu points.",
+                static_cast<size_t>(passthrough_trajectory_size_));
+    point_index_received = 0;
+    point_index_sent = 0;
+    trajectory_started = false;
+    last_time = 0.0;
+    passthrough_trajectory_transfer_state_ = 1.0;
   } else if (passthrough_trajectory_transfer_state_ == 2.0) {
     passthrough_trajectory_abort_ = 0.0;
     trajectory_joint_positions_[point_index_received] = passthrough_trajectory_positions_;
@@ -1688,7 +1715,7 @@ void URPositionHardwareInterface::check_passthrough_trajectory_controller()
 
     // Once we received enough points so we can move for at least 5 cycles, we start executing
     if ((passthrough_trajectory_time_from_start_ > 5.0 / static_cast<double>(info_.rw_rate) ||
-         point_index_received == passthrough_trajectory_size_ - 1) &&
+         point_index_received == passthrough_trajectory_size_) &&
         !trajectory_started) {
       ur_driver_->writeTrajectoryControlMessage(urcl::control::TrajectoryControlMessage::TRAJECTORY_START,
                                                 trajectory_joint_positions_.size());
