@@ -1,3 +1,5 @@
+:github_url: https://github.com/UniversalRobots/Universal_Robots_ROS2_Driver/blob/main/ur_robot_driver/doc/usage/startup.rst
+
 .. _ur_robot_driver_startup:
 
 Startup the driver
@@ -22,7 +24,7 @@ nodes for UR robots. The only required arguments are the ``ur_type`` and ``robot
 
    $ ros2 launch ur_robot_driver ur_control.launch.py ur_type:=ur5e robot_ip:=192.168.56.101
 
-Allowed ``ur_type`` strings: ``ur3``, ``ur5``, ``ur10``, ``ur3e``, ``ur5e``, ``ur7e``, ``ur10e``,
+Allowed ``ur_type`` strings: ``ur3``, ``ur3e``, ``ur5``, ``ur5e``, ``ur7e``, ``ur10``, ``ur10e``,
 ``ur12e``, ``ur16e``, ``ur8long``, ``ur15``, ``ur18``, ``ur20``, ``ur30``.
 
 Other important arguments are:
@@ -34,6 +36,9 @@ Other important arguments are:
 * ``launch_rviz`` (default: *true*) - Start RViz together with the driver.
 * ``initial_joint_controller`` (default: *scaled_joint_trajectory_controller*) - Use this if you
   want to start the robot with another controller.
+* ``blocking_read`` (default: *false*) - Make the robot's communication drive the ROS control loop's
+  pace. Deactivate this  if you don't have a reliable robot communication setup. See
+  :ref:`blocking_read` for more details.
 
   .. note::
      When the driver is started, you can list all loaded controllers using the ``ros2 control
@@ -49,6 +54,22 @@ For all other arguments, please see
    $ ros2 launch ur_robot_driver ur_control.launch.py --show-args
 
 Also, there are predefined launch files for all supported types of UR robots.
+
+.. _blocking_read:
+
+Blocking read
+-------------
+
+When using the ``ur_robot_driver``, there are effectively two control loops active: The ROS driver
+has it's own control loop, where it reads the robot's state, updates controllers and sends new
+commands to the robot. The robot itself also has a control loop, where it reads new commands and
+executes them. In most control modes the robot expects to receive new commands at a fixed rate.
+When both control loops run at different clocks, there will be a phase shift between the two loops,
+which can lead to problems. To avoid this, the driver can be started with the ``blocking_read``
+parameter set to ``true``. In this case, the driver will wait for new robot state data before
+updating the controllers and sending new commands. This way, the robot's control loop drives the
+ROS control loop's pace. This is the recommended setting for single robot setups and therefore the
+default value for the startup launch file.
 
 .. _robot_startup_program:
 

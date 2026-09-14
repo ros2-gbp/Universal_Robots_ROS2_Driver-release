@@ -1,14 +1,25 @@
+:github_url: https://github.com/UniversalRobots/Universal_Robots_ROS2_Driver/blob/main/ur_robot_driver/doc/installation/installation.rst
+
 Installation of the ur_robot_driver
 ===================================
 
 You can either install this driver from binary packages as shown above or build it from source. We
 recommend a binary package installation unless you want to join development and submit changes.
 
+.. note::
+
+   Controlling the robot using ROS raises the requirement for strict cycle times. To achieve this,
+   we strongly recommend to use a lowlatency or even ``PREEMPT_RT``-patched kernel. See
+   :ref:`real time setup` for details on setting this up.
+
+   For the same reason we encourage users to use a direct network connection between the ROS pc and
+   the robot controller without a switch.
+
 Install from binary packages
 ----------------------------
 
-1. `Install ROS2 <https://docs.ros.org/en/humble/Installation/Ubuntu-Install-Debs.html>`_. This
-   branch supports only ROS2 Humble. For other ROS2 versions, please see the respective branches.
+1. `Install ROS2 <https://docs.ros.org/en/jazzy/Installation/Ubuntu-Install-Debs.html>`_. This
+   branch supports only ROS2 Jazzy. For other ROS2 versions, please see the respective branches.
 2. Install the driver using
 
    .. code-block:: bash
@@ -27,10 +38,10 @@ require upstream repositories to be present in a certain version as otherwise bu
 Starting from scratch following exactly the steps below should always work, but simply pulling and
 building might fail occasionally.
 
-1. `Install ROS2 <https://docs.ros.org/en/humble/Installation/Ubuntu-Install-Debs.html>`_. This
-   branch supports only ROS2 Humble. For other ROS2 versions, please see the respective branches.
+1. `Install ROS2 <https://docs.ros.org/en/jazzy/Installation/Ubuntu-Install-Debs.html>`_. This
+   branch supports only ROS2 Jazzy. For other ROS2 versions, please see the respective branches.
 
-   Once installed, please make sure to actually `source ROS2 <https://docs.ros.org/en/humble/Tutorials/Beginner-CLI-Tools/Configuring-ROS2-Environment.html#source-the-setup-files>`_ before proceeding.
+   Once installed, please make sure to actually `source ROS2 <https://docs.ros.org/en/jazzy/Tutorials/Beginner-CLI-Tools/Configuring-ROS2-Environment.html#source-the-setup-files>`_ before proceeding.
 
 3. Make sure that ``colcon``, its extensions and ``vcs`` are installed:
 

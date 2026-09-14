@@ -29,10 +29,15 @@
 #include <gmock/gmock.h>
 #include <gtest/gtest.h>
 
+#include <atomic>
+#include <chrono>
 #include <memory>
+#include <mutex>
 #include <string>
+#include <thread>
 #include <utility>
 
+#include "controller_interface/controller_interface_params.hpp"
 #include "hardware_interface/loaned_command_interface.hpp"
 #include "hardware_interface/loaned_state_interface.hpp"
 #include "rclcpp/rclcpp.hpp"
@@ -56,17 +61,27 @@ public:
 protected:
   void SetUp() override
   {
-    rclcpp::NodeOptions options;
-    options.allow_undeclared_parameters(true);
-    options.automatically_declare_parameters_from_overrides(true);
-
-    ASSERT_EQ(controller_.init("tool_contact_controller_test", "", options), controller_interface::return_type::OK);
+    controller_interface::ControllerInterfaceParams params;
+    params.controller_name = "tool_contact_controller_test";
+    params.robot_description = "";
+    params.update_rate = 500;
+    params.controller_manager_update_rate = 500;
+    params.node_namespace = "";
+    params.node_options = controller_.define_custom_node_options();
+    ASSERT_EQ(controller_.init(params), controller_interface::return_type::OK);
 
     set_state_value_ = TOOL_CONTACT_STANDBY;
     state_value_ = TOOL_CONTACT_STANDBY;
     result_value_ = 3.0;
 
-    loaned_command_ = std::make_unique<hardware_interface::LoanedCommandInterface>(command_interface_);
+    command_interface_ = std::make_shared<hardware_interface::CommandInterface>(
+        "tool_contact", "tool_contact_set_state", &set_state_value_);
+    state_interface_ =
+        std::make_shared<hardware_interface::StateInterface>("tool_contact", "tool_contact_state", &state_value_);
+    result_interface_ =
+        std::make_shared<hardware_interface::StateInterface>("tool_contact", "tool_contact_result", &result_value_);
+
+    loaned_command_ = std::make_unique<hardware_interface::LoanedCommandInterface>(command_interface_, []() {});
     loaned_state_ = std::make_unique<hardware_interface::LoanedStateInterface>(state_interface_);
     loaned_result_ = std::make_unique<hardware_interface::LoanedStateInterface>(result_interface_);
 
@@ -74,8 +89,8 @@ protected:
     controller_.tool_contact_state_interface_ = *loaned_state_;
     controller_.tool_contact_result_interface_ = *loaned_result_;
 
-    // No active goal handle for these update()-path unit tests.
-    controller_.rt_active_goal_.writeFromNonRT(nullptr);
+    // No active goal; try_get succeeds and yields nullptr.
+    ASSERT_TRUE(controller_.set_rt_goal_from_non_rt(nullptr));
   }
 
   void TearDown() override
@@ -151,14 +166,43 @@ protected:
     return controller_.update(rclcpp::Time(0, 0, RCL_ROS_TIME), rclcpp::Duration::from_seconds(0.01));
   }
 
+  // Hold rt_active_goal_'s mutex so update()'s try_get fails (contention path).
+  template <typename Fn>
+  void with_goal_box_contended(Fn&& fn)
+  {
+    std::atomic<bool> lock_held{ false };
+    std::atomic<bool> release_lock{ false };
+    std::thread holder([this, &lock_held, &release_lock]() {
+      std::unique_lock lock(controller_.rt_active_goal_.get_mutex());
+      lock_held = true;
+      while (!release_lock.load()) {
+        std::this_thread::sleep_for(std::chrono::milliseconds(1));
+      }
+    });
+
+    const auto deadline = std::chrono::steady_clock::now() + std::chrono::seconds(1);
+    while (!lock_held.load() && std::chrono::steady_clock::now() < deadline) {
+      std::this_thread::sleep_for(std::chrono::milliseconds(1));
+    }
+    if (!lock_held.load()) {
+      release_lock = true;
+      holder.join();
+      FAIL() << "Timed out waiting to hold the goal box mutex.";
+    }
+
+    std::forward<Fn>(fn)();
+
+    release_lock = true;
+    holder.join();
+  }
+
   ur_controllers::ToolContactController controller_;
   double set_state_value_{};
   double state_value_{};
   double result_value_{};
-  hardware_interface::CommandInterface command_interface_{ "tool_contact", "tool_contact_set_state",
-                                                           &set_state_value_ };
-  hardware_interface::StateInterface state_interface_{ "tool_contact", "tool_contact_state", &state_value_ };
-  hardware_interface::StateInterface result_interface_{ "tool_contact", "tool_contact_result", &result_value_ };
+  std::shared_ptr<hardware_interface::CommandInterface> command_interface_;
+  std::shared_ptr<hardware_interface::StateInterface> state_interface_;
+  std::shared_ptr<hardware_interface::StateInterface> result_interface_;
   std::unique_ptr<hardware_interface::LoanedCommandInterface> loaned_command_;
   std::unique_ptr<hardware_interface::LoanedStateInterface> loaned_state_;
   std::unique_ptr<hardware_interface::LoanedStateInterface> loaned_result_;
@@ -257,6 +301,79 @@ TEST_F(ToolContactControllerTest, ExecutingHardwareAbortResultSetsStandby)
   EXPECT_EQ(run_update(), controller_interface::return_type::OK);
   EXPECT_DOUBLE_EQ(set_state_value_, TOOL_CONTACT_STANDBY);
   EXPECT_FALSE(is_active());
+}
+
+// ---------------------------------------------------------------------------
+// Goal-box contention: try_get fails while another thread holds the mutex
+// ---------------------------------------------------------------------------
+
+TEST_F(ToolContactControllerTest, ContendedGoalBoxExecutingNonTerminalAcknowledgesExecuting)
+{
+  // Non-terminal EXECUTING must still be acknowledged so startToolContact is
+  // not retriggered, even when the goal handle cannot be read this cycle.
+  clear_requests();
+  set_state_value_ = TOOL_CONTACT_WAITING_BEGIN;
+  set_hw_state(TOOL_CONTACT_EXECUTING, 3.0);
+  set_logged_once(false);
+
+  with_goal_box_contended([this]() {
+    EXPECT_EQ(run_update(), controller_interface::return_type::OK);
+    EXPECT_DOUBLE_EQ(set_state_value_, TOOL_CONTACT_EXECUTING);
+    EXPECT_TRUE(is_active());
+    EXPECT_TRUE(logged_once());
+    EXPECT_FALSE(should_reset_goal());
+  });
+}
+
+TEST_F(ToolContactControllerTest, ContendedGoalBoxExecutingSuccessDefersTerminalHandling)
+{
+  // Terminal success must NOT write WAITING_END while the goal box is
+  // contended; goal/result handling is deferred to a later cycle.
+  clear_requests();
+  set_state_value_ = TOOL_CONTACT_EXECUTING;
+  set_hw_state(TOOL_CONTACT_EXECUTING, 0.0);
+  set_active(true);
+  set_logged_once(true);
+
+  with_goal_box_contended([this]() {
+    EXPECT_EQ(run_update(), controller_interface::return_type::OK);
+    EXPECT_DOUBLE_EQ(set_state_value_, TOOL_CONTACT_EXECUTING);
+    EXPECT_TRUE(is_active());
+    EXPECT_FALSE(should_reset_goal());
+  });
+}
+
+TEST_F(ToolContactControllerTest, ContendedGoalBoxExecutingHardwareAbortDefersTerminalHandling)
+{
+  // Terminal hardware abort must NOT write STANDBY while the goal box is
+  // contended; goal/result handling is deferred to a later cycle.
+  clear_requests();
+  set_state_value_ = TOOL_CONTACT_EXECUTING;
+  set_hw_state(TOOL_CONTACT_EXECUTING, 1.0);
+  set_active(true);
+  set_logged_once(true);
+
+  with_goal_box_contended([this]() {
+    EXPECT_EQ(run_update(), controller_interface::return_type::OK);
+    EXPECT_DOUBLE_EQ(set_state_value_, TOOL_CONTACT_EXECUTING);
+    EXPECT_TRUE(is_active());
+    EXPECT_FALSE(should_reset_goal());
+  });
+}
+
+TEST_F(ToolContactControllerTest, ContendedGoalBoxNonExecutingLeavesCommandUnchanged)
+{
+  clear_requests();
+  set_state_value_ = TOOL_CONTACT_STANDBY;
+  set_hw_state(TOOL_CONTACT_STANDBY);
+  set_logged_once(true);
+
+  with_goal_box_contended([this]() {
+    EXPECT_EQ(run_update(), controller_interface::return_type::OK);
+    EXPECT_DOUBLE_EQ(set_state_value_, TOOL_CONTACT_STANDBY);
+    // STANDBY logging clear only runs in the uncontended switch.
+    EXPECT_TRUE(logged_once());
+  });
 }
 
 // ---------------------------------------------------------------------------
