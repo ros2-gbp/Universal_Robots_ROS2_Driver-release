@@ -1,4 +1,4 @@
-// Copyright 2019, FZI Forschungszentrum Informatik
+// Copyright 2026, Universal Robots A/S
 //
 // Redistribution and use in source and binary forms, with or without
 // modification, are permitted provided that the following conditions are met:
@@ -26,62 +26,50 @@
 // ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 // POSSIBILITY OF SUCH DAMAGE.
 
-//----------------------------------------------------------------------
-/*!\file
- *
- * \author  Marvin Große Besselmann grosse@fzi.de
- * \date    2021-02-10
- *
- */
-//----------------------------------------------------------------------
-
-#ifndef UR_CONTROLLERS__SPEED_SCALING_STATE_BROADCASTER_HPP_
-#define UR_CONTROLLERS__SPEED_SCALING_STATE_BROADCASTER_HPP_
+#ifndef UR_CONTROLLERS__TWIST_CONTROLLER_HPP_
+#define UR_CONTROLLERS__TWIST_CONTROLLER_HPP_
 
 #include <memory>
-#include <string>
-#include <vector>
 
-#include <realtime_tools/realtime_publisher.hpp>
 #include <controller_interface/controller_interface.hpp>
-#include <rclcpp/time.hpp>
-#include <rclcpp/duration.hpp>
-#include <std_msgs/msg/float64.hpp>
-#include "ur_controllers/speed_scaling_state_broadcaster_parameters.hpp"
+#include <realtime_tools/realtime_thread_safe_box.hpp>
+#include <geometry_msgs/msg/twist_stamped.hpp>
+
+#include "ur_controllers/twist_controller_parameters.hpp"
 
 namespace ur_controllers
 {
-class SpeedScalingStateBroadcaster : public controller_interface::ControllerInterface
+class TwistController : public controller_interface::ControllerInterface
 {
 public:
-  SpeedScalingStateBroadcaster();
-
   controller_interface::InterfaceConfiguration command_interface_configuration() const override;
 
   controller_interface::InterfaceConfiguration state_interface_configuration() const override;
 
   controller_interface::return_type update(const rclcpp::Time& time, const rclcpp::Duration& period) override;
 
-  controller_interface::CallbackReturn on_configure(const rclcpp_lifecycle::State& previous_state) override;
+  CallbackReturn on_configure(const rclcpp_lifecycle::State& previous_state) override;
 
-  controller_interface::CallbackReturn on_activate(const rclcpp_lifecycle::State& previous_state) override;
+  CallbackReturn on_activate(const rclcpp_lifecycle::State& previous_state) override;
 
-  controller_interface::CallbackReturn on_deactivate(const rclcpp_lifecycle::State& previous_state) override;
+  CallbackReturn on_deactivate(const rclcpp_lifecycle::State& previous_state) override;
 
-  controller_interface::CallbackReturn on_cleanup(const rclcpp_lifecycle::State& previous_state) override;
+  CallbackReturn on_init() override;
 
-  controller_interface::CallbackReturn on_init() override;
+private:
+  void reset();
 
-protected:
-  std::vector<std::string> sensor_names_;
-  double publish_rate_;
+  using TwistStamped = geometry_msgs::msg::TwistStamped;
 
-  std::shared_ptr<realtime_tools::RealtimePublisher<std_msgs::msg::Float64>> speed_scaling_state_publisher_;
-  std_msgs::msg::Float64 speed_scaling_state_msg_;
+  std::atomic<bool> subscriber_is_active_ = false;
+  rclcpp::Subscription<TwistStamped>::SharedPtr twist_command_subscriber_ = nullptr;
 
-  // Parameters from ROS for SpeedScalingStateBroadcaster
-  std::shared_ptr<speed_scaling_state_broadcaster::ParamListener> param_listener_;
-  speed_scaling_state_broadcaster::Params params_;
+  realtime_tools::RealtimeThreadSafeBox<TwistStamped> received_twist_msg_;
+  TwistStamped command_msg_;
+
+  std::shared_ptr<twist_controller::ParamListener> param_listener_;
+  twist_controller::Params controller_params_;
 };
 }  // namespace ur_controllers
-#endif  // UR_CONTROLLERS__SPEED_SCALING_STATE_BROADCASTER_HPP_
+
+#endif  // UR_CONTROLLERS__TWIST_CONTROLLER_HPP_
