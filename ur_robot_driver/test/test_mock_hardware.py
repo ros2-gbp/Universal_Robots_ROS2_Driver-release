@@ -35,9 +35,13 @@ import unittest
 import launch_testing
 import pytest
 import rclpy
+from geometry_msgs.msg import Vector3
 from rclpy.node import Node
+from rclpy.qos import DurabilityPolicy, QoSProfile, ReliabilityPolicy
 from control_msgs.action import FollowJointTrajectory
 from controller_manager_msgs.srv import SwitchController
+from std_msgs.msg import Bool
+from ur_dashboard_msgs.msg import RobotMode, SafetyMode
 
 sys.path.append(os.path.dirname(__file__))
 from test_common import (  # noqa: E402
@@ -99,6 +103,46 @@ class MockHWTest(unittest.TestCase):
             self._configuration_controller_interface.get_robot_software_version().major, 1
         )
 
+    def test_mock_hardware_publishes_operational_status(self):
+        """Mock hardware reports deterministic happy-path status on latched topics."""
+        messages = {}
+        qos = QoSProfile(
+            depth=1,
+            durability=DurabilityPolicy.TRANSIENT_LOCAL,
+            reliability=ReliabilityPolicy.RELIABLE,
+        )
+        subscriptions = [
+            self.node.create_subscription(
+                RobotMode,
+                "/io_and_status_controller/robot_mode",
+                lambda msg: messages.setdefault("robot_mode", msg.mode),
+                qos,
+            ),
+            self.node.create_subscription(
+                SafetyMode,
+                "/io_and_status_controller/safety_mode",
+                lambda msg: messages.setdefault("safety_mode", msg.mode),
+                qos,
+            ),
+            self.node.create_subscription(
+                Bool,
+                "/io_and_status_controller/robot_program_running",
+                lambda msg: messages.setdefault("program_running", msg.data),
+                qos,
+            ),
+        ]
+
+        deadline = time.monotonic() + 10.0
+        while len(messages) < 3 and time.monotonic() < deadline:
+            rclpy.spin_once(self.node, timeout_sec=0.1)
+
+        self.assertEqual(messages.get("robot_mode"), RobotMode.RUNNING)
+        self.assertEqual(messages.get("safety_mode"), SafetyMode.NORMAL)
+        self.assertIs(messages.get("program_running"), True)
+
+        for subscription in subscriptions:
+            self.node.destroy_subscription(subscription)
+
     def test_start_scaled_jtc_controller(self):
         # Deactivate controller, if it is not already
         self.assertTrue(
@@ -120,3 +164,26 @@ class MockHWTest(unittest.TestCase):
 
     def test_illegal_trajectory(self, tf_prefix):
         sjtc_illegal_trajectory_test(self, tf_prefix)
+
+    def test_set_payload(self):
+        """
+        Test that ``set_payload`` succeeds with mock hardware.
+
+        Mock hardware does not feed back the payload via RTDE, so the controller
+        is launched with ``verify_payload_on_set:=false`` (set automatically by
+        ``ur_control.launch.py`` when ``use_mock_hardware:=true``). The service
+        should therefore return success without performing the RTDE verification.
+        """
+        result = self._io_status_controller_interface.set_payload(
+            mass=1.5, center_of_gravity=Vector3(x=0.01, y=0.02, z=0.03)
+        )
+        self.assertTrue(
+            result.success,
+            "set_payload returned success=False on mock hardware. The controller "
+            "should be launched with verify_payload_on_set=false in this case.",
+        )
+
+        result = self._io_status_controller_interface.set_payload(
+            mass=0.0, center_of_gravity=Vector3(x=0.0, y=0.0, z=0.0)
+        )
+        self.assertTrue(result.success, "Resetting payload via set_payload failed on mock hardware")
