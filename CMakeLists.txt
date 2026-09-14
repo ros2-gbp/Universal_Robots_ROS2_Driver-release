@@ -73,6 +73,11 @@ generate_parameter_library(
 )
 
 generate_parameter_library(
+  gravity_update_controller_parameters
+  src/gravity_update_controller_parameters.yaml
+)
+
+generate_parameter_library(
   speed_scaling_state_broadcaster_parameters
   src/speed_scaling_state_broadcaster_parameters.yaml
 )
@@ -93,6 +98,11 @@ generate_parameter_library(
 )
 
 generate_parameter_library(
+  twist_controller_parameters
+  src/twist_controller_parameters.yaml
+)
+
+generate_parameter_library(
   ur_configuration_controller_parameters
   src/ur_configuration_controller_parameters.yaml
 )
@@ -105,7 +115,9 @@ add_library(${PROJECT_NAME} SHARED
   src/speed_scaling_state_broadcaster.cpp
   src/freedrive_mode_controller.cpp
   src/gpio_controller.cpp
+  src/gravity_update_controller.cpp
   src/passthrough_trajectory_controller.cpp
+  src/twist_controller.cpp
   src/ur_configuration_controller.cpp)
 
 target_include_directories(${PROJECT_NAME} PRIVATE
@@ -116,6 +128,7 @@ target_link_libraries(${PROJECT_NAME}
   force_mode_controller_parameters
   friction_model_controller_parameters
   gpio_controller_parameters
+  gravity_update_controller_parameters
   speed_scaling_state_broadcaster_parameters
   scaled_joint_trajectory_controller_parameters
   freedrive_mode_controller_parameters
@@ -191,6 +204,21 @@ if(BUILD_TESTING)
     ${PROJECT_NAME}
     controller_manager::controller_manager
     ros2_control_test_assets::ros2_control_test_assets
+  )
+  ament_add_gmock(test_load_twist_controller
+    test/test_load_twist_controller.cpp
+  )
+  target_link_libraries(test_load_twist_controller
+    ${PROJECT_NAME}
+    controller_manager::controller_manager
+    ros2_control_test_assets::ros2_control_test_assets
+  )
+  ament_add_gmock(test_tool_contact_controller
+    test/test_tool_contact_controller.cpp
+  )
+  target_link_libraries(test_tool_contact_controller
+    ${PROJECT_NAME}
+    hardware_interface::hardware_interface
   )
 endif()
 
