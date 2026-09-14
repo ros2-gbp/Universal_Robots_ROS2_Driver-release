@@ -35,7 +35,7 @@ import unittest
 import launch_testing
 import pytest
 import rclpy
-from geometry_msgs.msg import Vector3
+from geometry_msgs.msg import Inertia, Vector3
 from rclpy.node import Node
 from rclpy.qos import DurabilityPolicy, QoSProfile, ReliabilityPolicy
 from control_msgs.action import FollowJointTrajectory
@@ -82,9 +82,9 @@ class MockHWTest(unittest.TestCase):
         self._io_status_controller_interface = IoStatusInterface(self.node)
         self._configuration_controller_interface = ConfigurationInterface(self.node)
 
-        self._scaled_follow_joint_trajectory = ActionInterface(
+        self._follow_joint_trajectory = ActionInterface(
             self.node,
-            "/scaled_joint_trajectory_controller/follow_joint_trajectory",
+            "/joint_trajectory_controller/follow_joint_trajectory",
             FollowJointTrajectory,
         )
 
@@ -143,19 +143,19 @@ class MockHWTest(unittest.TestCase):
         for subscription in subscriptions:
             self.node.destroy_subscription(subscription)
 
-    def test_start_scaled_jtc_controller(self):
+    def test_start_jtc_controller(self):
         # Deactivate controller, if it is not already
         self.assertTrue(
             self._controller_manager_interface.switch_controller(
                 strictness=SwitchController.Request.BEST_EFFORT,
-                deactivate_controllers=["scaled_joint_trajectory_controller"],
+                deactivate_controllers=["joint_trajectory_controller"],
             ).ok
         )
         # Activate controller
         self.assertTrue(
             self._controller_manager_interface.switch_controller(
                 strictness=SwitchController.Request.STRICT,
-                activate_controllers=["scaled_joint_trajectory_controller"],
+                activate_controllers=["joint_trajectory_controller"],
             ).ok
         )
 
@@ -175,7 +175,7 @@ class MockHWTest(unittest.TestCase):
         should therefore return success without performing the RTDE verification.
         """
         result = self._io_status_controller_interface.set_payload(
-            mass=1.5, center_of_gravity=Vector3(x=0.01, y=0.02, z=0.03)
+            payload=Inertia(m=1.5, com=Vector3(x=0.01, y=0.02, z=0.03))
         )
         self.assertTrue(
             result.success,
@@ -184,6 +184,6 @@ class MockHWTest(unittest.TestCase):
         )
 
         result = self._io_status_controller_interface.set_payload(
-            mass=0.0, center_of_gravity=Vector3(x=0.0, y=0.0, z=0.0)
+            payload=Inertia(m=0.0, com=Vector3(x=0.0, y=0.0, z=0.0))
         )
         self.assertTrue(result.success, "Resetting payload via set_payload failed on mock hardware")

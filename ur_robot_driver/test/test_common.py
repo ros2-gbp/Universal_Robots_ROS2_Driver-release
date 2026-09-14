@@ -424,7 +424,7 @@ def sjtc_trajectory_test(tester, tf_prefix):
         tester._controller_manager_interface.switch_controller(
             strictness=SwitchController.Request.BEST_EFFORT,
             deactivate_controllers=["passthrough_trajectory_controller"],
-            activate_controllers=["scaled_joint_trajectory_controller"],
+            activate_controllers=["joint_trajectory_controller"],
         ).ok
     )
     # Construct test trajectory
@@ -444,13 +444,11 @@ def sjtc_trajectory_test(tester, tf_prefix):
 
     # Sending trajectory goal
     logging.info("Sending simple goal")
-    goal_handle = tester._scaled_follow_joint_trajectory.send_goal(trajectory=trajectory)
+    goal_handle = tester._follow_joint_trajectory.send_goal(trajectory=trajectory)
     tester.assertTrue(goal_handle.accepted)
 
     # Verify execution
-    result = tester._scaled_follow_joint_trajectory.get_result(
-        goal_handle, TIMEOUT_EXECUTE_TRAJECTORY
-    )
+    result = tester._follow_joint_trajectory.get_result(goal_handle, TIMEOUT_EXECUTE_TRAJECTORY)
     tester.assertEqual(result.error_code, FollowJointTrajectory.Result.SUCCESSFUL)
 
 
@@ -464,7 +462,7 @@ def sjtc_illegal_trajectory_test(tester, tf_prefix):
         tester._controller_manager_interface.switch_controller(
             strictness=SwitchController.Request.BEST_EFFORT,
             deactivate_controllers=["passthrough_trajectory_controller"],
-            activate_controllers=["scaled_joint_trajectory_controller"],
+            activate_controllers=["joint_trajectory_controller"],
         ).ok
     )
     # Construct test trajectory, the second point wrongly starts before the first
@@ -483,7 +481,7 @@ def sjtc_illegal_trajectory_test(tester, tf_prefix):
 
     # Send illegal goal
     logging.info("Sending illegal goal")
-    goal_handle = tester._scaled_follow_joint_trajectory.send_goal(
+    goal_handle = tester._follow_joint_trajectory.send_goal(
         trajectory=trajectory,
     )
 
@@ -607,7 +605,7 @@ def generate_dashboard_test_description(ursim_version="latest", ur_type="ur5e", 
 
 def generate_mock_hardware_test_description(
     tf_prefix="",
-    initial_joint_controller="scaled_joint_trajectory_controller",
+    initial_joint_controller="joint_trajectory_controller",
     controller_spawner_timeout=TIMEOUT_WAIT_SERVICE_INITIAL,
 ):
 
@@ -642,7 +640,7 @@ def generate_mock_hardware_test_description(
 
 def generate_driver_test_description(
     tf_prefix="",
-    initial_joint_controller="scaled_joint_trajectory_controller",
+    initial_joint_controller="joint_trajectory_controller",
     controller_spawner_timeout=TIMEOUT_WAIT_SERVICE_INITIAL,
     headless_mode=True,
     ursim_version="latest",
@@ -730,7 +728,6 @@ def generate_driver_test_description_for_model(
         "headless_mode": "true",
         "launch_dashboard_client": "true",
         "start_joint_controller": "false",
-        "verify_robot_model": "true",
     }
     if tf_prefix:
         launch_arguments["tf_prefix"] = tf_prefix

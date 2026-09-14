@@ -2,20 +2,23 @@
 Changelog for package ur_moveit_config
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-4.9.0 (2026-09-11)
+7.1.0 (2026-09-10)
 ------------------
-* Fix a typo in launch file arg docstring (backport `#1917 <https://github.com/UniversalRobots/Universal_Robots_ROS2_Driver/issues/1917>`_) (`#1931 <https://github.com/UniversalRobots/Universal_Robots_ROS2_Driver/issues/1931>`_)
-* Contributors: mergify[bot]
+* Fix a typo in launch file arg docstring (`#1917 <https://github.com/UniversalRobots/Universal_Robots_ROS2_Driver/issues/1917>`_)
+* Contributors: Felix Exner
 
-4.8.0 (2026-07-09)
+7.0.0 (2026-07-09)
 ------------------
+* Update minimum CMake version to 3.28.3 (`#1814 <https://github.com/UniversalRobots/Universal_Robots_ROS2_Driver/issues/1814>`_)
+* Contributors: Felix Exner
 
-4.7.0 (2026-05-15)
+6.0.0 (2026-05-12)
 ------------------
-* [Doc moveit_config] Add a note about joint_limits.yaml (backport `#1764 <https://github.com/UniversalRobots/Universal_Robots_ROS2_Driver/issues/1764>`_) (`#1766 <https://github.com/UniversalRobots/Universal_Robots_ROS2_Driver/issues/1766>`_)
-* Contributors: mergify[bot]
+* BREAKING: Remove scaled joint trajectory controller (`#1769 <https://github.com/UniversalRobots/Universal_Robots_ROS2_Driver/issues/1769>`_)
+* [Doc moveit_config] Add a note about joint_limits.yaml (`#1764 <https://github.com/UniversalRobots/Universal_Robots_ROS2_Driver/issues/1764>`_)
+* Contributors: Felix Exner
 
-4.6.0 (2026-04-09)
+5.0.0 (2026-04-09)
 ------------------
 * Add sim_time to servo launch file (`#1651 <https://github.com/UniversalRobots/Universal_Robots_ROS2_Driver/issues/1651>`_)
 * Contributors: Jennifer Buehler

@@ -110,7 +110,7 @@ class PassthroughControllerTest(unittest.TestCase):
 
         # Wait for all controllers needed below, as controller manager services might fail
         # e.g. when attempting to deactivate an unknown controller
-        self._controller_manager_interface.wait_for_controller("scaled_joint_trajectory_controller")
+        self._controller_manager_interface.wait_for_controller("joint_trajectory_controller")
 
     def setUp(self):
         self._dashboard_interface.start_robot()
@@ -122,7 +122,7 @@ class PassthroughControllerTest(unittest.TestCase):
             self._controller_manager_interface.switch_controller(
                 strictness=SwitchController.Request.BEST_EFFORT,
                 activate_controllers=["passthrough_trajectory_controller"],
-                deactivate_controllers=["scaled_joint_trajectory_controller"],
+                deactivate_controllers=["joint_trajectory_controller"],
             ).ok
         )
 
@@ -307,7 +307,7 @@ class PassthroughControllerTest(unittest.TestCase):
             self._controller_manager_interface.switch_controller(
                 strictness=SwitchController.Request.BEST_EFFORT,
                 deactivate_controllers=["passthrough_trajectory_controller"],
-                activate_controllers=["scaled_joint_trajectory_controller"],
+                activate_controllers=["joint_trajectory_controller"],
             ).ok
         )
 
@@ -317,7 +317,7 @@ class PassthroughControllerTest(unittest.TestCase):
             self._controller_manager_interface.switch_controller(
                 strictness=SwitchController.Request.BEST_EFFORT,
                 activate_controllers=["passthrough_trajectory_controller"],
-                deactivate_controllers=["scaled_joint_trajectory_controller"],
+                deactivate_controllers=["joint_trajectory_controller"],
             ).ok
         )
         trajectory = JointTrajectory(

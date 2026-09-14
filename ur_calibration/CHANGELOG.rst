@@ -2,19 +2,21 @@
 Changelog for package ur_calibration
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-4.9.0 (2026-09-11)
+7.1.0 (2026-09-10)
 ------------------
 
-4.8.0 (2026-07-09)
+7.0.0 (2026-07-09)
+------------------
+* Update minimum CMake version to 3.28.3 (`#1814 <https://github.com/UniversalRobots/Universal_Robots_ROS2_Driver/issues/1814>`_)
+* Contributors: Felix Exner
+
+6.0.0 (2026-05-12)
 ------------------
 
-4.7.0 (2026-05-15)
+5.0.0 (2026-04-09)
 ------------------
-
-4.6.0 (2026-04-09)
-------------------
-* Ensure calibration library in ur_calibration is always built as static (backport of `#1667 <https://github.com/UniversalRobots/Universal_Robots_ROS2_Driver/issues/1667>`_) (`#1670 <https://github.com/UniversalRobots/Universal_Robots_ROS2_Driver/issues/1670>`_)
-* Contributors: mergify[bot]
+* Ensure calibration library in ur_calibration is always built as static (`#1667 <https://github.com/UniversalRobots/Universal_Robots_ROS2_Driver/issues/1667>`_)
+* Contributors: Silvio Traversaro
 
 4.5.0 (2026-01-13)
 ------------------

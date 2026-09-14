@@ -111,7 +111,7 @@ For getting started, you'll basically need three steps:
 
 1. **Install the driver**
    ```bash
-   sudo apt-get install ros-kilted-ur
+   sudo apt-get install ros-rolling-ur
    ```
    See the [installation instructions](https://docs.universal-robots.com/Universal_Robots_ROS2_Documentation/doc/ur_robot_driver/ur_robot_driver/doc/installation/installation.html) for more details and source-build instructions.
 
