@@ -29,6 +29,8 @@ import logging
 import time
 
 import rclpy
+from rclpy.qos import QoSProfile, DurabilityPolicy
+
 from controller_manager_msgs.srv import (
     ListControllers,
     SwitchController,
@@ -54,6 +56,7 @@ from std_srvs.srv import Trigger
 from ur_dashboard_msgs.msg import RobotMode
 from ur_dashboard_msgs.srv import (
     DownloadProgram,
+    DownloadSupportFile,
     GetLoadedProgram,
     GetProgramState,
     GetPrograms,
@@ -72,6 +75,8 @@ from ur_dashboard_msgs.srv import (
     GetSafetyStatus,
     SetOperationalMode,
     SetUserRole,
+    AddToLog,
+    Popup,
 )
 from ur_msgs.srv import (
     SetIO,
@@ -83,6 +88,7 @@ from ur_msgs.srv import (
 from builtin_interfaces.msg import Duration
 from control_msgs.action import FollowJointTrajectory
 from trajectory_msgs.msg import JointTrajectory, JointTrajectoryPoint
+from std_msgs.msg import Bool as BoolMsg
 
 TIMEOUT_WAIT_SERVICE = 10
 TIMEOUT_WAIT_SERVICE_INITIAL = 120  # If we download the docker image simultaneously to the tests, it can take quite some time until the dashboard server is reachable and usable.
@@ -121,6 +127,28 @@ def _wait_for_action(node, action_name, action_type, timeout):
 
     logging.info("  Successfully connected to action server '%s'", action_name)
     return client
+
+
+def wait_for_robot_program_state(node, state, timeout):
+    received_state = None
+
+    def callback(msg):
+        nonlocal received_state
+        received_state = msg.data
+
+    subscription = node.create_subscription(
+        BoolMsg,
+        "/io_and_status_controller/robot_program_running",
+        callback,
+        QoSProfile(depth=1, durability=DurabilityPolicy.TRANSIENT_LOCAL),
+    )
+
+    start_time = time.time()
+    while time.time() - start_time < timeout and received_state != state:
+        rclpy.spin_once(node, timeout_sec=0.1)
+
+    node.destroy_subscription(subscription)
+    return received_state
 
 
 def _call_service(node, client, request):
@@ -234,6 +262,22 @@ class ActionInterface:
             )
 
 
+def connect_dashboard_client(node, timeout=TIMEOUT_WAIT_SERVICE_INITIAL):
+    """Call ~/connect until it succeeds. Used when the dashboard client is launched with autoconnect disabled."""
+    connect_client = _wait_for_service(node, "/dashboard_client/connect", Trigger, timeout)
+    end_time = time.time() + timeout
+    last_result = None
+    while time.time() < end_time:
+        last_result = _call_service(node, connect_client, Trigger.Request())
+        if last_result.success:
+            return last_result
+        time.sleep(1.0)
+    raise Exception(
+        "Failed to connect to dashboard client with autoconnect disabled"
+        + (f": {last_result.message}" if last_result is not None else "")
+    )
+
+
 class DashboardInterface(
     _ServiceInterface,
     namespace="/dashboard_client",
@@ -260,6 +304,7 @@ class DashboardInterface(
         "upload_program": UploadProgram,
         "update_program": UploadProgram,
         "download_program": DownloadProgram,
+        "download_support_file": DownloadSupportFile,
         "clear_operational_mode": Trigger,
         "generate_flight_report": GenerateFlightReport,
         "generate_support_file": GenerateSupportFile,
@@ -271,6 +316,9 @@ class DashboardInterface(
         "get_user_role": GetUserRole,
         "set_operational_mode": SetOperationalMode,
         "set_user_role": SetUserRole,
+        "add_to_log": AddToLog,
+        "popup": Popup,
+        "shutdown": Trigger,
     },
 ):
     def start_robot(self):
@@ -473,6 +521,25 @@ def _declare_launch_arguments():
     return declared_arguments
 
 
+def _wait_robot_booted_action():
+    """Wait until dashboard or Robot API is reachable. Not a ROS node."""
+    return ExecuteProcess(
+        cmd=[
+            PathJoinSubstitution(
+                [
+                    FindPackagePrefix("ur_robot_driver"),
+                    "lib",
+                    "ur_robot_driver",
+                    "wait_robot_booted.py",
+                ]
+            ),
+            "192.168.56.101",
+        ],
+        name="wait_robot_booted",
+        output="screen",
+    )
+
+
 def _ursim_action(
     ursim_version="latest",
     ur_type="ur5e",
@@ -507,7 +574,7 @@ def _ursim_action(
     )
 
 
-def generate_dashboard_test_description(ursim_version="latest", ur_type="ur5e"):
+def generate_dashboard_test_description(ursim_version="latest", ur_type="ur5e", autoconnect="true"):
     dashboard_client = IncludeLaunchDescription(
         PythonLaunchDescriptionSource(
             PathJoinSubstitution(
@@ -520,12 +587,21 @@ def generate_dashboard_test_description(ursim_version="latest", ur_type="ur5e"):
         ),
         launch_arguments={
             "robot_ip": "192.168.56.101",
+            "autoconnect": autoconnect,
         }.items(),
     )
+    wait_robot_booted = _wait_robot_booted_action()
 
-    return LaunchDescription(
-        _declare_launch_arguments()
-        + [ReadyToTest(), dashboard_client, _ursim_action(ursim_version, ur_type)]
+    starter = RegisterEventHandler(
+        OnProcessExit(target_action=wait_robot_booted, on_exit=[ReadyToTest(), dashboard_client])
+    )
+
+    return (
+        LaunchDescription(
+            _declare_launch_arguments()
+            + [wait_robot_booted, starter, _ursim_action(ursim_version, ur_type)]
+        ),
+        {"wait_robot_booted": wait_robot_booted},
     )
 
 
