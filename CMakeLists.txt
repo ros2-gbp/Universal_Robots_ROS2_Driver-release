@@ -158,6 +158,7 @@ target_link_libraries(robot_state_helper
 
 add_executable(urscript_interface
   src/urscript_interface.cpp
+  src/urcl_log_handler.cpp
 )
 target_link_libraries(urscript_interface PUBLIC
   rclcpp::rclcpp
@@ -285,6 +286,18 @@ if(BUILD_TESTING)
     ur_robot_driver_plugin
   )
 
+  ament_add_gmock(test_hardware_interface_exports
+    test/test_hardware_interface_exports.cpp
+  )
+  target_link_libraries(test_hardware_interface_exports
+    ur_robot_driver_plugin
+    hardware_interface::hardware_interface
+  )
+  target_include_directories(test_hardware_interface_exports PRIVATE
+    include
+    ${motion_primitives_controllers_INCLUDE_DIRS}
+  )
+
   ament_add_gmock(test_robot_state_helper
     test/test_robot_state_helper.cpp
   )
@@ -298,6 +311,16 @@ if(BUILD_TESTING)
   add_launch_test(test/test_mock_hardware.py
     TIMEOUT
       800
+  )
+
+  add_launch_test(test/urscript_interface_interruptible_startup.py
+    TIMEOUT
+      30
+  )
+
+  add_launch_test(test/dashboard_client_interruptible_startup.py
+    TIMEOUT
+      30
   )
 
   if(${UR_ROBOT_DRIVER_BUILD_INTEGRATION_TESTS})
@@ -346,6 +369,10 @@ if(BUILD_TESTING)
         800
     )
     add_launch_test(test/integration_test_io_controller.py
+      TIMEOUT
+        800
+    )
+    add_launch_test(test/integration_test_joint_efforts.py
       TIMEOUT
         800
     )
