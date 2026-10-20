@@ -1,3 +1,32 @@
+## ur_robot_driver (lyrical) - 6.2.0-1
+
+The packages in the `ur_robot_driver` repository were released into the `lyrical` distro by running `/home/feex/.local/bin/bloom-release ur_robot_driver --rosdistro lyrical` on `Tue, 20 Oct 2026 14:29:39 -0000`
+
+These packages were released:
+- `ur`
+- `ur_calibration`
+- `ur_controllers`
+- `ur_dashboard_msgs`
+- `ur_moveit_config`
+- `ur_robot_driver`
+
+Version of package(s) in repository `ur_robot_driver`:
+
+- upstream repository: https://github.com/UniversalRobots/Universal_Robots_ROS2_Driver.git
+- release repository: https://github.com/ros2-gbp/Universal_Robots_ROS2_Driver-release.git
+- rosdistro version: `6.1.0-1`
+- old version: `6.1.0-1`
+- new version: `6.2.0-1`
+
+Versions of tools used:
+
+- bloom version: `0.14.4`
+- catkin_pkg version: `1.1.1`
+- rosdep version: `0.27.0`
+- rosdistro version: `1.1.0`
+- vcstools version: `0.1.42`
+
+
 ## ur_robot_driver (rolling) - 7.2.0-1
 
 The packages in the `ur_robot_driver` repository were released into the `rolling` distro by running `/home/feex/.local/bin/bloom-release ur_robot_driver --rosdistro rolling` on `Tue, 20 Oct 2026 14:24:07 -0000`
