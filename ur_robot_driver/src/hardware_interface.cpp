@@ -693,8 +693,8 @@ URPositionHardwareInterface::on_configure(const rclcpp_lifecycle::State& previou
   // The driver will offer an interface to receive the program's URScript on this port.
   const int script_sender_port = stoi(info_.hardware_parameters["script_sender_port"]);
 
-  use_currents_as_efforts_ = ((info_.hardware_parameters["use_currents_as_efforts"] == "true") ||
-                              (info_.hardware_parameters["use_currents_as_efforts"] == "True"));
+  use_currents_as_efforts_ = ((info_.hardware_parameters["use_currents_as_efforts"] != "false") &&
+                              (info_.hardware_parameters["use_currents_as_efforts"] != "False"));
 
   // The ip address of the host the driver runs on
   std::string reverse_ip = info_.hardware_parameters["reverse_ip"];

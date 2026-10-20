@@ -2,31 +2,27 @@
 Changelog for package ur_controllers
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-7.2.0 (2026-10-20)
+6.2.0 (2026-10-20)
 ------------------
-* Migrate ur_robot_driver off deprecated Handle raw-pointer API (`#2033 <https://github.com/UniversalRobots/Universal_Robots_ROS2_Driver/issues/2033>`_)
+* Migrate ur_robot_driver off deprecated Handle raw-pointer API (backport `#2033 <https://github.com/UniversalRobots/Universal_Robots_ROS2_Driver/issues/2033>`_) (`#2035 <https://github.com/UniversalRobots/Universal_Robots_ROS2_Driver/issues/2035>`_)
   Co-authored-by: Dr. Denis <denis.stogl@b-robotized.com>
   Co-authored-by: Claude Sonnet 5 <noreply@anthropic.com>
-* Do not drop a tool contact goal handle before its terminal state is delivered (`#2005 <https://github.com/UniversalRobots/Universal_Robots_ROS2_Driver/issues/2005>`_)
+* Do not drop a tool contact goal handle before its terminal state is delivered (backport `#2005 <https://github.com/UniversalRobots/Universal_Robots_ROS2_Driver/issues/2005>`_) (`#2025 <https://github.com/UniversalRobots/Universal_Robots_ROS2_Driver/issues/2025>`_)
+  Co-authored-by: Christian Rishøj <christian@rishoj.net>
   Co-authored-by: Claude Fable 5 <noreply@anthropic.com>
-* Contributors: Christian Rishøj, Dr. Denis, Felix Exner
+* Contributors: mergify[bot]
 
-7.1.0 (2026-09-10)
+6.1.0 (2026-09-10)
 ------------------
-* Fix flaky quintic spline test in passthrough controller (`#1941 <https://github.com/UniversalRobots/Universal_Robots_ROS2_Driver/issues/1941>`_)
-* Fix tool contact controller (`#1952 <https://github.com/UniversalRobots/Universal_Robots_ROS2_Driver/issues/1952>`_)
-* Set command interface in tool contact controller (`#1939 <https://github.com/UniversalRobots/Universal_Robots_ROS2_Driver/issues/1939>`_)
-* Add Cartesian twist controller (`#1586 <https://github.com/UniversalRobots/Universal_Robots_ROS2_Driver/issues/1586>`_)
-* Contributors: Felix Exner, URJala
-
-7.0.0 (2026-07-09)
-------------------
-* Allow setting payload inertia matrix via set_payload service   (`#1808 <https://github.com/UniversalRobots/Universal_Robots_ROS2_Driver/issues/1808>`_)
+* Fix tolerance parsing in passthrough controller (backport `#1941 <https://github.com/UniversalRobots/Universal_Robots_ROS2_Driver/issues/1941>`_) (`#1967 <https://github.com/UniversalRobots/Universal_Robots_ROS2_Driver/issues/1967>`_)
+* Set command interface in tool contact controller (backport `#1939 <https://github.com/UniversalRobots/Universal_Robots_ROS2_Driver/issues/1939>`_) (`#1949 <https://github.com/UniversalRobots/Universal_Robots_ROS2_Driver/issues/1949>`_)
+* Add Cartesian twist controller (backport `#1586 <https://github.com/UniversalRobots/Universal_Robots_ROS2_Driver/issues/1586>`_) (`#1926 <https://github.com/UniversalRobots/Universal_Robots_ROS2_Driver/issues/1926>`_)
+* Allow setting payload inertia matrix via set_payload service in a backwards-compatible way (`#1811 <https://github.com/UniversalRobots/Universal_Robots_ROS2_Driver/issues/1811>`_)
 * Allow updating robot gravity (`#1606 <https://github.com/UniversalRobots/Universal_Robots_ROS2_Driver/issues/1606>`_)
 * Use a realtime_tools::RealtimePublisher for publishing the state (`#1822 <https://github.com/UniversalRobots/Universal_Robots_ROS2_Driver/issues/1822>`_)
-* Make GPIO controller publishers realtime safe (`#1807 <https://github.com/UniversalRobots/Universal_Robots_ROS2_Driver/issues/1807>`_)
+* Make GPIO controller publishers realtime-safe (`#1807 <https://github.com/UniversalRobots/Universal_Robots_ROS2_Driver/issues/1807>`_)
 * Update minimum CMake version to 3.28.3 (`#1814 <https://github.com/UniversalRobots/Universal_Robots_ROS2_Driver/issues/1814>`_)
-* Contributors: AdamPettinger, Felix Exner, Hasan Amin, Sergi Romero
+* Contributors: AdamPettinger, Felix Exner, Hasan Amin, Sergi Romero, mergify[bot]
 
 6.0.0 (2026-05-12)
 ------------------

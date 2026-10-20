@@ -31,10 +31,10 @@
 Integration tests for joint effort reporting.
 
 Verifies that the driver can publish joint efforts from either RTDE field:
-* ``actual_current_as_torque`` (default, ``use_currents_as_efforts:=false``)
-* ``actual_current`` (legacy, ``use_currents_as_efforts:=true``)
+* ``actual_current`` (default, ``use_currents_as_efforts:=true``)
+* ``actual_current_as_torque`` (``use_currents_as_efforts:=false``)
 
-Requires a UR5e URSim image with PolyScope >= 5.23.0 / 10.11.0 for the default torque mode.
+Requires a UR5e URSim image with PolyScope >= 5.23.0 / 10.11.0 for the torque mode.
 """
 
 import math
@@ -68,7 +68,7 @@ UR_TYPE = "ur5e"
 @pytest.mark.launch_test
 @launch_testing.parametrize(
     "use_currents_as_efforts",
-    # None: omit the launch argument and assert the default is torque mode.
+    # None: omit the launch argument and assert the default is current mode.
     [(None), ("false"), ("true")],
 )
 def generate_test_description(use_currents_as_efforts):
@@ -118,8 +118,8 @@ class JointEffortsTest(unittest.TestCase):
 
     def test_joint_efforts_are_published(self, use_currents_as_efforts):
         """Driver comes up and publishes finite joint efforts for the selected RTDE source."""
-        # Default (argument omitted) and explicit false both select torque reporting.
-        expect_torques = use_currents_as_efforts in (None, "false")
+        # Default (argument omitted) and explicit true both select current reporting.
+        expect_torques = use_currents_as_efforts == "false"
 
         if expect_torques:
             version = self._configuration_controller_interface.get_robot_software_version()
@@ -132,7 +132,7 @@ class JointEffortsTest(unittest.TestCase):
             self.assertFalse(
                 unsupported,
                 f"URSim software {version.major}.{version.minor} does not support "
-                "actual_current_as_torque; need >= 5.23.0 / 10.11.0 for the default effort mode.",
+                "actual_current_as_torque; need >= 5.23.0 / 10.11.0 for torque effort mode.",
             )
 
         joint_state = self._wait_for_joint_state()
@@ -160,16 +160,16 @@ class JointEffortsTest(unittest.TestCase):
                 "Expected gravity-related joint torques > "
                 f"{MIN_TORQUE_EFFORT_NM} Nm with use_currents_as_efforts="
                 f"{use_currents_as_efforts!r}, but max |effort| was {max_abs_effort}. "
-                "Check that actual_current_as_torque is read (default).",
+                "Check that actual_current_as_torque is read.",
             )
         else:
             self.assertGreater(
                 max_abs_effort,
                 MIN_CURRENT_EFFORT_A,
                 "Expected motor currents > "
-                f"{MIN_CURRENT_EFFORT_A} A with use_currents_as_efforts:=true, "
-                f"but max |effort| was {max_abs_effort}. "
-                "Check that actual_current is read.",
+                f"{MIN_CURRENT_EFFORT_A} A with use_currents_as_efforts="
+                f"{use_currents_as_efforts!r}, but max |effort| was {max_abs_effort}. "
+                "Check that actual_current is read (default).",
             )
             self.assertLess(
                 max_abs_effort,

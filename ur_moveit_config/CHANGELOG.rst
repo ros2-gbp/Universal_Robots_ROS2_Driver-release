@@ -2,20 +2,16 @@
 Changelog for package ur_moveit_config
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-7.2.0 (2026-10-20)
+6.2.0 (2026-10-20)
 ------------------
-* [ur_moveit_config] Update license tag (`#1993 <https://github.com/UniversalRobots/Universal_Robots_ROS2_Driver/issues/1993>`_)
-* Contributors: Felix Exner
+* [ur_moveit_config] Update license tag (backport `#1993 <https://github.com/UniversalRobots/Universal_Robots_ROS2_Driver/issues/1993>`_) (`#1997 <https://github.com/UniversalRobots/Universal_Robots_ROS2_Driver/issues/1997>`_)
+* Contributors: mergify[bot]
 
-7.1.0 (2026-09-10)
+6.1.0 (2026-09-10)
 ------------------
-* Fix a typo in launch file arg docstring (`#1917 <https://github.com/UniversalRobots/Universal_Robots_ROS2_Driver/issues/1917>`_)
-* Contributors: Felix Exner
-
-7.0.0 (2026-07-09)
-------------------
+* Fix a typo in launch file argument docstring (backport `#1917 <https://github.com/UniversalRobots/Universal_Robots_ROS2_Driver/issues/1917>`_) (`#1932 <https://github.com/UniversalRobots/Universal_Robots_ROS2_Driver/issues/1932>`_)
 * Update minimum CMake version to 3.28.3 (`#1814 <https://github.com/UniversalRobots/Universal_Robots_ROS2_Driver/issues/1814>`_)
-* Contributors: Felix Exner
+* Contributors: Felix Exner, mergify[bot]
 
 6.0.0 (2026-05-12)
 ------------------

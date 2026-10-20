@@ -10,8 +10,3 @@ Kilted -> Lyrical
 ^^^^^^^^^^^^^^^^^
 .. include:: migration/lyrical.rst
     :start-line: 4
-
-Lyrical -> Maoka
-^^^^^^^^^^^^^^^^
-.. include:: migration/makoa.rst
-    :start-line: 4
