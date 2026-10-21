@@ -158,6 +158,7 @@ target_link_libraries(robot_state_helper
 
 add_executable(urscript_interface
   src/urscript_interface.cpp
+  src/urcl_log_handler.cpp
 )
 target_link_libraries(urscript_interface PUBLIC
   rclcpp::rclcpp
@@ -300,6 +301,16 @@ if(BUILD_TESTING)
       800
   )
 
+  add_launch_test(test/urscript_interface_interruptible_startup.py
+    TIMEOUT
+      30
+  )
+
+  add_launch_test(test/dashboard_client_interruptible_startup.py
+    TIMEOUT
+      30
+  )
+
   if(${UR_ROBOT_DRIVER_BUILD_INTEGRATION_TESTS})
     add_launch_test(test/launch_args.py
       TIMEOUT
@@ -346,6 +357,10 @@ if(BUILD_TESTING)
         800
     )
     add_launch_test(test/integration_test_io_controller.py
+      TIMEOUT
+        800
+    )
+    add_launch_test(test/integration_test_joint_efforts.py
       TIMEOUT
         800
     )
