@@ -78,7 +78,7 @@ class JTCClient(rclpy.node.Node):
 
     def __init__(self):
         super().__init__("jtc_client")
-        self.declare_parameter("controller_name", "joint_trajectory_controller")
+        self.declare_parameter("controller_name", "scaled_joint_trajectory_controller")
         self.declare_parameter("tf_prefix", "")
         self.declare_parameter(
             "joints",

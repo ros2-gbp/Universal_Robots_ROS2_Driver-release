@@ -2,24 +2,25 @@
 Changelog for package ur_moveit_config
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-6.2.0 (2026-10-20)
-------------------
-* [ur_moveit_config] Update license tag (backport `#1993 <https://github.com/UniversalRobots/Universal_Robots_ROS2_Driver/issues/1993>`_) (`#1997 <https://github.com/UniversalRobots/Universal_Robots_ROS2_Driver/issues/1997>`_)
+4.10.0 (2026-10-20)
+-------------------
+* [ur_moveit_config] Update license tag (backport `#1993 <https://github.com/UniversalRobots/Universal_Robots_ROS2_Driver/issues/1993>`_) (`#1996 <https://github.com/UniversalRobots/Universal_Robots_ROS2_Driver/issues/1996>`_)
 * Contributors: mergify[bot]
 
-6.1.0 (2026-09-10)
+4.9.0 (2026-09-11)
 ------------------
-* Fix a typo in launch file argument docstring (backport `#1917 <https://github.com/UniversalRobots/Universal_Robots_ROS2_Driver/issues/1917>`_) (`#1932 <https://github.com/UniversalRobots/Universal_Robots_ROS2_Driver/issues/1932>`_)
-* Update minimum CMake version to 3.28.3 (`#1814 <https://github.com/UniversalRobots/Universal_Robots_ROS2_Driver/issues/1814>`_)
-* Contributors: Felix Exner, mergify[bot]
+* Fix a typo in launch file arg docstring (backport `#1917 <https://github.com/UniversalRobots/Universal_Robots_ROS2_Driver/issues/1917>`_) (`#1931 <https://github.com/UniversalRobots/Universal_Robots_ROS2_Driver/issues/1931>`_)
+* Contributors: mergify[bot]
 
-6.0.0 (2026-05-12)
+4.8.0 (2026-07-09)
 ------------------
-* BREAKING: Remove scaled joint trajectory controller (`#1769 <https://github.com/UniversalRobots/Universal_Robots_ROS2_Driver/issues/1769>`_)
-* [Doc moveit_config] Add a note about joint_limits.yaml (`#1764 <https://github.com/UniversalRobots/Universal_Robots_ROS2_Driver/issues/1764>`_)
-* Contributors: Felix Exner
 
-5.0.0 (2026-04-09)
+4.7.0 (2026-05-15)
+------------------
+* [Doc moveit_config] Add a note about joint_limits.yaml (backport `#1764 <https://github.com/UniversalRobots/Universal_Robots_ROS2_Driver/issues/1764>`_) (`#1766 <https://github.com/UniversalRobots/Universal_Robots_ROS2_Driver/issues/1766>`_)
+* Contributors: mergify[bot]
+
+4.6.0 (2026-04-09)
 ------------------
 * Add sim_time to servo launch file (`#1651 <https://github.com/UniversalRobots/Universal_Robots_ROS2_Driver/issues/1651>`_)
 * Contributors: Jennifer Buehler

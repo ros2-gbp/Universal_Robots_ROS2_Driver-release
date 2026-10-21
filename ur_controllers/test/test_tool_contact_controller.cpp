@@ -70,13 +70,16 @@ protected:
     params.node_options = controller_.define_custom_node_options();
     ASSERT_EQ(controller_.init(params), controller_interface::return_type::OK);
 
-    command_interface_ =
-        std::make_shared<hardware_interface::CommandInterface>("tool_contact", "tool_contact_set_state");
-    state_interface_ = std::make_shared<hardware_interface::StateInterface>("tool_contact", "tool_contact_state");
-    result_interface_ = std::make_shared<hardware_interface::StateInterface>("tool_contact", "tool_contact_result");
-    ASSERT_TRUE(command_interface_->set_value(TOOL_CONTACT_STANDBY));
-    ASSERT_TRUE(state_interface_->set_value(TOOL_CONTACT_STANDBY));
-    ASSERT_TRUE(result_interface_->set_value(3.0));
+    set_state_value_ = TOOL_CONTACT_STANDBY;
+    state_value_ = TOOL_CONTACT_STANDBY;
+    result_value_ = 3.0;
+
+    command_interface_ = std::make_shared<hardware_interface::CommandInterface>(
+        "tool_contact", "tool_contact_set_state", &set_state_value_);
+    state_interface_ =
+        std::make_shared<hardware_interface::StateInterface>("tool_contact", "tool_contact_state", &state_value_);
+    result_interface_ =
+        std::make_shared<hardware_interface::StateInterface>("tool_contact", "tool_contact_result", &result_value_);
 
     loaned_command_ = std::make_unique<hardware_interface::LoanedCommandInterface>(command_interface_);
     loaned_state_ = std::make_unique<hardware_interface::LoanedStateInterface>(state_interface_);
@@ -123,18 +126,8 @@ protected:
 
   void set_hw_state(double state, double result = 3.0)
   {
-    ASSERT_TRUE(state_interface_->set_value(state));
-    ASSERT_TRUE(result_interface_->set_value(result));
-  }
-
-  void set_command_state(double state)
-  {
-    ASSERT_TRUE(command_interface_->set_value(state));
-  }
-
-  double command_state() const
-  {
-    return command_interface_->get_optional().value();
+    state_value_ = state;
+    result_value_ = result;
   }
 
   void set_active(bool active)
@@ -199,6 +192,9 @@ protected:
   }
 
   ur_controllers::ToolContactController controller_;
+  double set_state_value_{};
+  double state_value_{};
+  double result_value_{};
   std::shared_ptr<hardware_interface::CommandInterface> command_interface_;
   std::shared_ptr<hardware_interface::StateInterface> state_interface_;
   std::shared_ptr<hardware_interface::StateInterface> result_interface_;
@@ -215,11 +211,11 @@ TEST_F(ToolContactControllerTest, AbortWhileExecutingKeepsWaitingEndCommand)
 {
   // Regression (#1939): abort must not be overwritten by the EXECUTING branch.
   request_abort();
-  set_command_state(TOOL_CONTACT_EXECUTING);
+  set_state_value_ = TOOL_CONTACT_EXECUTING;
   set_hw_state(TOOL_CONTACT_EXECUTING, 3.0);
 
   EXPECT_EQ(run_update(), controller_interface::return_type::OK);
-  EXPECT_DOUBLE_EQ(command_state(), TOOL_CONTACT_WAITING_END);
+  EXPECT_DOUBLE_EQ(set_state_value_, TOOL_CONTACT_WAITING_END);
   EXPECT_FALSE(abort_requested());
   EXPECT_FALSE(enable_requested());
 }
@@ -227,22 +223,22 @@ TEST_F(ToolContactControllerTest, AbortWhileExecutingKeepsWaitingEndCommand)
 TEST_F(ToolContactControllerTest, EnableWhileIdleSetsWaitingBeginAndReturns)
 {
   request_enable();
-  set_command_state(TOOL_CONTACT_STANDBY);
+  set_state_value_ = TOOL_CONTACT_STANDBY;
   set_hw_state(TOOL_CONTACT_STANDBY);
 
   EXPECT_EQ(run_update(), controller_interface::return_type::OK);
-  EXPECT_DOUBLE_EQ(command_state(), TOOL_CONTACT_WAITING_BEGIN);
+  EXPECT_DOUBLE_EQ(set_state_value_, TOOL_CONTACT_WAITING_BEGIN);
   EXPECT_FALSE(enable_requested());
 }
 
 TEST_F(ToolContactControllerTest, AbortTakesPriorityOverEnable)
 {
   request_abort_and_enable();
-  set_command_state(TOOL_CONTACT_EXECUTING);
+  set_state_value_ = TOOL_CONTACT_EXECUTING;
   set_hw_state(TOOL_CONTACT_EXECUTING, 3.0);
 
   EXPECT_EQ(run_update(), controller_interface::return_type::OK);
-  EXPECT_DOUBLE_EQ(command_state(), TOOL_CONTACT_WAITING_END);
+  EXPECT_DOUBLE_EQ(set_state_value_, TOOL_CONTACT_WAITING_END);
   EXPECT_FALSE(abort_requested());
   EXPECT_FALSE(enable_requested());
 }
@@ -251,11 +247,11 @@ TEST_F(ToolContactControllerTest, AbortDoesNotFallThroughToStateMachine)
 {
   // Even when HW reports SUCCESS_END, abort must win and leave WAITING_END.
   request_abort();
-  set_command_state(TOOL_CONTACT_EXECUTING);
+  set_state_value_ = TOOL_CONTACT_EXECUTING;
   set_hw_state(TOOL_CONTACT_SUCCESS_END);
 
   EXPECT_EQ(run_update(), controller_interface::return_type::OK);
-  EXPECT_DOUBLE_EQ(command_state(), TOOL_CONTACT_WAITING_END);
+  EXPECT_DOUBLE_EQ(set_state_value_, TOOL_CONTACT_WAITING_END);
 }
 
 // ---------------------------------------------------------------------------
@@ -265,12 +261,12 @@ TEST_F(ToolContactControllerTest, AbortDoesNotFallThroughToStateMachine)
 TEST_F(ToolContactControllerTest, ExecutingNonTerminalResultAcknowledgesExecuting)
 {
   clear_requests();
-  set_command_state(TOOL_CONTACT_WAITING_BEGIN);
+  set_state_value_ = TOOL_CONTACT_WAITING_BEGIN;
   set_hw_state(TOOL_CONTACT_EXECUTING, 3.0);
   set_logged_once(false);
 
   EXPECT_EQ(run_update(), controller_interface::return_type::OK);
-  EXPECT_DOUBLE_EQ(command_state(), TOOL_CONTACT_EXECUTING);
+  EXPECT_DOUBLE_EQ(set_state_value_, TOOL_CONTACT_EXECUTING);
   EXPECT_TRUE(is_active());
   EXPECT_TRUE(logged_once());
 }
@@ -278,24 +274,24 @@ TEST_F(ToolContactControllerTest, ExecutingNonTerminalResultAcknowledgesExecutin
 TEST_F(ToolContactControllerTest, ExecutingSuccessResultRequestsWaitingEnd)
 {
   clear_requests();
-  set_command_state(TOOL_CONTACT_EXECUTING);
+  set_state_value_ = TOOL_CONTACT_EXECUTING;
   set_hw_state(TOOL_CONTACT_EXECUTING, 0.0);
   set_active(true);
 
   EXPECT_EQ(run_update(), controller_interface::return_type::OK);
-  EXPECT_DOUBLE_EQ(command_state(), TOOL_CONTACT_WAITING_END);
+  EXPECT_DOUBLE_EQ(set_state_value_, TOOL_CONTACT_WAITING_END);
   EXPECT_FALSE(is_active());
 }
 
 TEST_F(ToolContactControllerTest, ExecutingHardwareAbortResultSetsStandby)
 {
   clear_requests();
-  set_command_state(TOOL_CONTACT_EXECUTING);
+  set_state_value_ = TOOL_CONTACT_EXECUTING;
   set_hw_state(TOOL_CONTACT_EXECUTING, 1.0);
   set_active(true);
 
   EXPECT_EQ(run_update(), controller_interface::return_type::OK);
-  EXPECT_DOUBLE_EQ(command_state(), TOOL_CONTACT_STANDBY);
+  EXPECT_DOUBLE_EQ(set_state_value_, TOOL_CONTACT_STANDBY);
   EXPECT_FALSE(is_active());
 }
 
@@ -308,13 +304,13 @@ TEST_F(ToolContactControllerTest, ContendedGoalBoxExecutingNonTerminalAcknowledg
   // Non-terminal EXECUTING must still be acknowledged so startToolContact is
   // not retriggered, even when the goal handle cannot be read this cycle.
   clear_requests();
-  set_command_state(TOOL_CONTACT_WAITING_BEGIN);
+  set_state_value_ = TOOL_CONTACT_WAITING_BEGIN;
   set_hw_state(TOOL_CONTACT_EXECUTING, 3.0);
   set_logged_once(false);
 
   with_goal_box_contended([this]() {
     EXPECT_EQ(run_update(), controller_interface::return_type::OK);
-    EXPECT_DOUBLE_EQ(command_state(), TOOL_CONTACT_EXECUTING);
+    EXPECT_DOUBLE_EQ(set_state_value_, TOOL_CONTACT_EXECUTING);
     EXPECT_TRUE(is_active());
     EXPECT_TRUE(logged_once());
   });
@@ -325,14 +321,14 @@ TEST_F(ToolContactControllerTest, ContendedGoalBoxExecutingSuccessDefersTerminal
   // Terminal success must NOT write WAITING_END while the goal box is
   // contended; goal/result handling is deferred to a later cycle.
   clear_requests();
-  set_command_state(TOOL_CONTACT_EXECUTING);
+  set_state_value_ = TOOL_CONTACT_EXECUTING;
   set_hw_state(TOOL_CONTACT_EXECUTING, 0.0);
   set_active(true);
   set_logged_once(true);
 
   with_goal_box_contended([this]() {
     EXPECT_EQ(run_update(), controller_interface::return_type::OK);
-    EXPECT_DOUBLE_EQ(command_state(), TOOL_CONTACT_EXECUTING);
+    EXPECT_DOUBLE_EQ(set_state_value_, TOOL_CONTACT_EXECUTING);
     EXPECT_TRUE(is_active());
   });
 }
@@ -342,14 +338,14 @@ TEST_F(ToolContactControllerTest, ContendedGoalBoxExecutingHardwareAbortDefersTe
   // Terminal hardware abort must NOT write STANDBY while the goal box is
   // contended; goal/result handling is deferred to a later cycle.
   clear_requests();
-  set_command_state(TOOL_CONTACT_EXECUTING);
+  set_state_value_ = TOOL_CONTACT_EXECUTING;
   set_hw_state(TOOL_CONTACT_EXECUTING, 1.0);
   set_active(true);
   set_logged_once(true);
 
   with_goal_box_contended([this]() {
     EXPECT_EQ(run_update(), controller_interface::return_type::OK);
-    EXPECT_DOUBLE_EQ(command_state(), TOOL_CONTACT_EXECUTING);
+    EXPECT_DOUBLE_EQ(set_state_value_, TOOL_CONTACT_EXECUTING);
     EXPECT_TRUE(is_active());
   });
 }
@@ -357,13 +353,13 @@ TEST_F(ToolContactControllerTest, ContendedGoalBoxExecutingHardwareAbortDefersTe
 TEST_F(ToolContactControllerTest, ContendedGoalBoxNonExecutingLeavesCommandUnchanged)
 {
   clear_requests();
-  set_command_state(TOOL_CONTACT_STANDBY);
+  set_state_value_ = TOOL_CONTACT_STANDBY;
   set_hw_state(TOOL_CONTACT_STANDBY);
   set_logged_once(true);
 
   with_goal_box_contended([this]() {
     EXPECT_EQ(run_update(), controller_interface::return_type::OK);
-    EXPECT_DOUBLE_EQ(command_state(), TOOL_CONTACT_STANDBY);
+    EXPECT_DOUBLE_EQ(set_state_value_, TOOL_CONTACT_STANDBY);
     // STANDBY logging clear only runs in the uncontended switch.
     EXPECT_TRUE(logged_once());
   });
@@ -376,59 +372,59 @@ TEST_F(ToolContactControllerTest, ContendedGoalBoxNonExecutingLeavesCommandUncha
 TEST_F(ToolContactControllerTest, FailureBeginSetsStandbyAndClearsActive)
 {
   clear_requests();
-  set_command_state(TOOL_CONTACT_WAITING_BEGIN);
+  set_state_value_ = TOOL_CONTACT_WAITING_BEGIN;
   set_hw_state(TOOL_CONTACT_FAILURE_BEGIN);
   set_active(true);
 
   EXPECT_EQ(run_update(), controller_interface::return_type::OK);
-  EXPECT_DOUBLE_EQ(command_state(), TOOL_CONTACT_STANDBY);
+  EXPECT_DOUBLE_EQ(set_state_value_, TOOL_CONTACT_STANDBY);
   EXPECT_FALSE(is_active());
 }
 
 TEST_F(ToolContactControllerTest, SuccessEndSetsStandbyAndClearsActive)
 {
   clear_requests();
-  set_command_state(TOOL_CONTACT_WAITING_END);
+  set_state_value_ = TOOL_CONTACT_WAITING_END;
   set_hw_state(TOOL_CONTACT_SUCCESS_END);
   set_active(true);
 
   EXPECT_EQ(run_update(), controller_interface::return_type::OK);
-  EXPECT_DOUBLE_EQ(command_state(), TOOL_CONTACT_STANDBY);
+  EXPECT_DOUBLE_EQ(set_state_value_, TOOL_CONTACT_STANDBY);
   EXPECT_FALSE(is_active());
 }
 
 TEST_F(ToolContactControllerTest, SuccessEndAlwaysWritesStandbyEvenIfAlreadyInactive)
 {
   clear_requests();
-  set_command_state(TOOL_CONTACT_WAITING_END);
+  set_state_value_ = TOOL_CONTACT_WAITING_END;
   set_hw_state(TOOL_CONTACT_SUCCESS_END);
   set_active(false);
 
   EXPECT_EQ(run_update(), controller_interface::return_type::OK);
-  EXPECT_DOUBLE_EQ(command_state(), TOOL_CONTACT_STANDBY);
+  EXPECT_DOUBLE_EQ(set_state_value_, TOOL_CONTACT_STANDBY);
   EXPECT_FALSE(is_active());
 }
 
 TEST_F(ToolContactControllerTest, FailureEndSetsStandby)
 {
   clear_requests();
-  set_command_state(TOOL_CONTACT_WAITING_END);
+  set_state_value_ = TOOL_CONTACT_WAITING_END;
   set_hw_state(TOOL_CONTACT_FAILURE_END);
   set_active(true);
 
   EXPECT_EQ(run_update(), controller_interface::return_type::OK);
-  EXPECT_DOUBLE_EQ(command_state(), TOOL_CONTACT_STANDBY);
+  EXPECT_DOUBLE_EQ(set_state_value_, TOOL_CONTACT_STANDBY);
 }
 
 TEST_F(ToolContactControllerTest, StandbyClearsLoggedOnceWithoutChangingCommand)
 {
   clear_requests();
-  set_command_state(TOOL_CONTACT_STANDBY);
+  set_state_value_ = TOOL_CONTACT_STANDBY;
   set_hw_state(TOOL_CONTACT_STANDBY);
   set_logged_once(true);
 
   EXPECT_EQ(run_update(), controller_interface::return_type::OK);
-  EXPECT_DOUBLE_EQ(command_state(), TOOL_CONTACT_STANDBY);
+  EXPECT_DOUBLE_EQ(set_state_value_, TOOL_CONTACT_STANDBY);
   EXPECT_FALSE(logged_once());
 }
 
@@ -436,31 +432,31 @@ TEST_F(ToolContactControllerTest, WaitingBeginStateIsPassthroughDefault)
 {
   // Intermediate HW states fall through the default branch; command is unchanged.
   clear_requests();
-  set_command_state(TOOL_CONTACT_WAITING_BEGIN);
+  set_state_value_ = TOOL_CONTACT_WAITING_BEGIN;
   set_hw_state(TOOL_CONTACT_WAITING_BEGIN);
 
   EXPECT_EQ(run_update(), controller_interface::return_type::OK);
-  EXPECT_DOUBLE_EQ(command_state(), TOOL_CONTACT_WAITING_BEGIN);
+  EXPECT_DOUBLE_EQ(set_state_value_, TOOL_CONTACT_WAITING_BEGIN);
 }
 
 TEST_F(ToolContactControllerTest, WaitingEndStateIsPassthroughDefault)
 {
   clear_requests();
-  set_command_state(TOOL_CONTACT_WAITING_END);
+  set_state_value_ = TOOL_CONTACT_WAITING_END;
   set_hw_state(TOOL_CONTACT_WAITING_END);
 
   EXPECT_EQ(run_update(), controller_interface::return_type::OK);
-  EXPECT_DOUBLE_EQ(command_state(), TOOL_CONTACT_WAITING_END);
+  EXPECT_DOUBLE_EQ(set_state_value_, TOOL_CONTACT_WAITING_END);
 }
 
 TEST_F(ToolContactControllerTest, UnknownStateLeavesCommandUnchanged)
 {
   clear_requests();
-  set_command_state(TOOL_CONTACT_STANDBY);
+  set_state_value_ = TOOL_CONTACT_STANDBY;
   set_hw_state(99.0);
 
   EXPECT_EQ(run_update(), controller_interface::return_type::OK);
-  EXPECT_DOUBLE_EQ(command_state(), TOOL_CONTACT_STANDBY);
+  EXPECT_DOUBLE_EQ(set_state_value_, TOOL_CONTACT_STANDBY);
 }
 
 // ---------------------------------------------------------------------------
@@ -471,28 +467,28 @@ TEST_F(ToolContactControllerTest, EnableThenExecutingHandshakeSequence)
 {
   // 1) Enable request -> WAITING_BEGIN
   request_enable();
-  set_command_state(TOOL_CONTACT_STANDBY);
+  set_state_value_ = TOOL_CONTACT_STANDBY;
   set_hw_state(TOOL_CONTACT_STANDBY);
   ASSERT_EQ(run_update(), controller_interface::return_type::OK);
-  ASSERT_DOUBLE_EQ(command_state(), TOOL_CONTACT_WAITING_BEGIN);
+  ASSERT_DOUBLE_EQ(set_state_value_, TOOL_CONTACT_WAITING_BEGIN);
 
   // 2) HW reports EXECUTING with non-terminal result -> acknowledge EXECUTING
   clear_requests();
   set_hw_state(TOOL_CONTACT_EXECUTING, 3.0);
   ASSERT_EQ(run_update(), controller_interface::return_type::OK);
-  EXPECT_DOUBLE_EQ(command_state(), TOOL_CONTACT_EXECUTING);
+  EXPECT_DOUBLE_EQ(set_state_value_, TOOL_CONTACT_EXECUTING);
   EXPECT_TRUE(is_active());
 
   // 3) Abort while still executing -> WAITING_END (regression path)
   request_abort();
   ASSERT_EQ(run_update(), controller_interface::return_type::OK);
-  EXPECT_DOUBLE_EQ(command_state(), TOOL_CONTACT_WAITING_END);
+  EXPECT_DOUBLE_EQ(set_state_value_, TOOL_CONTACT_WAITING_END);
 
   // 4) HW reports SUCCESS_END -> STANDBY
   clear_requests();
   set_hw_state(TOOL_CONTACT_SUCCESS_END);
   ASSERT_EQ(run_update(), controller_interface::return_type::OK);
-  EXPECT_DOUBLE_EQ(command_state(), TOOL_CONTACT_STANDBY);
+  EXPECT_DOUBLE_EQ(set_state_value_, TOOL_CONTACT_STANDBY);
   EXPECT_FALSE(is_active());
 }
 

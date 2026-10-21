@@ -2,25 +2,28 @@
 Changelog for package ur_dashboard_msgs
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-6.2.0 (2026-10-20)
+4.10.0 (2026-10-20)
+-------------------
+
+4.9.0 (2026-09-11)
+------------------
+* Update dashboard client for 10.14.0 (backport `#1945 <https://github.com/UniversalRobots/Universal_Robots_ROS2_Driver/issues/1945>`_) (`#1974 <https://github.com/UniversalRobots/Universal_Robots_ROS2_Driver/issues/1974>`_)
+* Contributors: mergify[bot]
+
+4.8.0 (2026-07-09)
+------------------
+* Update safety status msg with new IO plane stop (backport `#1817 <https://github.com/UniversalRobots/Universal_Robots_ROS2_Driver/issues/1817>`_) (`#1820 <https://github.com/UniversalRobots/Universal_Robots_ROS2_Driver/issues/1820>`_)
+* Contributors: Felix Exner, mergify[bot]
+
+4.7.0 (2026-05-15)
 ------------------
 
-6.1.0 (2026-09-10)
+4.6.0 (2026-04-09)
 ------------------
-* Update dashboard client for 10.14.0 (backport `#1945 <https://github.com/UniversalRobots/Universal_Robots_ROS2_Driver/issues/1945>`_) (`#1975 <https://github.com/UniversalRobots/Universal_Robots_ROS2_Driver/issues/1975>`_)
-* Update safety status message with new IO plane stop (`#1817 <https://github.com/UniversalRobots/Universal_Robots_ROS2_Driver/issues/1817>`_)
-* Update minimum CMake version to 3.28.3 (`#1814 <https://github.com/UniversalRobots/Universal_Robots_ROS2_Driver/issues/1814>`_)
-* Contributors: Felix Exner, Mads Holm Peters, mergify[bot]
-
-6.0.0 (2026-05-12)
-------------------
-
-5.0.0 (2026-04-09)
-------------------
-* Use integer representation of SafetyStatus.msg (`#1734 <https://github.com/UniversalRobots/Universal_Robots_ROS2_Driver/issues/1734>`_)
-* Services to support various dashboard calls (`#1674 <https://github.com/UniversalRobots/Universal_Robots_ROS2_Driver/issues/1674>`_)
-* Dashboard client new x commands (`#1679 <https://github.com/UniversalRobots/Universal_Robots_ROS2_Driver/issues/1679>`_)
-* Contributors: Felix Exner, URJala
+* Use integer representation of SafetyStatus.msg (backport `#1734 <https://github.com/UniversalRobots/Universal_Robots_ROS2_Driver/issues/1734>`_) (`#1743 <https://github.com/UniversalRobots/Universal_Robots_ROS2_Driver/issues/1743>`_)
+* Services to support various dashboard calls (backport `#1674 <https://github.com/UniversalRobots/Universal_Robots_ROS2_Driver/issues/1674>`_) (`#1710 <https://github.com/UniversalRobots/Universal_Robots_ROS2_Driver/issues/1710>`_)
+* Dashboard client new x commands (backport `#1679 <https://github.com/UniversalRobots/Universal_Robots_ROS2_Driver/issues/1679>`_) (`#1696 <https://github.com/UniversalRobots/Universal_Robots_ROS2_Driver/issues/1696>`_)
+* Contributors: mergify[bot]
 
 4.5.0 (2026-01-13)
 ------------------

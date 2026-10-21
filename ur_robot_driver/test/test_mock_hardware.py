@@ -82,9 +82,9 @@ class MockHWTest(unittest.TestCase):
         self._io_status_controller_interface = IoStatusInterface(self.node)
         self._configuration_controller_interface = ConfigurationInterface(self.node)
 
-        self._follow_joint_trajectory = ActionInterface(
+        self._scaled_follow_joint_trajectory = ActionInterface(
             self.node,
-            "/joint_trajectory_controller/follow_joint_trajectory",
+            "/scaled_joint_trajectory_controller/follow_joint_trajectory",
             FollowJointTrajectory,
         )
 
@@ -143,19 +143,19 @@ class MockHWTest(unittest.TestCase):
         for subscription in subscriptions:
             self.node.destroy_subscription(subscription)
 
-    def test_start_jtc_controller(self):
+    def test_start_scaled_jtc_controller(self):
         # Deactivate controller, if it is not already
         self.assertTrue(
             self._controller_manager_interface.switch_controller(
                 strictness=SwitchController.Request.BEST_EFFORT,
-                deactivate_controllers=["joint_trajectory_controller"],
+                deactivate_controllers=["scaled_joint_trajectory_controller"],
             ).ok
         )
         # Activate controller
         self.assertTrue(
             self._controller_manager_interface.switch_controller(
                 strictness=SwitchController.Request.STRICT,
-                activate_controllers=["joint_trajectory_controller"],
+                activate_controllers=["scaled_joint_trajectory_controller"],
             ).ok
         )
 
