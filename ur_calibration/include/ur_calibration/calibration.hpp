@@ -44,8 +44,8 @@
 #ifndef UR_CALIBRATION__CALIBRATION_HPP_
 #define UR_CALIBRATION__CALIBRATION_HPP_
 
-#include <Eigen/Dense>
 #include <cassert>
+#include <Eigen/Dense>
 #include <fstream>
 #include <string>
 #include <vector>
