@@ -1,7 +1,3 @@
-:github_url: https://github.com/UniversalRobots/Universal_Robots_ROS2_Driver/blob/main/ur_robot_driver/doc/usage/controllers.rst
-
-.. _ur_controllers:
-
 Controllers
 ===========
 
@@ -57,8 +53,7 @@ Publishes all joints' positions, velocities, and efforts as ``sensor_msgs/JointS
 
    The ``effort`` field contains motor currents, not physical joint torques by default. On newer
    robot software versions (>= 5.23.0 / 10.11.0), the driver can report the actual joint torques as
-   efforts. To achieve that, set the hardware parameter ``use_currents_as_efforts`` to ``false``.
-   See :ref:`hardware_interface_parameters` for details.
+   efforts. To achieve that, set ``use_currents_as_efforts`` to ``false``.
 
 speed_scaling_state_broadcaster
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
@@ -102,23 +97,26 @@ Allows setting I/O ports, controlling some UR-specific functionality and publish
 
 forward_effort_controller
 ^^^^^^^^^^^^^^^^^^^^^^^^^
-Type: `effort_controllers/JointGroupEffortController <https://control.ros.org/jazzy/doc/ros2_controllers/effort_controllers/doc/userdoc.html#effort-controllers-jointgroupeffortcontroller>`_
+Type: `effort_controllers/JointGroupEffortController <https://control.ros.org/humble/doc/ros2_controllers/effort_controllers/doc/userdoc.html#effort-controllers-jointgroupeffortcontroller>`_
 
 Allows setting target joint efforts (torques) directly. The user is therefore responsible for sending commands that are achievable. This controller is useful when implementing compliance or force control strategies.
 
 forward_velocity_controller
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+Type: `velocity_controllers/JointGroupVelocityController <https://control.ros.org/humble/doc/ros2_controllers/velocity_controllers/doc/userdoc.html#velocity-controllers-jointgroupvelocitycontroller>`_
 
-Type: `velocity_controllers/JointGroupVelocityController <https://control.ros.org/jazzy/doc/ros2_controllers/velocity_controllers/doc/userdoc.html#velocity-controllers-jointgroupvelocitycontroller>`_
-
-Allows setting target joint velocities directly. The user is therefore responsible for sending commands that are achievable. This controller is particularly useful when doing servoing such as ``moveit_servo``.
+Allows setting target joint positions directly. The robot tries to reach the target position as
+fast as possible. The user is therefore responsible for sending commands that are achievable. This
+controller is particularly useful when doing servoing such as ``moveit_servo``.
 
 forward_position_controller
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-Type: `position_controllers/JointGroupPositionController <https://control.ros.org/jazzy/doc/ros2_controllers/position_controllers/doc/userdoc.html#position-controllers-jointgrouppositioncontroller>`_
+Type: `position_controllers/JointGroupPositionController <https://control.ros.org/humble/doc/ros2_controllers/position_controllers/doc/userdoc.html#position-controllers-jointgrouppositioncontroller>`_
 
-Allows setting target joint positions directly. The robot tries to reach the target position as fast as possible. The user is responsible for sending commands that are achievable. This controller is particularly useful when doing servoing such as ``moveit_servo``.
+Allows setting target joint velocities directly. The user is responsible for sending commands that
+are achievable. This controller is particularly useful when doing servoing such as
+``moveit_servo``.
 
 force_mode_controller
 ^^^^^^^^^^^^^^^^^^^^^

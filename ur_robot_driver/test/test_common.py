@@ -29,8 +29,6 @@ import logging
 import time
 
 import rclpy
-from rclpy.qos import QoSProfile, DurabilityPolicy
-
 from controller_manager_msgs.srv import (
     ListControllers,
     SwitchController,
@@ -48,8 +46,9 @@ from launch.actions import (
 )
 from launch.event_handlers import OnProcessExit
 from launch.launch_description_sources import PythonLaunchDescriptionSource
-from launch.substitutions import LaunchConfiguration, PathJoinSubstitution
+from launch.substitutions import Command, FindExecutable, LaunchConfiguration, PathJoinSubstitution
 from launch_ros.actions import Node
+from launch_ros.parameter_descriptions import ParameterValue
 from launch_ros.substitutions import FindPackagePrefix, FindPackageShare
 from launch_testing.actions import ReadyToTest
 from rclpy.action import ActionClient
@@ -89,10 +88,12 @@ from ur_msgs.srv import (
 from builtin_interfaces.msg import Duration
 from control_msgs.action import FollowJointTrajectory
 from trajectory_msgs.msg import JointTrajectory, JointTrajectoryPoint
-from std_msgs.msg import Bool as BoolMsg
 
 TIMEOUT_WAIT_SERVICE = 10
-TIMEOUT_WAIT_SERVICE_INITIAL = 120  # If we download the docker image simultaneously to the tests, it can take quite some time until the dashboard server is reachable and usable.
+# Booting URSim (and possibly pulling the image) plus starting the dashboard client can take
+# several minutes. This must outlast wait_robot_booted's default 180s timeout on humble, where
+# ReadyToTest cannot be delayed via ready_to_test_action_timeout.
+TIMEOUT_WAIT_SERVICE_INITIAL = 240
 TIMEOUT_WAIT_ACTION = 10
 TIMEOUT_EXECUTE_TRAJECTORY = 30
 
@@ -128,28 +129,6 @@ def _wait_for_action(node, action_name, action_type, timeout):
 
     logging.info("  Successfully connected to action server '%s'", action_name)
     return client
-
-
-def wait_for_robot_program_state(node, state, timeout):
-    received_state = None
-
-    def callback(msg):
-        nonlocal received_state
-        received_state = msg.data
-
-    subscription = node.create_subscription(
-        BoolMsg,
-        "/io_and_status_controller/robot_program_running",
-        callback,
-        QoSProfile(depth=1, durability=DurabilityPolicy.TRANSIENT_LOCAL),
-    )
-
-    start_time = time.time()
-    while time.time() - start_time < timeout and received_state != state:
-        rclpy.spin_once(node, timeout_sec=0.1)
-
-    node.destroy_subscription(subscription)
-    return received_state
 
 
 def _call_service(node, client, request):
@@ -593,14 +572,18 @@ def generate_dashboard_test_description(ursim_version="latest", ur_type="ur5e", 
     )
     wait_robot_booted = _wait_robot_booted_action()
 
+    # On humble, ReadyToTest cannot be given an extended timeout via
+    # launch_testing.ready_to_test_action_timeout. Start the test runner immediately and let
+    # service waits (TIMEOUT_WAIT_SERVICE_INITIAL) cover robot boot; only delay the dashboard
+    # client until the robot is reachable.
     starter = RegisterEventHandler(
-        OnProcessExit(target_action=wait_robot_booted, on_exit=[ReadyToTest(), dashboard_client])
+        OnProcessExit(target_action=wait_robot_booted, on_exit=dashboard_client)
     )
 
     return (
         LaunchDescription(
             _declare_launch_arguments()
-            + [wait_robot_booted, starter, _ursim_action(ursim_version, ur_type)]
+            + [ReadyToTest(), wait_robot_booted, starter, _ursim_action(ursim_version, ur_type)]
         ),
         {"wait_robot_booted": wait_robot_booted},
     )
@@ -623,8 +606,8 @@ def generate_mock_hardware_test_description(
         "headless_mode": "true",
         "launch_dashboard_client": "true",
         "start_joint_controller": "false",
-        "use_mock_hardware": "true",
-        "mock_sensor_commands": "true",
+        "use_fake_hardware": "true",
+        "fake_sensor_commands": "true",
     }
     if tf_prefix:
         launch_arguments["tf_prefix"] = tf_prefix
@@ -724,28 +707,58 @@ def generate_driver_test_description_for_model(
     if ursim_type is None:
         ursim_type = ur_type
 
-    description_launchfile = (
-        PathJoinSubstitution([FindPackageShare("ur_robot_driver"), "launch", "ur_rsp.launch.py"]),
+    script_filename = PathJoinSubstitution(
+        [FindPackageShare("ur_client_library"), "resources", "external_control.urscript"]
     )
-    launch_arguments = {
-        "robot_ip": "192.168.56.101",
-        "ur_type": ur_type,
-        "verify_robot_model": "true",
+    input_recipe_filename = PathJoinSubstitution(
+        [FindPackageShare("ur_robot_driver"), "resources", "rtde_input_recipe.txt"]
+    )
+    output_recipe_filename = PathJoinSubstitution(
+        [FindPackageShare("ur_robot_driver"), "resources", "rtde_output_recipe.txt"]
+    )
+
+    robot_description_content = Command(
+        [
+            PathJoinSubstitution([FindExecutable(name="xacro")]),
+            " ",
+            PathJoinSubstitution([FindPackageShare("ur_description"), "urdf", "ur.urdf.xacro"]),
+            " ",
+            "robot_ip:=",
+            "192.168.56.101",
+            " ",
+            "name:=",
+            hw_name,
+            " ",
+            "script_filename:=",
+            script_filename,
+            " ",
+            "input_recipe_filename:=",
+            input_recipe_filename,
+            " ",
+            "output_recipe_filename:=",
+            output_recipe_filename,
+            " ",
+            "headless_mode:=true",
+            " ",
+            "ur_type:=",
+            ur_type,
+            " ",
+            "verify_robot_model:=true",
+            " ",
+            "use_currents_as_efforts:=",
+            use_currents_as_efforts if use_currents_as_efforts is not None else "true",
+        ]
+    )
+    robot_description = {
+        "robot_description": ParameterValue(value=robot_description_content, value_type=str)
     }
-    if use_currents_as_efforts is not None:
-        launch_arguments["use_currents_as_efforts"] = use_currents_as_efforts
-
-    rsp = IncludeLaunchDescription(
-        PythonLaunchDescriptionSource(description_launchfile),
-        launch_arguments=launch_arguments.items(),
-    )
-
     control_node = Node(
         package="controller_manager",
         executable="ros2_control_node",
         parameters=[
+            robot_description,
             {"update_rate": 125},  # that fits all models
-            {"hardware_components_initial_state": {"unconfigured": [ur_type]}},
+            {"hardware_components_initial_state": {"unconfigured": ["ur"]}},
         ],
         output="screen",
     )
@@ -771,7 +784,6 @@ def generate_driver_test_description_for_model(
         [
             ReadyToTest(),
             wait_dashboard_server,
-            rsp,
             _ursim_action(
                 ursim_version=ursim_version, ur_type=ursim_type, container_name=container_name
             ),

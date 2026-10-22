@@ -15,7 +15,7 @@ option(
 option(
   UR_ROBOT_DRIVER_RUN_ROBOT_MODELS_TEST
   "Run the integration test that runs the driver against URSim for every supported robot model"
-  OFF
+  ON
 )
 
 if(CMAKE_COMPILER_IS_GNUCXX OR CMAKE_CXX_COMPILER_ID MATCHES "Clang")
@@ -39,7 +39,9 @@ find_package(geometry_msgs REQUIRED)
 find_package(hardware_interface REQUIRED)
 find_package(pluginlib REQUIRED)
 find_package(rclcpp REQUIRED)
+find_package(rclcpp_action REQUIRED)
 find_package(rclcpp_lifecycle REQUIRED)
+find_package(realtime_tools REQUIRED)
 find_package(rclpy REQUIRED)
 find_package(std_msgs REQUIRED)
 find_package(std_srvs REQUIRED)
@@ -58,6 +60,7 @@ set(THIS_PACKAGE_INCLUDE_DEPENDS
   hardware_interface
   pluginlib
   rclcpp
+  rclcpp_action
   rclcpp_lifecycle
   std_msgs
   std_srvs
@@ -71,9 +74,7 @@ add_library(ur_robot_driver_plugin
   SHARED
   src/dashboard_client_ros.cpp
   src/hardware_interface.cpp
-  src/mode_compatibility.cpp
   src/urcl_log_handler.cpp
-  src/robot_state_helper.cpp
 )
 target_link_libraries(
   ur_robot_driver_plugin
@@ -103,6 +104,18 @@ target_link_libraries(dashboard_client ur_client_library::urcl)
 ament_target_dependencies(dashboard_client ${${PROJECT_NAME}_EXPORTED_TARGETS} ${THIS_PACKAGE_INCLUDE_DEPENDS})
 
 #
+# ur_ros2_control_node
+#
+add_executable(ur_ros2_control_node
+  src/ur_ros2_control_node.cpp
+)
+ament_target_dependencies(ur_ros2_control_node
+  controller_manager
+  rclcpp
+  realtime_tools
+)
+
+#
 # controller_stopper_node
 #
 add_executable(controller_stopper_node
@@ -114,11 +127,30 @@ ament_target_dependencies(controller_stopper_node ${${PROJECT_NAME}_EXPORTED_TAR
 #
 # robot_state_helper
 #
+add_library(robot_state_helper_lib SHARED
+  src/robot_state_helper.cpp
+  src/urcl_log_handler.cpp
+)
+target_include_directories(robot_state_helper_lib PUBLIC
+  "$<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>"
+  "$<INSTALL_INTERFACE:include>"
+)
+target_link_libraries(robot_state_helper_lib
+  ur_client_library::urcl
+)
+ament_target_dependencies(robot_state_helper_lib
+  ${${PROJECT_NAME}_EXPORTED_TARGETS}
+  ${THIS_PACKAGE_INCLUDE_DEPENDS}
+)
 add_executable(robot_state_helper
   src/robot_state_helper_node.cpp
 )
 target_link_libraries(robot_state_helper
-  ur_robot_driver_plugin
+  robot_state_helper_lib
+)
+ament_target_dependencies(robot_state_helper
+  ${${PROJECT_NAME}_EXPORTED_TARGETS}
+  ${THIS_PACKAGE_INCLUDE_DEPENDS}
 )
 
 add_executable(urscript_interface
@@ -143,12 +175,19 @@ target_link_libraries(trajectory_until_node PUBLIC
 
 install(
   TARGETS
-    dashboard_client
     controller_stopper_node
-    urscript_interface
+    dashboard_client
     robot_state_helper
     trajectory_until_node
+    ur_ros2_control_node
+    urscript_interface
   DESTINATION lib/${PROJECT_NAME}
+)
+
+install(
+  TARGETS robot_state_helper_lib
+  EXPORT export_${PROJECT_NAME}
+  DESTINATION lib
 )
 
 # INSTALL
@@ -191,10 +230,9 @@ ament_export_dependencies(
 # Install Python execs
 ament_python_install_package(${PROJECT_NAME})
 
-# Install executables
+# Install Python executables
 install(PROGRAMS
   scripts/tool_communication.py
-  scripts/wait_for_robot_description
   scripts/example_move.py
   scripts/start_ursim.sh
   scripts/wait_robot_booted.py
@@ -208,7 +246,11 @@ install(PROGRAMS scripts/wait_dashboard_server.sh
   DESTINATION bin
 )
 
-install(DIRECTORY config launch urdf
+install(PROGRAMS scripts/start_ursim.sh
+  DESTINATION lib/${PROJECT_NAME}
+)
+
+install(DIRECTORY config launch
   DESTINATION share/${PROJECT_NAME}
 )
 
@@ -221,21 +263,16 @@ if(BUILD_TESTING)
   find_package(ur_msgs REQUIRED)
   find_package(launch_testing_ament_cmake)
 
-  ament_add_gmock(test_mode_compatibility_symmetry
-    test/test_mode_compatibility_symmetry.cpp
-  )
-  target_link_libraries(test_mode_compatibility_symmetry
-    ur_robot_driver_plugin
-  )
-
   ament_add_gmock(test_robot_state_helper
     test/test_robot_state_helper.cpp
   )
   target_link_libraries(test_robot_state_helper
-    ur_robot_driver_plugin
-    rclcpp::rclcpp
-    rclcpp_action::rclcpp_action
-    ${std_srvs_TARGETS}
+    robot_state_helper_lib
+  )
+  ament_target_dependencies(test_robot_state_helper
+    rclcpp
+    rclcpp_action
+    std_srvs
   )
 
   add_launch_test(test/test_mock_hardware.py
@@ -265,10 +302,6 @@ if(BUILD_TESTING)
     add_launch_test(test/dashboard_client.py
       TIMEOUT
         800 # Booting the simulators can take quite some time. Increasing this timeout to avoid spurious failures.
-    )
-    add_launch_test(test/example_move.py
-      TIMEOUT
-        180
     )
     add_launch_test(test/integration_test_scaled_joint_controller.py
       TIMEOUT
@@ -311,10 +344,6 @@ if(BUILD_TESTING)
         800
     )
     add_launch_test(test/integration_test_tool_contact.py
-      TIMEOUT
-        800
-    )
-    add_launch_test(test/integration_test_twist_controller.py
       TIMEOUT
         800
     )

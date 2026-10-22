@@ -33,11 +33,6 @@
 
 #include "rclcpp/rclcpp.hpp"
 #include "rclcpp_action/create_server.hpp"
-#include "std_srvs/srv/trigger.hpp"
-
-#include "ur_dashboard_msgs/action/set_mode.hpp"
-#include "ur_dashboard_msgs/msg/safety_mode.hpp"
-#include "ur_dashboard_msgs/msg/robot_mode.hpp"
 #include "ur_client_library/ur/datatypes.h"
 
 namespace ur_robot_driver
@@ -92,17 +87,17 @@ RobotStateHelper::RobotStateHelper(const rclcpp::NodeOptions& options, RobotVers
   } else {
     // Service to restart safety
     restart_safety_srv_ = create_client<std_srvs::srv::Trigger>("dashboard_client/restart_safety",
-                                                                rclcpp::QoS(rclcpp::KeepLast(10)), service_cb_grp_);
+                                                                rmw_qos_profile_services_default, service_cb_grp_);
     // Service to start UR program execution on the robot
-    play_program_srv_ = create_client<std_srvs::srv::Trigger>("dashboard_client/play",
-                                                              rclcpp::QoS(rclcpp::KeepLast(10)), service_cb_grp_);
+    play_program_srv_ = create_client<std_srvs::srv::Trigger>("dashboard_client/play", rmw_qos_profile_services_default,
+                                                              service_cb_grp_);
     if (!mock_robot_version) {
       play_program_srv_->wait_for_service();
     }
   }
 
   resend_robot_program_srv_ = create_client<std_srvs::srv::Trigger>("io_and_status_controller/resend_robot_program",
-                                                                    rclcpp::QoS(rclcpp::KeepLast(10)), service_cb_grp_);
+                                                                    rmw_qos_profile_services_default, service_cb_grp_);
   if (!mock_robot_version) {
     resend_robot_program_srv_->wait_for_service();
   }
