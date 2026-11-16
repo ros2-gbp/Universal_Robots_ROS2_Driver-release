@@ -2,18 +2,19 @@
 Changelog for package ur_calibration
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-6.3.0 (2026-11-13)
+7.3.0 (2026-11-13)
 ------------------
 
-6.2.0 (2026-10-20)
+7.2.0 (2026-10-20)
 ------------------
-* [ur_calibration] Write calibration rpy in the URDF convention (backport `#2030 <https://github.com/UniversalRobots/Universal_Robots_ROS2_Driver/issues/2030>`_) (`#2039 <https://github.com/UniversalRobots/Universal_Robots_ROS2_Driver/issues/2039>`_)
-  Co-authored-by: Rick Shanor <rick@hadrian.co>
-* [ur_calibration] Added call Pipeline::init() so the primary stream connects before Pipeline::run() is called. (backport `#1981 <https://github.com/UniversalRobots/Universal_Robots_ROS2_Driver/issues/1981>`_) (`#1986 <https://github.com/UniversalRobots/Universal_Robots_ROS2_Driver/issues/1986>`_)
-  Co-authored-by: Tony Baltovski <tony.baltovski@gmail.com>
-* Contributors: mergify[bot]
+* [ur_calibration] Write calibration rpy in the URDF convention (`#2030 <https://github.com/UniversalRobots/Universal_Robots_ROS2_Driver/issues/2030>`_)
+* [ur_calibration] Added call Pipeline::init() so the primary stream connects before Pipeline::run() is called. (`#1981 <https://github.com/UniversalRobots/Universal_Robots_ROS2_Driver/issues/1981>`_)
+* Contributors: Rick Shanor, Tony Baltovski
 
-6.1.0 (2026-09-10)
+7.1.0 (2026-09-10)
+------------------
+
+7.0.0 (2026-07-09)
 ------------------
 * Update minimum CMake version to 3.28.3 (`#1814 <https://github.com/UniversalRobots/Universal_Robots_ROS2_Driver/issues/1814>`_)
 * Contributors: Felix Exner
