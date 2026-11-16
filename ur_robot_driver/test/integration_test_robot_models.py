@@ -87,14 +87,15 @@ ROBOT_MODEL_CASES = [
 ]
 
 # CB3 robots (PolyScope 3.x / URSim CB3) do not provide the ``actual_current_as_torque``
-# RTDE field. Keep the legacy current-based effort reporting for those models.
+# RTDE field, so the default torque-based effort reporting would make the hardware
+# interface fail during ``on_configure``. For these models we fall back to reporting
+# motor currents as efforts. e-Series / UR-Series models keep the default torque mode.
 CB3_MODELS = {"ur3", "ur5", "ur10"}
-
-HW_NAME = "ur"
 
 
 @pytest.mark.launch_test
 @launch_testing.parametrize("ursim_type, driver_type, ursim_version", ROBOT_MODEL_CASES)
+@launch_testing.ready_to_test_action_timeout(190)
 def generate_test_description(ursim_type, driver_type, ursim_version):
     use_currents_as_efforts = "true" if driver_type in CB3_MODELS else None
     return generate_driver_test_description_for_model(
@@ -102,7 +103,6 @@ def generate_test_description(ursim_type, driver_type, ursim_version):
         ursim_type=ursim_type,
         ursim_version=ursim_version,
         use_currents_as_efforts=use_currents_as_efforts,
-        hw_name=HW_NAME,
     )
 
 
@@ -132,7 +132,7 @@ class RobotModelStartupTest(unittest.TestCase):
             f"driver={driver_type}, got {len(hardware_info.component)}",
         )
         component = hardware_info.component[0]
-        self.assertEqual(component.name, HW_NAME)
+        self.assertEqual(component.name, driver_type)
         return component.state
 
     def test_driver_starts_for_robot_model(self, ursim_type, driver_type):
@@ -160,12 +160,12 @@ class RobotModelStartupTest(unittest.TestCase):
 
         target_state = LifecycleState(id=LifecycleState.PRIMARY_STATE_INACTIVE, label="inactive")
         result = self._controller_manager_interface.set_hardware_component_state(
-            name=HW_NAME, target_state=target_state
+            name=driver_type, target_state=target_state
         )
         if ursim_type == driver_type:
             self.assertTrue(
                 result.ok,
-                f"Hardware component '{HW_NAME}' for ursim={ursim_type}, "
+                f"Hardware component '{driver_type}' for ursim={ursim_type}, "
                 f"driver={driver_type} did not reach state '{target_state.label}' but is in state '{result.state.label}'",
             )
             self.assertEqual(result.state, target_state)
