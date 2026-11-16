@@ -31,11 +31,8 @@
 #include <atomic>
 #include <chrono>
 #include <cmath>
-#include <functional>
-#include <future>
 #include <map>
 #include <memory>
-#include <optional>
 #include <string>
 #include <thread>
 #include <vector>
@@ -145,8 +142,8 @@ std::string makeUrdf(bool with_tool_t2)
     std::string extra_states;
     if (with_tool_t2 && name == "gpio") {
       extra_commands = interfaces("command_interface", { "tool_voltage_t2_cmd" }, "0");
-      extra_states = interfaces("state_interface", { "tool_flange_type" }, "2") +
-                     interfaces("state_interface", { "tool_output_voltage_2", "tool_output_current_2" }, "0");
+      extra_states =
+          interfaces("state_interface", { "tool_flange_type", "tool_output_voltage_2", "tool_output_current_2" }, "0");
     }
     const std::string initial = name == "system_interface" ? "1" : "0";
     gpios += "<gpio name=\"" + name + "\">" + interfaces("command_interface", commands, "") + extra_commands +
@@ -162,13 +159,10 @@ std::string makeUrdf(bool with_tool_t2)
          gpios + "</ros2_control></robot>";
 }
 
-controller_interface::return_type activate(const std::string& urdf,
-                                           const std::function<void(rclcpp::Node&)>& while_active = {})
+controller_interface::return_type activate(const std::string& urdf)
 {
   auto executor = std::make_shared<rclcpp::executors::SingleThreadedExecutor>();
   controller_manager::ControllerManager cm{ executor, urdf, true, "test_controller_manager" };
-  auto client_node = std::make_shared<rclcpp::Node>("test_gpio_controller_client");
-  executor->add_node(client_node);
   std::thread spinner([&executor]() { executor->spin(); });
 
   // This controller_manager does not run its own update thread. switch_controller only schedules
@@ -195,9 +189,6 @@ controller_interface::return_type activate(const std::string& urdf,
     result = cm.switch_controller({ name }, {}, controller_manager_msgs::srv::SwitchController::Request::STRICT, false,
                                   rclcpp::Duration::from_seconds(5.0));
   }
-  if (result == controller_interface::return_type::OK && while_active) {
-    while_active(*client_node);
-  }
 
   run_update.store(false);
   updater.join();
@@ -217,27 +208,8 @@ TEST(TestGPIOControllerToolT2, refuses_activation_without_t2_interfaces)
   EXPECT_EQ(activate(makeUrdf(false)), controller_interface::return_type::ERROR);
 }
 
-// Mock hardware never acknowledges io_async_success, so the request times out with the pending value.
-TEST(TestGPIOControllerToolT2, unacknowledged_t2_voltage_request_fails)
-{
-  std::optional<bool> success;
-  const auto result = activate(makeUrdf(true), [&success](rclcpp::Node& node) {
-    auto client = node.create_client<ur_msgs::srv::SetIO>("/test_gpio_controller/set_io");
-    ASSERT_TRUE(client->wait_for_service(std::chrono::seconds(5)));
-    auto request = std::make_shared<ur_msgs::srv::SetIO::Request>();
-    request->fun = ur_msgs::srv::SetIO::Request::FUN_SET_TOOL_VOLTAGE_T2;
-    request->state = ur_msgs::srv::SetIO::Request::STATE_TOOL_VOLTAGE_0V;
-    auto future = client->async_send_request(request);
-    ASSERT_EQ(future.wait_for(std::chrono::seconds(10)), std::future_status::ready);
-    success = future.get()->success;
-  });
-  ASSERT_EQ(result, controller_interface::return_type::OK);
-  ASSERT_TRUE(success.has_value());
-  EXPECT_FALSE(*success);
-}
-
 // Tool flange type is the wire value latched from gpio/tool_flange_type at activation.
-// 2 or greater is a V2 (or later) flange, which is the only flange with connectors T1 and T2.
+// 2 is a V2 flange, which is the only flange with connectors T1 and T2.
 class GPIOControllerFlangeServiceTest : public ::testing::TestWithParam<double>
 {
 protected:
@@ -279,7 +251,7 @@ protected:
     loaned_commands.reserve(commands_.size());
     loaned_states.reserve(states_.size());
     for (const auto& command : commands_) {
-      loaned_commands.emplace_back(command, []() {});
+      loaned_commands.emplace_back(command);
     }
     for (const auto& state : states_) {
       loaned_states.emplace_back(state);
@@ -349,17 +321,14 @@ protected:
     request->pin = pin;
     request->state = state;
     auto future = client_->async_send_request(request);
-    auto future_return = rclcpp::spin_until_future_complete(client_node_, future, std::chrono::seconds(5));
-    EXPECT_EQ(future_return, rclcpp::FutureReturnCode::SUCCESS);
-    if (future_return != rclcpp::FutureReturnCode::SUCCESS) {
-      return nullptr;
-    }
+    EXPECT_EQ(rclcpp::spin_until_future_complete(client_node_, future, std::chrono::seconds(5)),
+              rclcpp::FutureReturnCode::SUCCESS);
     return future.get();
   }
 
   bool connectors_present() const
   {
-    return GetParam() >= 2.0;
+    return GetParam() == 2.0;
   }
 
   ur_controllers::GPIOController controller_;

@@ -14,11 +14,11 @@ repositories:
   ros2_control:
     type: git
     url: https://github.com/ros-controls/ros2_control.git
-    version: kilted
+    version: master
   ros2_controllers:
     type: git
     url: https://github.com/ros-controls/ros2_controllers
-    version: kilted
+    version: master
   kinematics_interface:
     type: git
     url: https://github.com/ros-controls/kinematics_interface.git
@@ -30,24 +30,24 @@ repositories:
   control_toolbox:
     type: git
     url: https://github.com/ros-controls/control_toolbox.git
-    version: kilted
+    version: master
   realtime_tools:
     type: git
     url: https://github.com/ros-controls/realtime_tools.git
-    version: kilted
-  moveit2:
-    type: git
-    url: https://github.com/moveit/moveit2.git
-    version: main
-  moveit_msgs:
-    type: git
-    url: https://github.com/moveit/moveit_msgs.git
-    version: ros2
-  srdfdom:
-    type: git
-    url: https://github.com/moveit/srdfdom.git
-    version: ros2
-  moveit_resources:
-    type: git
-    url: https://github.com/moveit/moveit_resources.git
-    version: ros2
+    version: master
+#  moveit2:
+#    type: git
+#    url: https://github.com/moveit/moveit2.git
+#    version: main
+#  moveit_msgs:
+#    type: git
+#    url: https://github.com/moveit/moveit_msgs.git
+#    version: ros2
+#  srdfdom:
+#    type: git
+#    url: https://github.com/moveit/srdfdom.git
+#    version: ros2
+#  moveit_resources:
+#    type: git
+#    url: https://github.com/moveit/moveit_resources.git
+#    version: ros2

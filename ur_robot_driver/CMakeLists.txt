@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 3.5)
+cmake_minimum_required(VERSION 3.28.3)
 project(ur_robot_driver)
 
 # Default to off as this only works in environments where a new docker container can be started with the appropriate networking, which
@@ -286,20 +286,33 @@ if(BUILD_TESTING)
     ur_robot_driver_plugin
   )
 
+  ament_add_gmock(test_tool_contact_request
+    test/test_tool_contact_request.cpp
+  )
+  target_include_directories(test_tool_contact_request PRIVATE include)
+
+  ament_add_gmock(test_hardware_interface_exports
+    test/test_hardware_interface_exports.cpp
+  )
+  target_link_libraries(test_hardware_interface_exports
+    ur_robot_driver_plugin
+    hardware_interface::hardware_interface
+  )
+  target_include_directories(test_hardware_interface_exports PRIVATE
+    include
+    ${motion_primitives_controllers_INCLUDE_DIRS}
+  )
+
   ament_add_gmock(test_tool_voltage_t2_startup
     test/test_tool_voltage_t2_startup.cpp
   )
   target_link_libraries(test_tool_voltage_t2_startup
     ur_robot_driver_plugin
-    motion_primitives_controllers::motion_primitives_controllers
   )
   target_include_directories(test_tool_voltage_t2_startup PRIVATE
     include
+    ${motion_primitives_controllers_INCLUDE_DIRS}
   )
-  ament_add_gmock(test_tool_contact_request
-    test/test_tool_contact_request.cpp
-  )
-  target_include_directories(test_tool_contact_request PRIVATE include)
 
   ament_add_gmock(test_robot_state_helper
     test/test_robot_state_helper.cpp

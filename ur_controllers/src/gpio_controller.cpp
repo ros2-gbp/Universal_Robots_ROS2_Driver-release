@@ -245,7 +245,7 @@ controller_interface::return_type ur_controllers::GPIOController::update(const r
 {
   publishIO();
   publishToolData();
-  if (tool_flange_type_ >= 2) {
+  if (tool_flange_type_ == 2) {
     publishToolDataT1();
     publishToolDataT2();
   }
@@ -258,6 +258,8 @@ controller_interface::return_type ur_controllers::GPIOController::update(const r
 controller_interface::CallbackReturn
 ur_controllers::GPIOController::on_configure(const rclcpp_lifecycle::State& /*previous_state*/)
 {
+  const auto logger = get_node()->get_logger();
+
   if (!param_listener_) {
     RCLCPP_ERROR(get_node()->get_logger(), "Error encountered during init");
     return controller_interface::CallbackReturn::ERROR;
@@ -283,7 +285,7 @@ ur_controllers::GPIOController::on_configure(const rclcpp_lifecycle::State& /*pr
     tool_data_t1_pub_ = std::make_shared<realtime_tools::RealtimePublisher<ur_msgs::msg::ToolDataT1Msg>>(
         get_node()->create_publisher<ur_msgs::msg::ToolDataT1Msg>("~/tool_data_t1", rclcpp::SystemDefaultsQoS()));
 
-    // Messages are published only while the robot reports a V2 (or later) flange.
+    // Messages are published only while the robot reports that connector T2 is present.
     tool_data_t2_pub_ = std::make_shared<realtime_tools::RealtimePublisher<ur_msgs::msg::ToolDataT2Msg>>(
         get_node()->create_publisher<ur_msgs::msg::ToolDataT2Msg>("~/tool_data_t2", rclcpp::SystemDefaultsQoS()));
 
@@ -440,8 +442,7 @@ ur_controllers::GPIOController::on_activate(const rclcpp_lifecycle::State& /*pre
     RCLCPP_INFO(get_node()->get_logger(), "Waiting for system interface to initialize...");
     std::this_thread::sleep_for(std::chrono::milliseconds(50));
   }
-  const double tool_flange_type = state_interfaces_[StateInterfaces::TOOL_FLANGE_TYPE].get_optional().value_or(0.0);
-  tool_flange_type_ = std::isfinite(tool_flange_type) ? static_cast<uint32_t>(tool_flange_type) : 0u;
+  tool_flange_type_ = state_interfaces_[StateInterfaces::TOOL_FLANGE_TYPE].get_optional().value_or(0.0);
 
   return LifecycleNodeInterface::CallbackReturn::SUCCESS;
 }
@@ -495,8 +496,9 @@ bool GPIOController::setIO(ur_msgs::srv::SetIO::Request::SharedPtr req, ur_msgs:
                   req->pin - req->PIN_TOOL_DOUT0, req->state);
     } else if (req->pin >= req->PIN_TOOL_T1_DOUT0 && req->pin <= req->PIN_TOOL_T1_DOUT3) {
       if (tool_flange_type_ < 2) {
-        RCLCPP_ERROR(get_node()->get_logger(), "Connector T1 is not present on this robot. It requires PolyScope X "
-                                               "10.15 or later and Tool Flange V2.");
+        RCLCPP_ERROR(
+            get_node()->get_logger(),
+            "Connector T1 is not present on this robot. It requires PolyScope X 10.15 or later and Tool Flange V2.");
         resp->success = false;
         return false;
       }
@@ -557,13 +559,13 @@ bool GPIOController::setIO(ur_msgs::srv::SetIO::Request::SharedPtr req, ur_msgs:
     return resp->success;
   } else if (req->fun == req->FUN_SET_TOOL_VOLTAGE_T2) {
     if (tool_flange_type_ < 2) {
-      RCLCPP_ERROR(get_node()->get_logger(), "Connector T2 is not present on this robot. It requires PolyScope X 10.15 "
-                                             "or later and Tool Flange V2.");
+      RCLCPP_ERROR(
+          get_node()->get_logger(),
+          "Connector T2 is not present on this robot. It requires PolyScope X 10.15 or later and Tool Flange V2.");
       resp->success = false;
       return false;
     }
-    // Exactly 0, 24 or 48. A cast of 48.5 would otherwise become an accepted 48 V command, and NaN
-    // would leave the async flag waiting, which the service reports as success.
+    // Exactly 0, 24 or 48. A cast of 48.5 would otherwise become an accepted 48 V command.
     if (req->state != req->STATE_TOOL_VOLTAGE_0V && req->state != req->STATE_TOOL_VOLTAGE_24V &&
         req->state != req->STATE_TOOL_VOLTAGE_48V) {
       RCLCPP_ERROR(get_node()->get_logger(), "Connector T2 accepts 0, 24 or 48 V. Requested '%f'.", req->state);

@@ -46,6 +46,7 @@
 #include <limits>
 #include <memory>
 #include <optional>
+#include <set>
 #include <string>
 #include <unordered_map>
 #include <vector>
@@ -145,9 +146,9 @@ public:
 
   hardware_interface::CallbackReturn on_init(const hardware_interface::HardwareComponentInterfaceParams& params) final;
 
-  std::vector<hardware_interface::StateInterface> export_state_interfaces() final;
+  std::vector<hardware_interface::StateInterface::ConstSharedPtr> on_export_state_interfaces() final;
 
-  std::vector<hardware_interface::CommandInterface> export_command_interfaces() final;
+  std::vector<hardware_interface::CommandInterface::SharedPtr> on_export_command_interfaces() final;
 
   hardware_interface::CallbackReturn on_configure(const rclcpp_lifecycle::State& previous_state) final;
   hardware_interface::CallbackReturn on_activate(const rclcpp_lifecycle::State& previous_state) final;
@@ -185,6 +186,39 @@ protected:
 
   // stop function used by on_shutdown and on_cleanup
   hardware_interface::CallbackReturn stop();
+
+  // The driver keeps working on its member variables. Each exported interface handle is paired with the member that
+  // holds its value, and both are synchronized at fixed points:
+  // - States are pushed to their handles in read().
+  // - Commands handled in the real-time loop are pulled from their handles at the start of write() and the values the
+  //   hardware changed itself are pushed back at the end of write() and perform_command_mode_switch().
+  // - Commands handled in checkAsyncIO() are pulled and pushed there, in the async thread.
+  struct StateMirror
+  {
+    hardware_interface::StateInterface::SharedPtr handle;
+    double* value;
+  };
+  struct CommandMirror
+  {
+    hardware_interface::CommandInterface::SharedPtr handle;
+    double* value;
+    // Value of the interface when it was last read or written
+    double synced;
+    // The hardware changed the value, but could not write it to the interface yet
+    bool dirty;
+  };
+  void add_state_mirror(const std::string& prefix, const std::string& name, double* value);
+  void add_command_mirror(const std::string& prefix, const std::string& name, double* value);
+  void add_async_command_mirror(const std::string& prefix, const std::string& name, double* value);
+  CommandMirror make_command_mirror(const std::string& prefix, const std::string& name, double* value);
+  void push_state_mirrors();
+  void pull_command_mirrors(std::vector<CommandMirror>& mirrors, bool blocking);
+  void push_command_mirrors(std::vector<CommandMirror>& mirrors, bool blocking);
+
+  std::vector<StateMirror> state_mirrors_;
+  std::vector<CommandMirror> command_mirrors_;
+  std::vector<CommandMirror> async_command_mirrors_;
+  hardware_interface::CommandInterface::SharedPtr freedrive_mode_abort_handle_;
 
   void initAsyncIO();
   void checkAsyncIO();
@@ -277,7 +311,8 @@ protected:
   // program connects, through its own state rather than tool_voltage_t2_cmd_ / io_async_success_.
   // Unset when the value is written into the control script instead, or when the parameter is empty.
   std::optional<int> startup_tool_voltage_t2_;
-  // Only read and written from checkAsyncIO, which runs on the async thread.
+  // checkAsyncIO clears these while robot_program_running_ is false, and sets sent once the
+  // configured voltage has been applied to the current connection.
   bool startup_tool_voltage_t2_sent_{ false };
   bool startup_tool_voltage_t2_error_reported_{ false };
   double io_async_success_;
@@ -419,13 +454,16 @@ protected:
   std::vector<std::array<double, 6>> trajectory_joint_velocities_;
   std::vector<std::array<double, 6>> trajectory_joint_accelerations_;
   std::vector<double> trajectory_times_;
+  // Latest result from trajectory_done_callback(), applied in write()
+  static constexpr int NO_TRAJECTORY_RESULT = -1;
+  std::atomic<int> trajectory_result_{ NO_TRAJECTORY_RESULT };
 
   PausingState pausing_state_;
   double pausing_ramp_up_increment_;
 
   // resources switching aux vars
   std::vector<std::vector<uint32_t>> stop_modes_;
-  std::vector<std::vector<std::string>> start_modes_;
+  std::vector<std::set<std::string>> start_modes_;
   bool position_controller_running_;
   bool velocity_controller_running_;
   bool torque_controller_running_;

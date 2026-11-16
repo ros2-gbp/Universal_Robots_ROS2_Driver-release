@@ -1,4 +1,4 @@
-// Copyright 2026 Universal Robots A/S
+// Copyright 2026, Universal Robots A/S
 //
 // Redistribution and use in source and binary forms, with or without
 // modification, are permitted provided that the following conditions are met:
@@ -45,9 +45,10 @@ public:
     return true;
   }
 
-  void stoppedWithStartupVoltage()
+  // Program is stopped. A command handled now must not count as the startup voltage.
+  void stoppedProgram()
   {
-    robot_program_running_.store(false);
+    robot_program_running_.store(false, std::memory_order_relaxed);
     tool_t2_supported_ = true;
     startup_tool_voltage_t2_ = 24;
     startup_tool_voltage_t2_sent_ = false;
@@ -62,7 +63,7 @@ public:
 
   void setProgramRunning(const bool running)
   {
-    robot_program_running_.store(running);
+    robot_program_running_.store(running, std::memory_order_relaxed);
   }
 
   bool startupSent() const
@@ -80,7 +81,7 @@ public:
 TEST(ToolVoltageT2Startup, RequestBeforeProgramStartDoesNotSkipConfiguredVoltage)
 {
   ToolVoltageT2StartupHw hw;
-  hw.stoppedWithStartupVoltage();
+  hw.stoppedProgram();
   hw.request(0.0);
 
   hw.handle();
@@ -100,7 +101,7 @@ TEST(ToolVoltageT2Startup, RequestBeforeProgramStartDoesNotSkipConfiguredVoltage
 TEST(ToolVoltageT2Startup, RequestWhileProgramIsRunningOverridesStartupVoltage)
 {
   ToolVoltageT2StartupHw hw;
-  hw.stoppedWithStartupVoltage();
+  hw.stoppedProgram();
   hw.setProgramRunning(true);
   hw.request(48.0);
 
@@ -114,6 +115,7 @@ TEST(ToolVoltageT2Startup, RequestWhileProgramIsRunningOverridesStartupVoltage)
 
   EXPECT_EQ(hw.applied_voltages.size(), 1u);
 }
+
 int main(int argc, char** argv)
 {
   testing::InitGoogleTest(&argc, argv);
