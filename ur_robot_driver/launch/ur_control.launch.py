@@ -288,6 +288,9 @@ def generate_launch_description():
                 "ur18",
                 "ur20",
                 "ur30",
+                "ur10g-1750",
+                "ur17g-1300",
+                "ur18g-950",
             ],
         )
     )
@@ -486,6 +489,15 @@ def generate_launch_description():
             "tool_voltage",
             default_value="0",  # 0 being a conservative value that won't destroy anything
             description="Tool voltage that will be setup.",
+        )
+    )
+    declared_arguments.append(
+        DeclareLaunchArgument(
+            "tool_voltage_t2",
+            default_value="",
+            description="Startup voltage for connector T2 (0, 24 or 48). Empty leaves T2 unchanged. "
+            "Applied when the robot program starts, whether or not use_tool_communication is "
+            "true. Requires Tool Flange V2 on PolyScope X 10.15 or later.",
         )
     )
     declared_arguments.append(
