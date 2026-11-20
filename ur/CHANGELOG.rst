@@ -2,16 +2,16 @@
 Changelog for package ur
 ^^^^^^^^^^^^^^^^^^^^^^^^
 
-7.3.0 (2026-11-13)
+6.3.1 (2026-11-19)
 ------------------
 
-7.2.0 (2026-10-20)
+6.3.0 (2026-11-13)
 ------------------
 
-7.1.0 (2026-09-10)
+6.2.0 (2026-10-20)
 ------------------
 
-7.0.0 (2026-07-09)
+6.1.0 (2026-09-10)
 ------------------
 * Update minimum CMake version to 3.28.3 (`#1814 <https://github.com/UniversalRobots/Universal_Robots_ROS2_Driver/issues/1814>`_)
 * Contributors: Felix Exner
